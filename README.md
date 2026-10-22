@@ -8,6 +8,8 @@ All-in-One VA Disability Helper
 
 Profile details, ratings, claims, notes, documents, and an optional xAI API key are stored only in this browser (IndexedDB and local storage). VA to Z does not upload that information to this site. The only network request the app itself makes is optional: if you save your own xAI API key, chat messages go from your device straight to xAI. Use **Download Backup** on the Tools tab when you want a copy you control.
 
+Read the [VA to Z Privacy Policy](https://rrkennedy69.github.io/VA-to-Z/privacy.html).
+
 ## Install on a phone
 
 Publish the site (see below), then open it in the phone's browser and add it to the home screen. The icon is labeled **VA to Z** and the app opens full screen.
