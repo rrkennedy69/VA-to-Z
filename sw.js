@@ -1,6 +1,6 @@
 /* VA to Z — cache the app shell and icons so the page works offline.
    index.html is network-first so a published update is used when online. */
-var CACHE = "va-to-z-v9";
+var CACHE = "va-to-z-v10";
 var ICONS = [
   "icons/icon-192.png",
   "icons/icon-512.png",

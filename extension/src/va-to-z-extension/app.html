@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<div class="top"><header><div class="hl"><h1 class="brand"><svg class="logo" role="img" aria-label="VA to Z" xmlns="http://www.w3.org/2000/svg" viewBox="18 18 384 164"><title>VA to Z</title><circle cx="100" cy="100" r="78" fill="#fff"/><text x="100" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#162e51" text-anchor="middle" letter-spacing="-3">VA</text><text x="200" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#fff">to Z</text></svg></h1><p class="tag">Made by a Marine Veteran who strives to help fellow veterans get the benefits they've earned. <b>Semper Fi.</b></p></div><div class="hr"><button type="button" id="hdrRing" class="hdrring" data-go="tool-calc"></button><button id="openWin" class="popwin" type="button" title="Open in window" aria-label="Open VA to Z in its own window"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg><span> Open in window</span></button><button type="button" id="donateBtn" class="donbtn" aria-haspopup="dialog" aria-label="Donate" title="Donate"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-10-9.3C.4 8.5 2.2 4.5 6 4.5c2.1 0 3.4 1.1 4 2.2.6-1.1 1.9-2.2 4-2.2 3.8 0 5.6 4 4 7.2C19.5 16.4 12 21 12 21z"/></svg><span class="dontxt">Donate</span></button><div class="hrsave"><button id="saveBtn" class="savebtn" type="button">Save</button><div id="saveInd" class="saveind" aria-live="polite">All changes saved</div></div></div></header>
+<div class="top"><header><div class="hl"><h1 class="brand"><svg class="logo" role="img" aria-label="VA to Z" xmlns="http://www.w3.org/2000/svg" viewBox="18 18 384 164"><title>VA to Z</title><circle cx="100" cy="100" r="78" fill="#fff"/><text x="100" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#162e51" text-anchor="middle" letter-spacing="-3">VA</text><text x="200" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#fff">to Z</text></svg></h1><p class="tag">Made by a Marine Veteran who strives to help fellow veterans get the benefits they've earned. <b>Semper Fi.</b></p></div><div class="hr"><button type="button" id="hdrRing" class="hdrring" aria-haspopup="dialog"></button><button id="openWin" class="popwin" type="button" title="Open in window" aria-label="Open VA to Z in its own window"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg><span> Open in window</span></button><button type="button" id="donateBtn" class="donbtn" aria-haspopup="dialog" aria-label="Donate" title="Donate"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-10-9.3C.4 8.5 2.2 4.5 6 4.5c2.1 0 3.4 1.1 4 2.2.6-1.1 1.9-2.2 4-2.2 3.8 0 5.6 4 4 7.2C19.5 16.4 12 21 12 21z"/></svg><span class="dontxt">Donate</span></button><div class="hrsave"><button id="saveBtn" class="savebtn" type="button">Save</button><div id="saveInd" class="saveind" aria-live="polite">All changes saved</div></div></div></header>
 <nav id="nav">
-<button data-t="setup">1. Setup</button><button data-t="profile">2. Profile</button><button data-t="lookup">3. Lookup</button><button data-t="claims">4. My Claims</button><button data-t="docs">5. Documents</button><button data-t="tools">Tools</button>
+<button data-t="setup">1. Setup</button><button data-t="profile">2. Profile</button><button data-t="lookup">3. Conditions</button><button data-t="claims">4. My Claims</button><button data-t="status">5. Claims Status</button><button data-t="docs">6. Documents</button><button data-t="tools">Tools</button>
 </nav><div id="dirBanner"></div></div>
 <main>
 <div id="remind"></div>
@@ -62,7 +62,7 @@
 </section>
 
 <section id="lookup">
-<div class="card"><h2 class="step"><span class="num">1</span>Step 1: Lookup a Condition</h2>
+<div class="card"><h2 class="step"><span class="num">1</span>Step 1: Find a Condition</h2>
 <p>Search the VA Schedule for Rating Disabilities (38 CFR Part 4) by name, body part, or diagnostic code.</p>
 <label for="q" class="sr">Search conditions</label>
 <input id="q" type="search" placeholder="Search: knee, tinnitus, 9411, back, sleep apnea...">
@@ -86,9 +86,16 @@
 
 <section id="claims">
 <div class="grid2">
-<div><div class="card"><h2>My claims</h2><div id="claimList" class="claimlist"></div><p class="muted">Add claims from the Lookup tab with "Let's File It".</p></div></div>
-<div id="claimView"><div class="card"><p>Pick a claim on the left, or go to <b>Lookup</b> and press <b>Let's File It</b> on a condition.</p></div></div>
+<div><div class="card"><h2>My claims</h2><div id="claimList" class="claimlist"></div><p class="muted">Add claims from the Conditions tab with "Let's File It".</p></div></div>
+<div id="claimView"><div class="card"><p>Pick a claim on the left, or go to <b>Conditions</b> and press <b>Let's File It</b> on a condition.</p></div></div>
 </div></section>
+
+<section id="status">
+<div class="card"><h2>Claims Status</h2><p>Your open VA claims from VA.gov, with every detail VA.gov has: all 8 steps with dates, temporary jurisdiction, evidence requests, documents, and letters. Tap a claim for details.</p>
+<p class="muted" id="csLast"></p><button type="button" class="b red ext-only" id="csPull">Pull from VA.gov</button> <button type="button" class="b alt web-only" data-go="tool-sync">Sync VA Data</button>
+<div id="csMsg"></div></div>
+<div id="csBody"></div>
+</section>
 
 <section id="docs">
 <div class="card"><h2>My Documents</h2>
@@ -200,6 +207,8 @@
 
 </section>
 </main>
+<div id="ratingModal" class="dmodal" role="dialog" aria-modal="true" aria-labelledby="rpTitle" hidden><div class="dbox rpbox">
+<button type="button" class="dclose" id="rpClose" aria-label="Close">✕</button><h2 id="rpTitle" style="margin-top:0">Your VA ratings</h2><div id="rpBody"></div></div></div>
 <div id="donateModal" class="dmodal" role="dialog" aria-modal="true" aria-labelledby="donTitle" hidden><div class="dbox">
 <button type="button" class="dclose" id="donClose" aria-label="Close">✕</button>
 <h2 id="donTitle" style="margin-top:0">Support VA to Z</h2>
