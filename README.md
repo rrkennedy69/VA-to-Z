@@ -41,3 +41,18 @@ Install it in developer mode:
 5. Click **Load unpacked** and select the unzipped `va-to-z-sync` folder.
 
 Then open the **Tools** tab in VA to Z and use **Sync VA Data**. The extension source is in `extension/src/va-to-z-sync/` so it can be read in this repository. The zip is the copy to download and load.
+
+## VA to Z desktop extension (Chrome and Edge)
+
+The all-in-one **VA to Z** extension is the whole app plus built-in VA.gov sync. It opens in its own tab on a Windows or Mac computer. It does not run on phones or tablets. Data in the extension is separate from this website; move it with a backup file from **Backup and Restore**.
+
+Install it in developer mode:
+
+1. Download [va-to-z-extension.zip](extension/va-to-z-extension.zip).
+2. Unzip it. You get a folder named `va-to-z-extension`. Keep that folder; the extension runs from it.
+3. Open `chrome://extensions` in Chrome, or `edge://extensions` in Edge.
+4. Turn on **Developer mode**.
+5. Click **Load unpacked** and select the unzipped `va-to-z-extension` folder.
+6. Pin **VA to Z** from the puzzle-piece menu, then click it to open the app.
+
+The extension source is in `extension/src/va-to-z-extension/`. The zip is the copy to download and load. `va-to-z-sync.zip` is still the smaller add-on for the website.

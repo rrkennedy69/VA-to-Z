@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "VA to Z",
+  "version": "1.0.0",
+  "description": "VA disability claim helper with built-in VA.gov sync. Your data stays on this computer.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Open VA to Z",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://www.va.gov/*",
+    "https://api.va.gov/*",
+    "https://api.x.ai/*"
+  ]
+}
