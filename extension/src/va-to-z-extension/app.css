@@ -28,6 +28,18 @@ nav{display:flex;gap:4px;overflow-x:auto;background:#16304f;padding:6px}
 .hr{display:flex;align-items:center;gap:0}.hr .hrsave{display:flex;flex-direction:column;align-items:flex-end}
 @media (max-width:480px){.hdrring .ring{width:46px}.hdrring .rpct{font-size:.82rem}.hdrring{margin-right:8px}}
 html.ispopup .hdrring .ring{width:40px}html.ispopup .hdrring .rpct{font-size:.78rem}html.ispopup .hdrring{flex-direction:row;gap:6px}html.ispopup .hdrring .hrlbl{margin:0}
+header{position:relative}
+#hdrRing{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;z-index:1}
+header .hl{max-width:calc(50% - 60px);min-width:0}header .hr{margin-left:auto;max-width:calc(50% - 50px);justify-content:flex-end}
+.donbtn{display:inline-flex;align-items:center;gap:5px;background:transparent;color:#ffc72c;border:1.5px solid #ffc72c;border-radius:8px;padding:6px 10px;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer;margin-right:8px;white-space:nowrap}
+.donbtn:hover{background:rgba(255,199,44,.12)}.donbtn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.dmodal{position:fixed;inset:0;background:rgba(10,20,40,.55);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}.dmodal[hidden]{display:none}
+.dbox{background:#fff;color:#1b1b1b;border-radius:14px;max-width:420px;width:100%;padding:20px 22px;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.dclose{position:absolute;right:10px;top:8px;background:none;border:0;font-size:1.2rem;cursor:pointer;color:#555}
+.dsoon{background:#f4f7fb;border:1px dashed #9aa9bf;border-radius:10px;padding:10px 12px;font-weight:700;color:#162e51;text-align:center}
+@media (max-width:900px){header .tag{font-size:.7rem}}
+@media (max-width:600px){header .tag{display:none}.dontxt{display:none}.donbtn{padding:6px 8px;margin-right:6px}}
+html.ispopup .dontxt{display:none}html.ispopup .donbtn{padding:5px 7px;margin-right:6px}
 .popwin{display:none}html.ispopup .popwin{display:inline-flex;align-items:center;gap:4px;background:#ffc72c;color:#162e51;border:0;border-radius:8px;padding:6px 10px;font-weight:700;cursor:pointer;margin-right:8px;font-size:.85rem;vertical-align:middle}
 html.ispopup,html.ispopup body{width:800px;height:600px;overflow:hidden;margin:0}html.ispopup body{overflow-y:auto;overflow-x:hidden}
 html.ispopup header{padding:6px 12px}html.ispopup .logo{height:30px}html.ispopup .tag{display:none}html.ispopup .saveind{font-size:.7rem}html.ispopup .savebtn{padding:6px 12px;font-size:.85rem}html.ispopup .hr{display:flex;align-items:center;gap:6px}

@@ -1,3 +1,5 @@
+/* Donation link: set DONATE_URL to your donation page (e.g. 'https://...'). Leave '' to show "Donation link coming soon". */
+var DONATE_URL='';
 var IS_EXT=!!(window.VATOZ_EXT);if(IS_EXT)document.documentElement.classList.add("isext");var IS_POPUP=IS_EXT&&/[?&]popup=1/.test(location.search);if(IS_POPUP)document.documentElement.classList.add("ispopup");
 /*CALC_START*/
 // OFFICIAL method = 38 CFR 4.25 Table I: arrange in order of severity; combine two at a time; each result is
@@ -518,6 +520,15 @@ function applyIntent(){var m=/[#&]intent=([^&]+)/.exec(location.hash);if(!m)retu
 window.addEventListener('hashchange',function(){try{applyIntent()}catch(e){}});
 // keep popup and window in step: if the other one saved newer data, load it
 window.addEventListener('storage',function(e){if(e.key!==KEY||!e.newValue)return;try{var d=JSON.parse(e.newValue);if(d._savedAt&&(!S._savedAt||d._savedAt>S._savedAt)){var tb=S.tab;S=Object.assign(blankState(),d);S.tab=tb;init()}}catch(x){}});
+
+/* ---------- donate ---------- */
+function openDonate(){var a=$('donAction'),u=(DONATE_URL||'').trim();
+  a.innerHTML=/^https:\/\//.test(u)?'<a class="b red" id="donGo" href="'+esc(u)+'" target="_blank" rel="noopener">Open donation page</a>':'<div class="dsoon" id="donSoon">Donation link coming soon</div>';
+  $('donateModal').hidden=false;setTimeout(function(){$('donClose').focus()},0)}
+function closeDonate(){$('donateModal').hidden=true;$('donateBtn').focus()}
+$('donateBtn').onclick=openDonate;$('donClose').onclick=closeDonate;
+$('donateModal').addEventListener('click',function(e){if(e.target===this)closeDonate()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('donateModal').hidden)closeDonate()});
 
 /* ---------- lookup ---------- */
 var COMMON=[['6260','Tinnitus'],['6100','Hearing loss'],['9411','PTSD'],['9434','Depression'],['9400','Anxiety'],['8100','Migraines'],['5237','Back/neck strain'],['5242','Spine arthritis/DDD'],['5243','Disc (IVDS)'],['5260','Knee flexion'],['5261','Knee extension'],['5257','Knee instability'],['5201','Shoulder'],['8520','Sciatic (leg) nerve'],['8515','Median nerve (wrist)'],['6847','Sleep apnea'],['6522','Allergic rhinitis'],['6602','Asthma'],['7101','Hypertension'],['7346','Hiatal hernia/GERD'],['7319','IBS'],['7913','Diabetes'],['5276','Flat feet'],['5271','Ankle'],['5252','Hip flexion'],['7806','Dermatitis/eczema'],['7522','Erectile dysfunction'],['8045','TBI']];
