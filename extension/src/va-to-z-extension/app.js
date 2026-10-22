@@ -161,7 +161,6 @@ function b64(buf){return new Promise(function(res){var fr=new FileReader();fr.on
 function unb64(s){var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer}
 document.addEventListener('input',function(e){if(e.target.id!=='q'&&e.target.id!=='imp'&&e.target.id!=='imp2'&&e.target.id!=='cMsg')save()},true);
 document.addEventListener('change',function(e){if(e.target.id!=='imp'&&e.target.id!=='imp2'&&!e.target.dataset.up)save()},true);
-var sbT;$('saveBtn').onclick=function(){saveNow();var b=$('saveBtn');b.textContent='Saved ✓';setInd('Saved at '+new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit',second:'2-digit'}));clearTimeout(sbT);sbT=setTimeout(function(){b.textContent='Save'},2500)};
 window.addEventListener('beforeunload',saveNow);
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')saveNow()});
 window.addEventListener('pagehide',saveNow);
