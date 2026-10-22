@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="vatoz-app" content="1">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VA to Z</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2231%22%20fill%3D%22%23fff%22%20stroke%3D%22%23162e51%22%20stroke-width%3D%222%22/%3E%3Ctext%20x%3D%2232%22%20y%3D%2242%22%20font-family%3D%22Arial%20Black%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%2228%22%20fill%3D%22%23162e51%22%20text-anchor%3D%22middle%22%20letter-spacing%3D%22-1%22%3EVA%3C/text%3E%3C/svg%3E">
@@ -289,6 +290,30 @@ html{scroll-padding-top:150px}
 <div id="saveStatus" class="muted" style="margin-top:8px"></div>
 </div></details>
 
+<details class="card tool tcard" id="tool-sync"><summary><span class="smct">Sync VA Data<span class="tsum" id="sum-sync"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">
+<p>Instead of typing everything in, you can copy your own info from <b>VA.gov</b>: your name, contact info, service history, VA ratings, and claims. A small free browser add-on (the <b>VA to Z Sync</b> extension) reads it while you're logged in to VA.gov and hands it to this app. You check every item before anything is changed.</p>
+<p class="muted">It only reads. It never sees your password, never submits anything to VA, and your info goes straight from VA.gov to this app on your computer. It does not go to any other server.</p>
+<div class="sub"><h3>Step 1: Install the extension (one time)</h3>
+<p class="muted"><b>Computer only</b> (Windows or Mac) in <b>Google Chrome</b> or <b>Microsoft Edge</b>. It does not work on phones or tablets.</p>
+<ol>
+<li><a href="https://github.com/rrkennedy69/VA-to-Z/raw/main/extension/va-to-z-sync.zip" target="_blank" rel="noopener"><b>Download the extension (va-to-z-sync.zip)</b></a>.</li>
+<li>Open your Downloads folder. Right-click the zip and choose <b>Extract All</b> (Windows) or double-click it (Mac). You get a folder named <b>va-to-z-sync</b>. Move it somewhere you'll keep it, such as Documents. Don't delete it later, because the extension runs from that folder.</li>
+<li>In the address bar, type <b>chrome://extensions</b> (Chrome) or <b>edge://extensions</b> (Edge) and press Enter.</li>
+<li>Turn on <b>Developer mode</b>. In Chrome the switch is at the top right; in Edge it's on the left side.</li>
+<li>Click <b>Load unpacked</b> and select the <b>va-to-z-sync</b> folder you extracted.</li>
+<li>Click the puzzle-piece icon in the toolbar and <b>pin</b> VA to Z Sync so its button is always visible.</li>
+<li><i>Using VA to Z saved on your computer (a file) instead of the website?</i> On the extensions page click <b>Details</b> under VA to Z Sync and turn on <b>Allow access to file URLs</b>.</li>
+</ol>
+<p class="muted">Sometimes Chrome or Edge shows a message such as "Disable developer mode extensions." That's normal for add-ons installed this way. Click the X or <b>Keep</b>, not Disable.</p></div>
+<div class="sub"><h3>Step 2: Pull your info</h3>
+<ol><li>Go to <a href="https://www.va.gov/" target="_blank" rel="noopener">VA.gov</a> and sign in (Login.gov or ID.me) as usual.</li>
+<li>Click the <b>VA to Z Sync</b> button in your toolbar, then <b>Pull my VA data</b>.</li>
+<li>If this app is open in another tab, the info appears below for review. If not, click <b>Download VA data file</b> in the extension, then use <b>Import VA data file</b> here.</li></ol>
+<div id="syncExt" class="muted"></div>
+<label class="b alt" style="display:inline-block;cursor:pointer">Import VA data file<input type="file" id="syncImp" class="hidefile" accept=".json,application/json"></label>
+<div id="syncMsg"></div></div>
+<div id="syncReview"></div>
+</div></details>
 <details class="card tool danger tcard" id="tool-clear"><summary><span class="smct">Clear All Data<span class="tsum" id="sum-clear"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">
 <p>This erases <b>everything</b> from this device: API key, profile, claims, notes, chats, and calculator. It cannot be undone. Download a backup first if you might want it later.</p>
 <button class="b red" id="clr">Clear All Data</button></div></details>
@@ -469,7 +494,7 @@ function tab(t){if(t==='calc'||t==='data')t='tools';S.tab=t;document.querySelect
 $('nav').addEventListener('click',function(e){if(e.target.dataset.t)tab(e.target.dataset.t)});
 function goTool(id){if(S.tab!=='tools')tab('tools');var el=$(id);if(!el)return;if(el.tagName==='DETAILS')el.open=true;setTimeout(function(){var y=el.getBoundingClientRect().top+window.scrollY-150;window.scrollTo({top:y,behavior:'smooth'});var s=el.querySelector('summary');if(s)s.focus({preventScroll:true})},30)}
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-go]');if(b){e.preventDefault();goTool(b.dataset.go)}});
-function toolSums(){try{var r=vaCombined(S.calc.entries),sm=S.calc.smc||{},p=vaPay(RATES,r.rounded,S.calc.deps,sm);
+function toolSums(){try{$('sum-sync').textContent='Copy your info from VA.gov (computer, Chrome or Edge)';}catch(e){}try{var r=vaCombined(S.calc.entries),sm=S.calc.smc||{},p=vaPay(RATES,r.rounded,S.calc.deps,sm);
   $('sum-calc').textContent=(S.calc.entries.length||sm.level||sm.k)?('Official rating '+r.rounded+'% · '+money(p.total)+'/mo'+(sm.level||sm.k?' · SMC':'')):'Combine your ratings and estimate monthly pay';}catch(x){}
   $('sum-backup').textContent=(S.lastBackup?'Last backup: '+new Date(S.lastBackup).toLocaleDateString():'No backup saved yet — tap to make one')+(DIRSTATE==='ok'?' · Save folder on':DIRSTATE==='needs'?' · Save folder needs reconnect':'');
   $('sum-clear').textContent='Erase everything on this device';
@@ -693,6 +718,71 @@ async function restoreFromFolder(){var msg=$('restoreMsg');try{var root=DIR;if(!
     d.docs=docs.filter(function(x){return bad.indexOf(x.name)<0});S=Object.assign(blankState(),d);S.tab='tools';saveNow();init();
     $('restoreMsg').innerHTML='<div class="okbox">✓ Restored from save folder: '+Object.keys(S.claims).length+' claims, '+S.docs.length+' documents.'+(bad.length?' Could not restore: '+esc(bad.join(', ')):'')+'</div>'}
   catch(e){if(e&&e.name==='AbortError')return;msg.innerHTML='<span class="err">Restore from folder failed: '+esc(e.message||e)+'</span>'}}
+
+/* ---------- Sync VA Data (from the VA to Z Sync extension) ---------- */
+var SYNC=null;
+function sStr(v,n){return (typeof v==='string'||typeof v==='number')?String(v).slice(0,n||300).trim():''}
+function cleanVA(o){
+  if(!o||typeof o!=='object'||o.source!=='va.gov'||!o.profile||typeof o.profile!=='object')throw new Error('This is not a VA to Z Sync data file.');
+  var p=o.profile,ad=function(a){a=a&&typeof a==='object'?a:{};return {line1:sStr(a.line1),line2:sStr(a.line2),city:sStr(a.city,80),state:sStr(a.state,40),zip:sStr(a.zip,20),country:sStr(a.country,60)}};
+  var r=o.ratings&&typeof o.ratings==='object'?o.ratings:{};
+  var arr=function(x){return Array.isArray(x)?x.slice(0,200):[]};
+  var comb=r.combined===null||r.combined===undefined||r.combined===''?null:+r.combined;if(!(comb>=0&&comb<=100))comb=null;
+  return {pulledAt:sStr(o.pulledAt,40),
+    profile:{first:tc(sStr(p.first,60)),middle:tc(sStr(p.middle,60)),last:tc(sStr(p.last,60)),suffix:sStr(p.suffix,10),dob:sStr(p.dob,10),gender:sStr(p.gender,10),email:sStr(p.email,120),phone:sStr(p.phone,40),mail:ad(p.mailingAddress),home:ad(p.homeAddress)},
+    combined:comb,
+    conditions:arr(r.conditions).map(function(c){c=c||{};var pc=c.percent===null||c.percent===undefined||c.percent===''?null:+c.percent;return {name:sStr(c.name,200),dc:sStr(c.dc,10).replace(/\D/g,''),percent:pc>=0&&pc<=100?pc:null,effective:sStr(c.effective,10),decision:sStr(c.decision,60)}}).filter(function(c){return c.name||c.dc}),
+    claims:arr(o.claims).map(function(c){c=c||{};return {id:sStr(c.id,40),type:sStr(c.type,120),date:sStr(c.date,10),status:sStr(c.status,60),closed:sStr(c.closed,10)}}),
+    service:arr(o.service).map(function(s){s=s||{};return {branch:sStr(s.branch,60),component:sStr(s.component,20),begin:sStr(s.begin,10),end:sStr(s.end,10),discharge:sStr(s.discharge,60)}})}}
+function tc(s){return s&&s===s.toUpperCase()?s.toLowerCase().replace(/(^|[\s'-])([a-z])/g,function(m,a,b){return a+b.toUpperCase()}):s}
+function isoDate(s){return /^\d{4}-\d{2}-\d{2}/.test(s)?s.slice(0,10):''}
+function mapBranch(b){b=(b||'').toLowerCase();for(var i=0;i<BRANCHES.length;i++)if(BRANCHES[i].toLowerCase()===b||b.indexOf(BRANCHES[i].toLowerCase())>=0)return BRANCHES[i];return ''}
+function mapComp(c){c=(c||'').toUpperCase();return c==='A'||/ACTIVE/.test(c)?'Active duty':c==='V'||c==='R'||/RESERVE/.test(c)?'Reserve':c==='N'||/GUARD/.test(c)?'National Guard':''}
+function mapDis(d){var t=(d||'').toLowerCase();if(/dishonorable/.test(t))return 'Dishonorable';if(/other than/.test(t))return 'Other than honorable';if(/general|under honorable/.test(t))return 'General (under honorable conditions)';if(/bad conduct/.test(t))return 'Bad conduct';if(/uncharacterized/.test(t))return 'Uncharacterized';if(/^honorable$/.test(t))return 'Honorable';return ''}
+function syncItems(v){var p=ensureProfile(),f=p.f,it=[],P=v.profile;
+  function add(k,label,val){if(!val)return;var cur=f[k]||'';if(cur===val)return;it.push({g:'Profile',kind:'f',k:k,label:label,val:val,cur:cur,on:!cur})}
+  add('first','First name',P.first);add('middle','Middle name',P.middle);add('last','Last name',P.last);
+  if(['Jr.','Sr.','II','III','IV','V'].indexOf(P.suffix)>=0)add('suffix','Suffix',P.suffix);
+  add('dob','Date of birth',isoDate(P.dob));add('sex','Sex',{M:'Male',F:'Female',MALE:'Male',FEMALE:'Female'}[(P.gender||'').toUpperCase()]||'');
+  add('email','Email',P.email);add('phone','Main phone',P.phone);
+  var m=P.mail;add('mStreet','Mailing street address',m.line1);add('mApt','Mailing Apt/Unit',m.line2);add('mCity','Mailing city',m.city);add('mState','Mailing state',m.state);add('mZip','Mailing ZIP code',m.zip);
+  if(m.country&&!/^(USA|United States)/i.test(m.country))add('mCountry','Mailing country',m.country);
+  var h=P.home;add('pStreet','Home street address',h.line1);add('pApt','Home Apt/Unit',h.line2);add('pCity','Home city',h.city);add('pState','Home state',h.state);add('pZip','Home ZIP code',h.zip);
+  if(v.combined!==null)add('rating','Current VA combined rating',v.combined+'%');
+  v.service.forEach(function(s,i){var row={branch:mapBranch(s.branch),component:mapComp(s.component),entry:isoDate(s.begin),sep:isoDate(s.end),discharge:mapDis(s.discharge)};
+    var dup=p.l.periods.some(function(x){return x.entry&&x.entry===row.entry&&(!row.branch||x.branch===row.branch)});if(dup)return;
+    it.push({g:'Service history',kind:'per',row:row,label:[s.branch||'Service',row.entry&&('from '+row.entry),row.sep&&('to '+row.sep),s.discharge&&('discharge: '+s.discharge)].filter(Boolean).join(' '),on:true})});
+  var have={};S.order.forEach(function(id){var c=S.claims[id];if(c){if(c.dc)have['dc'+c.dc]=1;if(c.vaId)have['va'+c.vaId]=1}});
+  v.conditions.forEach(function(c){if(c.dc&&have['dc'+c.dc])return;var known=c.dc&&BYDC[c.dc];
+    it.push({g:'Rated conditions → My Claims',kind:'cond',c:c,label:(c.name||(known?known.n:'Condition'))+(c.dc?' (DC '+c.dc+')':'')+(c.percent!==null?' — '+c.percent+'%':'')+(c.effective?' since '+isoDate(c.effective):''),on:true})});
+  var rated=v.conditions.filter(function(c){return c.percent!==null});
+  if(rated.length)it.push({g:'Calculator',kind:'calc',list:rated,label:'Replace the Calculator\'s list with these '+rated.length+' VA rating'+(rated.length>1?'s':'')+(S.calc.entries.length?' (you have '+S.calc.entries.length+' there now)':''),on:!S.calc.entries.length});
+  v.claims.forEach(function(c){if(c.id&&have['va'+c.id])return;it.push({g:'VA claims → My Claims',kind:'claim',c:c,label:(c.type||'VA claim')+(c.date?' filed '+isoDate(c.date):'')+(c.status?' — '+c.status:''),on:true})});
+  return it}
+function renderSync(){var R=$('syncReview');if(!SYNC){R.innerHTML='';return}
+  var it=SYNC.items,h='<div class="sub" style="border:2px solid #162e51;border-radius:10px;padding:12px"><h3 style="margin-top:0">Review your VA.gov info</h3><p class="muted">Pulled '+esc(SYNC.v.pulledAt?new Date(SYNC.v.pulledAt).toLocaleString():'')+'. Checked items will be added. Items that would <b>replace</b> something you already typed are unchecked; check them only if VA.gov is right.</p>';
+  if(!it.length)h+='<p><b>Nothing new.</b> Everything from VA.gov already matches what\'s in the app.</p>';
+  var g='';it.forEach(function(x,i){if(x.g!==g){g=x.g;h+='<h4 style="margin:12px 0 4px">'+esc(g)+'</h4>'}
+    h+='<label class="chk"><input type="checkbox" data-sy="'+i+'"'+(x.on?' checked':'')+'> <span><b>'+esc(x.label)+'</b>'+(x.kind==='f'?': '+esc(x.val)+(x.cur?' <span class="err">(replaces "'+esc(x.cur)+'")</span>':''):'')+'</span></label>'});
+  h+='<button class="b" id="syncApply"'+(it.length?'':' disabled')+'>Apply checked items</button><button class="b alt" id="syncCancel">Cancel</button></div>';R.innerHTML=h}
+function startSync(raw,how){var v=cleanVA(raw);SYNC={v:v,items:syncItems(v)};var d=$('tool-sync');if(d)d.open=true;tab('tools');renderSync();
+  $('syncMsg').innerHTML='<div class="okbox">✓ VA.gov info received'+(how?' '+how:'')+'. Review it below.</div>';setTimeout(function(){try{$('syncReview').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}},50)}
+function applySync(){var p=ensureProfile(),n=0,nc=0;document.querySelectorAll('[data-sy]').forEach(function(b){SYNC.items[+b.dataset.sy].on=b.checked});
+  SYNC.items.forEach(function(x){if(!x.on)return;
+    if(x.kind==='f'){p.f[x.k]=x.val;n++}
+    else if(x.kind==='per'){var empty=p.l.periods.filter(function(r){return !Object.keys(r).some(function(k){return r[k]})})[0];if(empty)Object.assign(empty,x.row);else p.l.periods.push(Object.assign({},x.row));n++}
+    else if(x.kind==='calc'){S.calc.entries=x.list.map(function(c){return {name:c.name||(BYDC[c.dc]?BYDC[c.dc].n:''),pct:Math.round(c.percent/10)*10,side:'',limb:false,part:''}});n++}
+    else if(x.kind==='cond'||x.kind==='claim'){var c=x.c,id='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),e=x.kind==='cond'&&c.dc?BYDC[c.dc]:null;
+      S.claims[id]=x.kind==='cond'?{id:id,dc:c.dc||'',name:c.name||(e?e.n:'Rated condition'),status:'Granted',created:new Date().toISOString(),checklist:e?checklistFor(e):[],notes:'From VA.gov: rated '+(c.percent!==null?c.percent+'%':'(percent not shown)')+(c.effective?', effective '+isoDate(c.effective):'')+(c.decision?' ('+c.decision+')':'')+'.',evidence:'',chat:[],prevDenied:false,fromVA:true}
+        :{id:id,dc:'',name:(c.type||'VA claim')+(c.date?' ('+isoDate(c.date)+')':''),status:/^(complete|closed|canceled|cancelled)/i.test(c.status)||c.closed?'Decision received':'Filed',created:new Date().toISOString(),checklist:[],notes:'From VA.gov: claim '+(c.id?'#'+c.id+' ':'')+(c.date?'filed '+isoDate(c.date)+', ':'')+'status '+(c.status||'unknown')+(c.closed?', closed '+isoDate(c.closed):'')+'.',evidence:'',chat:[],prevDenied:false,vaId:c.id,fromVA:true};
+      S.order.push(id);nc++}});
+  SYNC=null;saveNow();renderProfile();renderCalc();renderClaims();renderSync();toolSums();
+  $('syncMsg').innerHTML='<div class="okbox">✓ Applied: '+n+' profile/calculator item'+(n===1?'':'s')+' and '+nc+' claim'+(nc===1?'':'s')+' added.<br><b>Next:</b> make a backup (Tools → Backup and Restore) to save it and to move it to your phone.</div>'}
+document.addEventListener('click',function(e){var t=e.target;if(t.id==='syncApply')applySync();else if(t.id==='syncCancel'){SYNC=null;renderSync();$('syncMsg').innerHTML=''}else if(t.id==='syncAsk')window.postMessage({type:'VATOZ_REQUEST'},'*')});
+$('syncImp').onchange=function(){var f=this.files[0];if(!f)return;this.value='';f.text().then(function(t){startSync(JSON.parse(t),'from file')}).catch(function(e){$('syncMsg').innerHTML='<span class="err">Import failed: '+esc(e.message)+'</span>'})};
+window.addEventListener('message',function(e){if(e.source!==window||!e.data||e.data.source!=='vatoz-sync-ext')return;
+  if(e.data.type==='VATOZ_EXT_READY'){$('syncExt').innerHTML='✓ VA to Z Sync extension detected. <button class="b alt sm" id="syncAsk">Get my last pull</button>'}
+  else if(e.data.type==='VATOZ_VA_DATA'){try{startSync(e.data.data,'from the extension')}catch(x){$('syncMsg').innerHTML='<span class="err">'+esc(x.message)+'</span>'}}});
 
 /* ---------- lookup ---------- */
 var COMMON=[['6260','Tinnitus'],['6100','Hearing loss'],['9411','PTSD'],['9434','Depression'],['9400','Anxiety'],['8100','Migraines'],['5237','Back/neck strain'],['5242','Spine arthritis/DDD'],['5243','Disc (IVDS)'],['5260','Knee flexion'],['5261','Knee extension'],['5257','Knee instability'],['5201','Shoulder'],['8520','Sciatic (leg) nerve'],['8515','Median nerve (wrist)'],['6847','Sleep apnea'],['6522','Allergic rhinitis'],['6602','Asthma'],['7101','Hypertension'],['7346','Hiatal hernia/GERD'],['7319','IBS'],['7913','Diabetes'],['5276','Flat feet'],['5271','Ankle'],['5252','Hip flexion'],['7806','Dermatitis/eczema'],['7522','Erectile dysfunction'],['8045','TBI']];
