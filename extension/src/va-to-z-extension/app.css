@@ -197,3 +197,5 @@ html.ispopup .stbox{max-height:calc(100vh - 24px);padding:14px 16px}
 .auditnote{background:#fff4d1;border-left:4px solid #ffc72c;padding:6px 10px;border-radius:6px}.auditpriv{font-size:.8rem;margin-top:8px}
 .auditres{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:10px;background:#fbfcfe}.auditbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}.auditbar .sp{flex:1}
 .audittxt{white-space:pre-wrap;line-height:1.5;max-height:520px;overflow:auto;font-size:.95rem}
+header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text-align:right;border-left:0;border-right:3px solid #ffc72c;padding:0 10px 0 0;margin:0;max-width:none;font-size:.78rem}
+@media(max-width:900px){header .hr .tag{font-size:.7rem}}
