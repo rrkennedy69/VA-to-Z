@@ -30,6 +30,12 @@ nav{display:flex;gap:4px;overflow-x:auto;background:#16304f;padding:6px}
 .rpct{font-size:2.6rem;font-weight:800;color:#162e51;line-height:1}.ring.sm .rpct{font-size:1.4rem}.rlbl{font-size:.8rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;margin-top:4px}.ring.sm .rlbl{font-size:.6rem}
 .rexact{font-size:.85rem;color:#444;margin-top:6px;text-align:center}.ringsm{float:right;margin:0 0 6px 12px}.ringsm .rexact{font-size:.7rem;max-width:110px}
 .ringcard{background:#f4f7fb;border:1px solid #dde4ee;border-radius:12px;padding:14px 10px}.card>.ringsm+h2+.okbox{clear:both}
+.hdrring{background:none;border:0;padding:0;margin:0 10px 0 0;cursor:pointer;color:#fff;display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;flex:0 0 auto}
+.hdrring .ring{width:52px}.hdrring .rtrack{stroke:rgba(255,255,255,.25);stroke-width:13}.hdrring .rarc{stroke:#ffc72c;stroke-width:13}.hdrring .rpct{color:#fff;font-size:.95rem;font-weight:800}.hdrring .rlbl{display:none}
+.hdrring .rexact{display:none}.hdrring .hrlbl{font-size:.6rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;margin-top:2px;white-space:nowrap;opacity:.9}.hdrring:focus-visible{outline:2px solid #ffc72c;outline-offset:3px;border-radius:8px}
+.hr{display:flex;align-items:center;gap:0}.hr .hrsave{display:flex;flex-direction:column;align-items:flex-end}
+@media (max-width:480px){.hdrring .ring{width:46px}.hdrring .rpct{font-size:.82rem}.hdrring{margin-right:8px}}
+html.ispopup .hdrring .ring{width:40px}html.ispopup .hdrring .rpct{font-size:.78rem}html.ispopup .hdrring{flex-direction:row;gap:6px}html.ispopup .hdrring .hrlbl{margin:0}
 .popwin{display:none}html.ispopup .popwin{display:inline-flex;align-items:center;gap:4px;background:#ffc72c;color:#162e51;border:0;border-radius:8px;padding:6px 10px;font-weight:700;cursor:pointer;margin-right:8px;font-size:.85rem;vertical-align:middle}
 html.ispopup,html.ispopup body{width:800px;height:600px;overflow:hidden;margin:0}html.ispopup body{overflow-y:auto;overflow-x:hidden}
 html.ispopup header{padding:6px 12px}html.ispopup .logo{height:30px}html.ispopup .tag{display:none}html.ispopup .saveind{font-size:.7rem}html.ispopup .savebtn{padding:6px 12px;font-size:.85rem}html.ispopup .hr{display:flex;align-items:center;gap:6px}
@@ -154,7 +160,7 @@ html{scroll-padding-top:150px}
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 </head>
 <body>
-<div class="top"><header><div class="hl"><h1 class="brand"><svg class="logo" role="img" aria-label="VA to Z" xmlns="http://www.w3.org/2000/svg" viewBox="18 18 384 164"><title>VA to Z</title><circle cx="100" cy="100" r="78" fill="#fff"/><text x="100" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#162e51" text-anchor="middle" letter-spacing="-3">VA</text><text x="200" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#fff">to Z</text></svg></h1><p class="tag">Made by a Marine Veteran who strives to help fellow veterans get the benefits they've earned. <b>Semper Fi.</b></p></div><div class="hr"><button id="openWin" class="popwin" type="button" title="Open in window" aria-label="Open VA to Z in its own window"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg><span> Open in window</span></button><button id="saveBtn" class="savebtn" type="button">Save</button><div id="saveInd" class="saveind" aria-live="polite">All changes saved</div></div></header>
+<div class="top"><header><div class="hl"><h1 class="brand"><svg class="logo" role="img" aria-label="VA to Z" xmlns="http://www.w3.org/2000/svg" viewBox="18 18 384 164"><title>VA to Z</title><circle cx="100" cy="100" r="78" fill="#fff"/><text x="100" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#162e51" text-anchor="middle" letter-spacing="-3">VA</text><text x="200" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#fff">to Z</text></svg></h1><p class="tag">Made by a Marine Veteran who strives to help fellow veterans get the benefits they've earned. <b>Semper Fi.</b></p></div><div class="hr"><button type="button" id="hdrRing" class="hdrring" data-go="tool-calc"></button><button id="openWin" class="popwin" type="button" title="Open in window" aria-label="Open VA to Z in its own window"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg><span> Open in window</span></button><div class="hrsave"><button id="saveBtn" class="savebtn" type="button">Save</button><div id="saveInd" class="saveind" aria-live="polite">All changes saved</div></div></div></header>
 <nav id="nav">
 <button data-t="setup">1. Setup</button><button data-t="profile">2. Profile</button><button data-t="lookup">3. Lookup</button><button data-t="claims">4. My Claims</button><button data-t="docs">5. Documents</button><button data-t="tools">Tools</button>
 </nav><div id="dirBanner"></div></div>
@@ -193,7 +199,7 @@ html{scroll-padding-top:150px}
 
 
 <section id="profile">
-<div class="card"><div class="ringwrap ringsm" id="ringProfile" style="display:none"></div><h2>My Profile</h2>
+<div class="card"><h2>My Profile</h2>
 <div class="okbox" style="font-weight:400">Your profile is saved only on this device, in this browser. VA to Z has no servers, and no third party can see or store it. The only exception is if you turn on AI access below: then your profile is sent with your questions to xAI (Grok) to answer them.</div>
 <p class="muted" style="margin-top:8px">Your profile is also included in backups you download in Tools, so keep backup files private. Fill in only what you want. These are details VA forms often ask for (21-526EZ, 21-0995, 21-10210, 21-4138, 21-686c), so you have them in one place. Tap a section to open it.</p></div>
 <div id="profForm"></div>
@@ -231,7 +237,7 @@ html{scroll-padding-top:150px}
 
 <section id="claims">
 <div class="grid2">
-<div><div class="card"><div class="ringwrap ringsm" id="ringClaims" style="display:none"></div><h2>My claims</h2><div id="claimList" class="claimlist"></div><p class="muted">Add claims from the Lookup tab with "Let's File It".</p></div></div>
+<div><div class="card"><h2>My claims</h2><div id="claimList" class="claimlist"></div><p class="muted">Add claims from the Lookup tab with "Let's File It".</p></div></div>
 <div id="claimView"><div class="card"><p>Pick a claim on the left, or go to <b>Lookup</b> and press <b>Let's File It</b> on a condition.</p></div></div>
 </div></section>
 
@@ -561,7 +567,7 @@ function renderCalc(){
   if(r.bilateral)h+='<p class="muted">Bilateral factor applied ('+r.pairs.map(function(p){return p==='arm'?'both arms':p==='leg'?'both legs':'both sides'}).join(' and ')+'): those ratings combine to '+r.bilCombinedStr+'%, plus 10% of that ('+r.bilFactorStr+'), rounded = '+r.bilValueStr+'%, then combined with the rest.</p>';
   else if(E.some(function(e){return e.limb}))h+='<p class="muted">No bilateral factor yet: it needs ratings on both arms, or on both legs.</p>';
   if(E.length)h+='<details class="howc"><summary>How we got this</summary><ol>'+r.steps.map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol></details>';
-  $('cResult').innerHTML=h;renderRing($('ringBox'),r.rounded,E.length?r.exactStr:null,'Total Rating');renderCalcVA();if($('sum-calc'))setTimeout(toolSums,0);
+  $('cResult').innerHTML=h;renderRing($('ringBox'),r.rounded,E.length?r.exactStr:null,'Total Rating');renderHdrRing();renderCalcVA();if($('sum-calc'))setTimeout(toolSums,0);
   document.querySelectorAll('#mar button').forEach(function(b){var v=+b.dataset.mar,on=(v===0&&!d.spouse)||(v===1&&d.spouse&&!d.aa)||(v===2&&d.spouse&&d.aa);b.classList.toggle('on',on);b.setAttribute('aria-checked',on);b.setAttribute('role','radio')});
   ['kids','school','parents'].forEach(function(k){$('v_'+k).textContent=d[k]});
   var sm=S.calc.smc;$('v_smck').textContent=sm.k;document.querySelectorAll('input[name=smclvl]').forEach(function(i){i.checked=i.value===sm.level});
@@ -598,7 +604,13 @@ function renderCalcVA(){var b=$('calcVA');if(!b)return;var v=S.vaData;if(!v){b.i
   var when=v.pulledAt?new Date(v.pulledAt).toLocaleDateString():'';var loaded=S.calc.entries.some(function(e){return e.va});
   b.innerHTML='<div class="vanote">'+(loaded?'Loaded from your VA.gov data (pulled '+esc(when)+'). Check arm/leg sides for the bilateral factor; change anything that looks off.':'You have imported VA.gov ratings (pulled '+esc(when)+').')+' <button type="button" class="b alt sm" id="calcVAReload">Reload my VA ratings</button></div>'}
 document.addEventListener('click',function(e){if(e.target.id==='calcVAReload'){var n=preloadCalc(true);renderCalc();saveNow();$('calcVA').insertAdjacentHTML('beforeend','<p class="muted" id="calcVAMsg">'+(n?n+' VA rating'+(n>1?'s':'')+' added.':'Your VA ratings are already in the calculator.')+'</p>')}});
-function renderVARings(){[['ringProfile','profile'],['ringClaims','claims']].forEach(function(x){var b=$(x[0]);if(!b)return;var v=S.vaData;if(!v||v.combined===null||v.combined===undefined){b.innerHTML='';b.style.display='none';return}
+function renderHdrRing(){var b=$('hdrRing');if(!b)return;var r;try{r=vaCombined(S.calc.entries)}catch(e){r={rounded:0,exactStr:'0.00'}}
+  var v=S.vaData,useVA=v&&v.combined!==null&&v.combined!==undefined,pct=useVA?+v.combined:r.rounded,ex=S.calc.entries.length?r.exactStr:'0.00';
+  var src=useVA?'From VA.gov '+(v.pulledAt?fmtWhen(v.pulledAt):''):'From calculator';
+  var tip='Total Rating '+pct+'% · '+src+(useVA?' (VA gives whole numbers; calculator exact: '+ex+'%)':' · exact combined value '+ex+'%')+'. Click to open the calculator.';
+  renderRing(b,pct,null,'Total Rating',true);if(!b.querySelector('.hrlbl'))b.insertAdjacentHTML('beforeend','<span class="hrlbl">Total Rating</span>');
+  var ring=b.querySelector('.ring');ring.removeAttribute('role');ring.removeAttribute('aria-label');b.setAttribute('aria-label',tip);b.title=tip;b.dataset.src=useVA?'va':'calc';b.dataset.exact=ex}
+function renderVARings(){renderHdrRing();[['ringProfile','profile'],['ringClaims','claims']].forEach(function(x){var b=$(x[0]);if(!b)return;var v=S.vaData;if(!v||v.combined===null||v.combined===undefined){b.innerHTML='';b.style.display='none';return}
   b.style.display='';renderRing(b,v.combined,null,'VA rating',true);var m=b.querySelector('.rexact');m.textContent='From VA.gov, '+(v.pulledAt?new Date(v.pulledAt).toLocaleDateString():'')})}
 /* SMC UI */
 var SMC_INFO=[['','None','No SMC level other than K.'],
