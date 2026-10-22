@@ -534,7 +534,7 @@ $('donateModal').addEventListener('click',function(e){if(e.target===this)closeDo
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('donateModal').hidden)closeDonate()});
 
 /* ---------- Claims Status (VA.gov claim tracker) ---------- */
-var PHASES=[['CLAIM_RECEIVED','Claim received'],['UNDER_REVIEW','Initial review'],['GATHERING_OF_EVIDENCE','Evidence gathering'],['REVIEW_OF_EVIDENCE','Evidence review'],['PREPARATION_FOR_DECISION','Preparation for decision'],['PENDING_DECISION_APPROVAL','Pending decision approval'],['PREPARATION_FOR_NOTIFICATION','Preparation for notification'],['COMPLETE','Complete']];
+var PHASES=[['CLAIM_RECEIVED','Claim received'],['UNDER_REVIEW','Initial review'],['GATHERING_OF_EVIDENCE','Evidence gathering'],['REVIEW_OF_EVIDENCE','Evidence review'],['PREPARATION_FOR_DECISION','Rating'],['PENDING_DECISION_APPROVAL','Preparing decision letter'],['PREPARATION_FOR_NOTIFICATION','Final review'],['COMPLETE','Claim decided']];
 function phaseNum(pt,status){pt=String(pt||'').toUpperCase().replace(/[\s-]/g,'_');for(var i=0;i<PHASES.length;i++)if(PHASES[i][0]===pt)return i+1;
   var s=String(status||'').toUpperCase();if(/COMPLETE|CLOSED/.test(s))return 8;if(/PREPARATION_FOR_NOTIFICATION/.test(s))return 7;if(/CLAIM_RECEIVED/.test(s))return 1;if(/INITIAL_REVIEW|UNDER_REVIEW/.test(s))return 2;if(/EVIDENCE_GATHERING/.test(s))return 3;return 0}
 function phaseName(n){return n?PHASES[n-1][1]:'Unknown phase'}
@@ -549,11 +549,12 @@ function renderStatus(){var box=$('csBody');if(!box)return;var L=(S.vaClaims&&S.
   if(!L.length){box.innerHTML='<div class="card"><p><b>No claims from VA.gov yet.</b> '+(IS_EXT?'Click <b>Pull from VA.gov</b> above (sign in at VA.gov first).':'Install the free <b>VA to Z Sync</b> extension and pull your VA.gov data (Tools → Sync VA Data). Or import a VA data file there.')+'</p><button class="b alt" data-go="tool-sync">Go to Sync VA Data</button></div>';return}
   var open=L.filter(isOpenClaim),closed=L.filter(function(c){return !isOpenClaim(c)});
   var card=function(c){var d=csDetail(c.id),a=d&&d.data&&d.data.attributes||{},pd=a.claimPhaseDates||{},n=phaseNum(pd.latestPhaseType||c.phaseType,a.status||c.status),tj=a.tempJurisdiction;
-    return '<button type="button" class="cscard" data-cs="'+esc(c.id)+'"><div class="cstop"><b>'+esc(c.type||'VA claim')+'</b><span class="muted">#'+esc(c.id)+'</span></div>'+
-    '<div class="muted">Filed '+esc(dshort(c.date)||'unknown')+(c.phaseChangeDate||pd.phaseChangeDate?' · Last changed '+esc(dshort(pd.phaseChangeDate||c.phaseChangeDate)):'')+'</div>'+
-    '<div class="csbar" role="img" aria-label="Step '+n+' of 8: '+esc(phaseName(n))+'">'+[1,2,3,4,5,6,7,8].map(function(i){return '<span class="'+(i<n?'done':i===n?'cur':'')+'"></span>'}).join('')+'</div>'+
-    '<div class="csph">Step '+(n||'?')+' of 8: <b>'+esc(phaseName(n))+'</b>'+(pd.currentPhaseBack?' <span class="csbad">Moved back</span>':'')+(tj?' <span class="cstj">Temp jurisdiction: '+esc(tj)+'</span>':'')+'</div>'+
-    '<div class="muted csupd">'+(d?'Details updated '+esc(fmtWhen(d.fetchedAt)):'Tap for full details')+'</div></button>'};
+    var st=stepInfo(c,n);
+    return '<div class="cscard"><button type="button" class="cshead" data-cs="'+esc(c.id)+'" aria-label="Open full details for '+esc(c.type||'VA claim')+' number '+esc(c.id)+'"><div class="cstop"><b>'+esc(c.type||'VA claim')+'</b><span class="muted">#'+esc(c.id)+'</span></div>'+
+    '<div class="muted">Filed '+esc(dshort(c.date)||'unknown')+(c.phaseChangeDate||pd.phaseChangeDate?' · Last changed '+esc(dshort(pd.phaseChangeDate||c.phaseChangeDate)):'')+'</div></button>'+
+    stepBar(c.id,st)+
+    '<div class="csph">'+(st.cur?'Step '+st.cur+' of '+st.total+': <b>'+esc(st.labels[st.cur-1])+'</b>':'Step unknown')+(pd.currentPhaseBack?' <span class="csbad">Moved back</span>':'')+(tj?' <span class="cstj">Temp jurisdiction: '+esc(tj)+'</span>':'')+'</div>'+
+    '<div class="csfoot"><span class="muted csupd">'+(d?'Details updated '+esc(fmtWhen(d.fetchedAt)):'Tap the steps to learn what each one means')+'</span><button type="button" class="linkbtn" data-cs="'+esc(c.id)+'">Full details ›</button></div></div>'};
   box.innerHTML='<h3>Open claims ('+open.length+')</h3>'+(open.length?'<div class="csgrid">'+open.map(card).join('')+'</div>':'<p class="muted">No open claims right now.</p>')+
     '<details class="card" id="csClosed"><summary><b>Closed claims ('+closed.length+')</b></summary>'+(closed.length?closed.map(function(c){return '<div class="csrow"><button type="button" class="linkbtn" data-cs="'+esc(c.id)+'">'+esc(c.type||'VA claim')+' #'+esc(c.id)+'</button> <span class="muted">filed '+esc(dshort(c.date))+(c.closed?', closed '+esc(dshort(c.closed)):'')+'</span></div>'}).join(''):'<p class="muted">None.</p>')+'</details>'}
 function claimSnapshot(id,res){S.claimDetail=S.claimDetail||{};var prev=S.claimDetail[id],a=res.data.attributes||{},pd=a.claimPhaseDates||{};
@@ -611,6 +612,60 @@ window.addEventListener('message',function(e){if(e.source!==window||!e.data||e.d
   else if(e.data.type==='VATOZ_CLAIM_DATA'&&CS_PENDING[e.data.id]){var r=e.data.result;CS_PENDING[e.data.id](r&&typeof r==='object'?r:{ok:false,error:'bad reply'})}});
 
 /* ---------- Total Rating panel ---------- */
+
+// ---- Claim step bar + explainer (sources: research/claim-steps.md) ----
+var VA_AVG={days:68.2,month:'September 2026',src:'VA.gov, "The VA claim process after you file your claim" (updated Oct 5, 2026)'};
+var STEP8=['Claim received','Initial review','Evidence gathering','Evidence review','Rating','Preparing decision letter','Final review','Claim decided'];
+var STEP5=['Claim received','Initial review','Evidence gathering, review, and decision','Preparation for notification','Complete'];
+var BACK='Claims can move <b>back</b> to Evidence gathering if VA needs more evidence or you send new evidence. That is common and does not mean your claim was denied.';
+var UNOFF='Unofficial estimate based on VA Claims Insider; VA does not publish per-step times.';
+var EX8=[
+ {what:'VA has your claim in its system. If you filed online, you saw an on-screen confirmation. If you mailed it, VA sends a letter about 1 week (plus mailing time) after it arrives.',todo:'Nothing yet. Keep a copy of what you sent.',wait:'Varies; often about 3–4 days.'},
+ {what:'VA checks your claim for basic information it needs, like your name and Social Security number.',todo:'Nothing, unless VA contacts you about missing information. Answer quickly if it does.',wait:'Varies; often about 5–6 days.'},
+ {what:'VA makes sure it has all the evidence it needs. It may ask you for evidence, schedule a claim exam (C&P exam), ask your private doctors for records, or pull your VA records. This is usually the longest step.',todo:'Watch for letters and tracked items asking for something. Go to every exam VA schedules. You can send evidence at any time.',wait:'Varies; often about 30–36 days, and sometimes several months (for example, while waiting on exams or records).',back:1},
+ {what:'VA reviews all the evidence it has for your claim.',todo:'Usually nothing. If you send new evidence now, the claim goes back to Evidence gathering.',wait:'Varies; often about 9–11 days.',back:1},
+ {what:'A rater decides your claim and sets your disability rating, using VA\'s rating schedule (38 CFR Part 4).',todo:'Wait. Sending new evidence now moves the claim back to Evidence gathering.',wait:'Varies; often about 8–10 days, and longer when there is a backlog of claims waiting for a rater.',back:1},
+ {what:'VA is writing your decision letter. If you\'re eligible, it will show your rating, your monthly payment, and the date payments start.',todo:'Nothing. Watch your mail and the claim status tool.',wait:'Varies; often about 7–8 days.',back:1},
+ {what:'A senior reviewer does a final check of your claim and the decision letter.',todo:'Nothing. Your decision is close.',wait:'Varies; often about 6–7 days.',back:1},
+ {what:'VA has decided your claim. You can read and download your decision letter in VA\'s claim status tool. VA also mails a copy.',todo:'Read the whole letter. If you disagree, you have decision review options (generally within 1 year).',wait:'The mailed letter should arrive within 10 business days, but may take longer (VA).',official:1}];
+var EX5=[{what:'VA received your claim but has not assigned it to a reviewer yet.',todo:'Nothing yet.',wait:'Varies; often a few days.'},
+ {what:'VA assigned your claim to a reviewer, who decides if more information is needed from you.',todo:'Answer any VA requests quickly.',wait:'Varies; often about a week.'},
+ {what:'VA is getting evidence (from you, your providers, government agencies, and others), reviewing it, and making a decision. Several kinds of work happen inside this one step, so claims often stay here the longest.',todo:'Watch for letters asking for something, go to any exam, and send requested evidence.',wait:'Varies; often about 2 months, and sometimes much longer.',back:1},
+ {what:'VA has made a decision and is getting your decision letter ready to mail.',todo:'Nothing. Watch your mail.',wait:'Varies; often about a week.'},
+ {what:'VA has sent you a decision letter by U.S. mail explaining the decision.',todo:'Read the whole letter. If you disagree, look at your decision review options.',wait:'Allow normal mailing time.'}];
+function is8Step(c,a){var t=String((a&&(a.claimType||a.claimTypeBase||a.displayTitle))||c.type||'')+' '+String(c.typeCode||a&&a.claimTypeCode||'');
+  if(!t.trim())return true;return /compensation|disab/i.test(t)}
+function stepInfo(c,n){var d=csDetail(c.id),a=d&&d.data&&d.data.attributes||{};var e=is8Step(c,a);
+  var cur=!n?0:e?n:(n<=2?n:n<=6?3:n===7?4:5);return {eight:e,total:e?8:5,labels:e?STEP8:STEP5,cur:cur,phase:n}}
+function stepBar(id,st){var h='<div class="cssteps'+(st.eight?' s8':' s5')+'" role="list" aria-label="Claim steps. '+(st.cur?'Current step '+st.cur+' of '+st.total+': '+esc(st.labels[st.cur-1]):'Current step unknown')+'. Select a step to learn about it.">';
+  for(var i=1;i<=st.total;i++){var cls=i<st.cur?'done':i===st.cur?'cur':'todo',state=i<st.cur?'done':i===st.cur?'current step':'not started';
+    h+='<div role="listitem" class="cst '+cls+'">'+(i===st.cur?'<span class="cspt" aria-hidden="true">▼</span>':'')+'<button type="button" class="cstbtn" data-step="'+i+'" data-sclaim="'+esc(id)+'"'+(i===st.cur?' aria-current="step"':'')+' aria-label="Step '+i+' of '+st.total+': '+esc(st.labels[i-1])+' ('+state+'). Open explainer." aria-haspopup="dialog"><span class="cstn">'+(i<st.cur?'✓':i)+'</span><span class="cstl2">'+esc(st.labels[i-1])+'</span></button></div>'}
+  return h+'</div>'}
+var STEP_OPEN=null,STEP_RET=null;
+function openStep(claimId,i){var L=(S.vaClaims&&S.vaClaims.list)||[],c=L.filter(function(x){return String(x.id)===String(claimId)})[0]||{id:claimId},d=csDetail(claimId),a=d&&d.data&&d.data.attributes||{},pd=a.claimPhaseDates||{};
+  var st=stepInfo(c,phaseNum(pd.latestPhaseType||c.phaseType,a.status||c.status));i=Math.max(1,Math.min(st.total,i));STEP_OPEN={id:claimId,i:i,st:st};
+  var ex=(st.eight?EX8:EX5)[i-1],when=i<st.cur?'Your claim has finished this step.':i===st.cur?'▼ Your claim is in this step now'+(pd.phaseChangeDate||c.phaseChangeDate?' (since '+esc(dshort(pd.phaseChangeDate||c.phaseChangeDate))+')':'')+'.':'Your claim has not reached this step yet.';
+  $('stKicker').textContent='Step '+i+' of '+st.total+(st.eight?'':' (VA shows 5 steps for this type of claim)');$('stTitle').textContent=st.labels[i-1];
+  $('stBody').innerHTML='<p class="stwhen'+(i===st.cur?' now':'')+'">'+when+'</p>'+
+   '<h3>What happens</h3><p>'+ex.what+'</p><h3>What you should do</h3><p>'+ex.todo+'</p>'+
+   '<h3>Typical wait</h3><p>'+ex.wait+'</p><p class="muted stsrc">'+(ex.official?'From VA.gov.':UNOFF)+' Every claim is different; this is not a guarantee.</p>'+
+   (ex.back?'<div class="warn stback">'+BACK+'</div>':'')+
+   '<div class="stavg"><b>VA national average:</b> '+VA_AVG.days+' days to complete disability-related claims ('+VA_AVG.month+'). <span class="muted">Source: '+esc(VA_AVG.src)+'.</span></div>'+
+   '<p class="muted" style="font-size:.8rem">Step names match VA.gov\'s claim status tool. Not affiliated with VA.</p>';
+  $('stPrev').disabled=i<=1;$('stNext').disabled=i>=st.total;
+  if($('stepModal').hidden){STEP_RET=document.activeElement;$('stepModal').hidden=false}$('stTitle').focus()}
+function closeStep(){if($('stepModal').hidden)return;$('stepModal').hidden=true;var r=STEP_RET;STEP_OPEN=null;STEP_RET=null;
+  if(r&&document.body.contains(r))r.focus();else{var q=document.querySelector('.cstbtn[aria-current]');if(q)q.focus()}}
+document.addEventListener('click',function(e){var b=e.target.closest('.cstbtn');if(b){e.preventDefault();e.stopPropagation();openStep(b.dataset.sclaim,+b.dataset.step)}},true);
+$('stClose').onclick=closeStep;$('stPrev').onclick=function(){if(STEP_OPEN)openStep(STEP_OPEN.id,STEP_OPEN.i-1)};$('stNext').onclick=function(){if(STEP_OPEN)openStep(STEP_OPEN.id,STEP_OPEN.i+1)};
+$('stepModal').addEventListener('click',function(e){if(e.target===this)closeStep()});
+$('stepModal').addEventListener('keydown',function(e){if(e.key==='Escape'){e.preventDefault();closeStep();return}
+  if(e.key==='Tab'){var f=[].slice.call(this.querySelectorAll('button:not([disabled]),a[href],[tabindex="-1"]#stTitle'));f=f.filter(function(x){return x.id!=='stTitle'});if(!f.length)return;var fst=f[0],lst=f[f.length-1];
+    if(e.shiftKey&&(document.activeElement===fst||document.activeElement===$('stTitle'))){e.preventDefault();lst.focus()}else if(!e.shiftKey&&document.activeElement===lst){e.preventDefault();fst.focus()}}
+  if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&STEP_OPEN&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();openStep(STEP_OPEN.id,STEP_OPEN.i+(e.key==='ArrowRight'?1:-1))}});
+document.addEventListener('keydown',function(e){var b=e.target.closest&&e.target.closest('.cstbtn');if(!b||(e.key!=='ArrowRight'&&e.key!=='ArrowLeft'&&e.key!=='Home'&&e.key!=='End'))return;
+  var all=[].slice.call(b.closest('.cssteps').querySelectorAll('.cstbtn')),k=all.indexOf(b);e.preventDefault();
+  k=e.key==='Home'?0:e.key==='End'?all.length-1:Math.max(0,Math.min(all.length-1,k+(e.key==='ArrowRight'?1:-1)));all[k].focus()});
 function openRatingPanel(){var v=S.vaData,b=$('rpBody'),h='';
   if(!v||!(v.conditions||[]).length&&(v.combined===null||v.combined===undefined)){
     var r=vaCombined(S.calc.entries);h='<p><b>No VA.gov ratings yet.</b> Sync your VA.gov data to see your service-connected conditions here.</p><p class="muted">The ring now shows your calculator result: '+r.rounded+'%.</p><button class="b red" id="rpSync">Sync VA Data</button> <button class="b alt" id="rpCalc">Open calculator</button>'}
