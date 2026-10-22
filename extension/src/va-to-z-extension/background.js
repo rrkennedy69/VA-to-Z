@@ -23,7 +23,7 @@ function waitLoaded(tabId,ms){return new Promise((res,rej)=>{const t=setTimeout(
   chrome.tabs.onUpdated.addListener(f);chrome.tabs.get(tabId).then(tb=>{if(tb.status==='complete'){clearTimeout(t);chrome.tabs.onUpdated.removeListener(f);res()}}).catch(()=>{})})}
 // Reads VA data by running pull.js inside a www.va.gov tab, so requests to api.va.gov carry
 // the user's normal VA.gov session exactly like VA.gov's own pages (GET only, read-only).
-async function pull(refocus){
+async function runInVA(fn,args,refocus){
   let [tab]=await chrome.tabs.query({url:'https://www.va.gov/*'});let opened=null;
   let openedWin=null;
   if(!tab){const normal=(await chrome.windows.getAll({windowTypes:['normal']}))[0];
@@ -31,12 +31,14 @@ async function pull(refocus){
     else{const w=await chrome.windows.create({url:'https://www.va.gov/',focused:false,state:'minimized'});openedWin=w.id;tab=w.tabs[0]}}
   try{await waitLoaded(tab.id,30000);
     await chrome.scripting.executeScript({target:{tabId:tab.id},files:['pull.js']});
-    const [r]=await chrome.scripting.executeScript({target:{tabId:tab.id},func:()=>vatozPull()});
+    const [r]=await chrome.scripting.executeScript({target:{tabId:tab.id},func:(n,a)=>self[n](...a),args:[fn,args||[]]});
     return r&&r.result||{ok:false,error:'no result'}}
   finally{if(opened)chrome.tabs.remove(opened.id).catch(()=>{});if(openedWin)chrome.windows.remove(openedWin).catch(()=>{});
     const {appWin}=await SES.get('appWin');if(appWin&&refocus)chrome.windows.update(appWin,{focused:true}).catch(()=>{})}}
+function pull(refocus){return runInVA('vatozPull',[],refocus)}
 chrome.runtime.onMessage.addListener((m,sender,reply)=>{
   if(!m||!sender.url||!sender.url.startsWith(APP))return;
   if(m.type==='VATOZ_OPEN_WINDOW'){openApp(m.intent||null).then(id=>reply({ok:true,id}),e=>reply({ok:false,error:String(e)}));return true}
+  if(m.type==='VATOZ_PULL_CLAIM'){runInVA('vatozPullClaim',[String(m.id||'')],!/[?&]popup=1/.test(sender.url)).then(reply,e=>reply({ok:false,error:String(e&&e.message||e)}));return true}
   if(m.type!=='VATOZ_PULL')return;
   pull(!/[?&]popup=1/.test(sender.url)).then(reply,e=>reply({ok:false,error:String(e&&e.message||e)}));return true});

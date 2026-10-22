@@ -163,7 +163,7 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
 window.addEventListener('pagehide',saveNow);
 
 /* ---------- tabs ---------- */
-function tab(t){if(t==='calc'||t==='data')t='tools';S.tab=t;document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===t)});document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});if(t==='claims')renderClaims();save();window.scrollTo(0,0)}
+function tab(t){if(t==='calc'||t==='data')t='tools';S.tab=t;document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===t)});document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});if(t==='claims')renderClaims();if(t==='status')renderStatus();save();window.scrollTo(0,0)}
 $('nav').addEventListener('click',function(e){if(e.target.dataset.t)tab(e.target.dataset.t)});
 function goTool(id){if(S.tab!=='tools')tab('tools');var el=$(id);if(!el)return;if(el.tagName==='DETAILS')el.open=true;setTimeout(function(){var y=el.getBoundingClientRect().top+window.scrollY-150;window.scrollTo({top:y,behavior:'smooth'});var s=el.querySelector('summary');if(s)s.focus({preventScroll:true})},30)}
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-go]');if(b){e.preventDefault();goTool(b.dataset.go)}});
@@ -231,7 +231,7 @@ function renderRing(box,pct,exact,label,small){if(!box)return;pct=Math.max(0,Mat
   if(!box.querySelector('svg')){box.innerHTML='<div class="ring'+(small?' sm':'')+'" role="img"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><circle cx="60" cy="60" r="'+R+'" class="rtrack"/><circle cx="60" cy="60" r="'+R+'" class="rarc" transform="rotate(-90 60 60)" stroke-dasharray="'+C.toFixed(2)+'" stroke-dashoffset="'+C.toFixed(2)+'"/></svg><div class="rmid"><div class="rpct"></div><div class="rlbl"></div></div></div><div class="rexact"></div>'}
   var ring=box.querySelector('.ring');ring.setAttribute('aria-label',aria);box.querySelector('.rpct').textContent=pct+'%';box.querySelector('.rlbl').textContent=label;
   box.querySelector('.rexact').innerHTML=exact?'Exact combined value: <b>'+esc(exact)+'%</b>':'';
-  var arc=box.querySelector('.rarc');requestAnimationFrame(function(){arc.style.strokeDashoffset=off.toFixed(2)});box.dataset.pct=pct}
+  var arc=box.querySelector('.rarc');requestAnimationFrame(function(){arc.style.strokeDashoffset=off.toFixed(2)});box.dataset.ringPct=pct}
 var ARM_RE=/\b(arm|shoulder|elbow|wrist|hand|finger|thumb|forearm|humerus|ulnar|radial|median|upper extremity|carpal)\b/i,LEG_RE=/\b(leg|hip|knee|ankle|foot|feet|toe|thigh|femur|tibia|fibula|sciatic|lower extremity|plantar|achilles|hallux|pes planus|flatfoot)\b/i;
 function vaPart(c){var n=c.name||'',dc=+c.dc||0,side=/\bleft\b|\blt\b/i.test(n)?'L':/\bright\b|\brt\b/i.test(n)?'R':'';
   var part=ARM_RE.test(n)?'arm':LEG_RE.test(n)?'leg':(dc>=5200&&dc<=5230)||(dc>=5300&&dc<=5309)?'arm':(dc>=5250&&dc<=5284)||(dc>=5310&&dc<=5312)?'leg':'';
@@ -239,7 +239,7 @@ function vaPart(c){var n=c.name||'',dc=+c.dc||0,side=/\bleft\b|\blt\b/i.test(n)?
 function vaKey(c){return (c.dc||'')+'|'+(c.name||'').toLowerCase()}
 function preloadCalc(force){var v=S.vaData;if(!v)return 0;migrateCalc();var cs=S.calc;if(cs.vaOff&&!force)return 0;cs.vaOff=false;
   var have={};cs.entries.forEach(function(e){if(e.va)have[e.va]=1});cs.vaSeen=cs.vaSeen||{};if(!force)Object.keys(cs.vaSeen).forEach(function(k){have[k]=1});var n=0;
-  (v.conditions||[]).forEach(function(c){if(c.percent===null||c.percent===undefined||+c.percent<=0)return;var k=vaKey(c);if(have[k])return;
+  (v.conditions||[]).forEach(function(c){if(c.percent===null||c.percent===undefined||+c.percent<=0||/not service/i.test(c.decision||''))return;var k=vaKey(c);if(have[k])return;
     var pt=vaPart(c),e={name:c.name||(BYDC[c.dc]?BYDC[c.dc].n:''),pct:Math.min(100,Math.round(+c.percent/10)*10)||10,side:pt?pt.side:'',limb:!!pt,part:pt?pt.part:'',va:k};cs.entries.push(e);have[k]=1;cs.vaSeen[k]=1;n++});
   var d=cs.deps,p=ensureProfile();if(n&&!d.spouse&&!d.kids&&!d.school&&!d.parents){if(p.f.marital==='Married')d.spouse=1;
     (p.l.children||[]).forEach(function(ch){if(ch.status==='Under 18'||ch.status==='Stepchild'||ch.status==='Adopted')d.kids++;else if(ch.status==='18–23 and in school')d.school++})}
@@ -251,7 +251,7 @@ document.addEventListener('click',function(e){if(e.target.id==='calcVAReload'){v
 function renderHdrRing(){var b=$('hdrRing');if(!b)return;var r;try{r=vaCombined(S.calc.entries)}catch(e){r={rounded:0,exactStr:'0.00'}}
   var v=S.vaData,useVA=v&&v.combined!==null&&v.combined!==undefined,pct=useVA?+v.combined:r.rounded,ex=S.calc.entries.length?r.exactStr:'0.00';
   var src=useVA?'From VA.gov '+(v.pulledAt?fmtWhen(v.pulledAt):''):'From calculator';
-  var tip='Total Rating '+pct+'% · '+src+(useVA?' (VA gives whole numbers; calculator exact: '+ex+'%)':' · exact combined value '+ex+'%')+'. Click to open the calculator.';
+  var tip='Total Rating '+pct+'% · '+src+(useVA?' (VA gives whole numbers; calculator exact: '+ex+'%)':' · exact combined value '+ex+'%')+'. Click to see your rated conditions.';
   renderRing(b,pct,null,'Total Rating',true);if(!b.querySelector('.hrlbl'))b.insertAdjacentHTML('beforeend','<span class="hrlbl">Total Rating</span>');
   var ring=b.querySelector('.ring');ring.removeAttribute('role');ring.removeAttribute('aria-label');b.setAttribute('aria-label',tip);b.title=tip;b.dataset.len=String(pct+'%').length;b.dataset.src=useVA?'va':'calc';b.dataset.exact=ex}
 function renderVARings(){renderHdrRing();[['ringProfile','profile'],['ringClaims','claims']].forEach(function(x){var b=$(x[0]);if(!b)return;var v=S.vaData;if(!v||v.combined===null||v.combined===undefined){b.innerHTML='';b.style.display='none';return}
@@ -441,8 +441,8 @@ function cleanVA(o){
   return {pulledAt:sStr(o.pulledAt,40),
     profile:{first:tc(sStr(p.first,60)),middle:tc(sStr(p.middle,60)),last:tc(sStr(p.last,60)),suffix:sStr(p.suffix,10),dob:sStr(p.dob,10),gender:sStr(p.gender,10),email:sStr(p.email,120),phone:sStr(p.phone,40),mail:ad(p.mailingAddress),home:ad(p.homeAddress)},
     combined:comb,
-    conditions:arr(r.conditions).map(function(c){c=c||{};var pc=c.percent===null||c.percent===undefined||c.percent===''?null:+c.percent;return {name:sStr(c.name,200),dc:sStr(c.dc,10).replace(/\D/g,''),percent:pc>=0&&pc<=100?pc:null,effective:sStr(c.effective,10),decision:sStr(c.decision,60)}}).filter(function(c){return c.name||c.dc}),
-    claims:arr(o.claims).map(function(c){c=c||{};return {id:sStr(c.id,40),type:sStr(c.type,120),date:sStr(c.date,10),status:sStr(c.status,60),closed:sStr(c.closed,10)}}),
+    conditions:arr(r.conditions).map(function(c){c=c||{};var pc=c.percent===null||c.percent===undefined||c.percent===''?null:+c.percent;return {name:sStr(c.name,200),dc:sStr(c.dc,10).replace(/\D/g,''),percent:pc>=0&&pc<=100?pc:null,effective:sStr(c.effective,10),decision:sStr(c.decision,60),static:c.static===true?true:c.static===false?false:null}}).filter(function(c){return c.name||c.dc}),
+    claims:arr(o.claims).map(function(c){c=c||{};return {id:sStr(c.id,40).replace(/[^0-9A-Za-z-]/g,''),type:sStr(c.type,120),date:sStr(c.date,10),status:sStr(c.status,60),closed:sStr(c.closed,10),phaseType:sStr(c.phaseType,60),phaseChangeDate:sStr(c.phaseChangeDate,30)}}),
     service:arr(o.service).map(function(s){s=s||{};return {branch:sStr(s.branch,60),component:sStr(s.component,20),begin:sStr(s.begin,10),end:sStr(s.end,10),discharge:sStr(s.discharge,60)}})}}
 function tc(s){return s&&s===s.toUpperCase()?s.toLowerCase().replace(/(^|[\s'-])([a-z])/g,function(m,a,b){return a+b.toUpperCase()}):s}
 function isoDate(s){return /^\d{4}-\d{2}-\d{2}/.test(s)?s.slice(0,10):''}
@@ -463,9 +463,9 @@ function syncItems(v){var p=ensureProfile(),f=p.f,it=[],P=v.profile;
     var dup=p.l.periods.some(function(x){return x.entry&&x.entry===row.entry&&(!row.branch||x.branch===row.branch)});if(dup)return;
     it.push({g:'Service history',kind:'per',row:row,label:[s.branch||'Service',row.entry&&('from '+row.entry),row.sep&&('to '+row.sep),s.discharge&&('discharge: '+s.discharge)].filter(Boolean).join(' '),on:true})});
   var have={};S.order.forEach(function(id){var c=S.claims[id];if(c){if(c.dc)have['dc'+c.dc]=1;if(c.vaId)have['va'+c.vaId]=1}});
-  v.conditions.forEach(function(c){if(c.dc&&have['dc'+c.dc])return;var known=c.dc&&BYDC[c.dc];
+  v.conditions.forEach(function(c){if(/not service/i.test(c.decision||''))return;if(c.dc&&have['dc'+c.dc])return;var known=c.dc&&BYDC[c.dc];
     it.push({g:'Rated conditions → My Claims',kind:'cond',c:c,label:(c.name||(known?known.n:'Condition'))+(c.dc?' (DC '+c.dc+')':'')+(c.percent!==null?' — '+c.percent+'%':'')+(c.effective?' since '+isoDate(c.effective):''),on:true})});
-  var rated=v.conditions.filter(function(c){return c.percent!==null});
+  var rated=v.conditions.filter(function(c){return c.percent!==null&&!/not service/i.test(c.decision||'')});
   if(rated.length)it.push({g:'Calculator',kind:'calc',label:'Load these '+rated.length+' VA rating'+(rated.length>1?'s':'')+' into the Calculator (no duplicates; your own entries stay)',on:true});
   v.claims.forEach(function(c){if(c.id&&have['va'+c.id])return;it.push({g:'VA claims → My Claims',kind:'claim',c:c,label:(c.type||'VA claim')+(c.date?' filed '+isoDate(c.date):'')+(c.status?' — '+c.status:''),on:true})});
   return it}
@@ -478,7 +478,7 @@ function renderSync(){renderSyncLast();var R=$('syncReview');if(!SYNC){R.innerHT
   var g='';it.forEach(function(x,i){if(x.g!==g){g=x.g;h+='<h4 style="margin:12px 0 4px">'+esc(g)+'</h4>'}
     h+='<label class="chk"><input type="checkbox" data-sy="'+i+'"'+(x.on?' checked':'')+'> <span><b>'+esc(x.label)+'</b>'+(x.kind==='f'?': '+esc(x.val)+(x.cur?' <span class="err">(replaces "'+esc(x.cur)+'")</span>':''):'')+'</span></label>'});
   h+='<button class="b" id="syncApply"'+(it.length?'':' disabled')+'>Apply checked items</button><button class="b alt" id="syncCancel">Cancel</button></div>';R.innerHTML=h}
-function startSync(raw,how){var v=cleanVA(raw);SYNC={v:v,items:syncItems(v)};var d=$('tool-sync');if(d)d.open=true;tab('tools');renderSync();
+function startSync(raw,how){var v=cleanVA(raw);S.vaClaims={list:v.claims,at:v.pulledAt||new Date().toISOString()};saveNow();try{renderStatus()}catch(e){}SYNC={v:v,items:syncItems(v)};var d=$('tool-sync');if(d)d.open=true;tab('tools');renderSync();
   $('syncMsg').innerHTML='<div class="okbox">✓ VA.gov info received'+(how?' '+how:'')+'. Review it below.</div>';setTimeout(function(){try{$('syncReview').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}},50)}
 function applySync(){var p=ensureProfile(),n=0,nc=0,wantCalc=false;S.vaData=SYNC.v;S.vaSyncedAt=new Date().toISOString();document.querySelectorAll('[data-sy]').forEach(function(b){SYNC.items[+b.dataset.sy].on=b.checked});
   SYNC.items.forEach(function(x){if(!x.on)return;
@@ -529,6 +529,99 @@ function closeDonate(){$('donateModal').hidden=true;$('donateBtn').focus()}
 $('donateBtn').onclick=openDonate;$('donClose').onclick=closeDonate;
 $('donateModal').addEventListener('click',function(e){if(e.target===this)closeDonate()});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('donateModal').hidden)closeDonate()});
+
+/* ---------- Claims Status (VA.gov claim tracker) ---------- */
+var PHASES=[['CLAIM_RECEIVED','Claim received'],['UNDER_REVIEW','Initial review'],['GATHERING_OF_EVIDENCE','Evidence gathering'],['REVIEW_OF_EVIDENCE','Evidence review'],['PREPARATION_FOR_DECISION','Preparation for decision'],['PENDING_DECISION_APPROVAL','Pending decision approval'],['PREPARATION_FOR_NOTIFICATION','Preparation for notification'],['COMPLETE','Complete']];
+function phaseNum(pt,status){pt=String(pt||'').toUpperCase().replace(/[\s-]/g,'_');for(var i=0;i<PHASES.length;i++)if(PHASES[i][0]===pt)return i+1;
+  var s=String(status||'').toUpperCase();if(/COMPLETE|CLOSED/.test(s))return 8;if(/PREPARATION_FOR_NOTIFICATION/.test(s))return 7;if(/CLAIM_RECEIVED/.test(s))return 1;if(/INITIAL_REVIEW|UNDER_REVIEW/.test(s))return 2;if(/EVIDENCE_GATHERING/.test(s))return 3;return 0}
+function phaseName(n){return n?PHASES[n-1][1]:'Unknown phase'}
+function isOpenClaim(c){return !c.closed&&!/^(COMPLETE|CLOSED|CANCELED|CANCELLED)/i.test(c.status||'')&&phaseNum(c.phaseType,c.status)!==8}
+function dshort(s){var d=isoDate(String(s||''));if(!d)return '';var x=new Date(d+'T12:00:00');return isNaN(x)?d:x.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+var CS_VIEW=null; // claim id being viewed
+function csDetail(id){S.claimDetail=S.claimDetail||{};return S.claimDetail[id]}
+function canPullClaims(){return IS_EXT||EXT_BRIDGE}
+function renderStatus(){var box=$('csBody');if(!box)return;var L=(S.vaClaims&&S.vaClaims.list)||[];
+  $('csLast').textContent=S.vaClaims&&S.vaClaims.at?'Claims list from VA.gov: '+fmtWhen(S.vaClaims.at):'No VA.gov claims yet';
+  if(CS_VIEW){renderClaimDetail(CS_VIEW);return}
+  if(!L.length){box.innerHTML='<div class="card"><p><b>No claims from VA.gov yet.</b> '+(IS_EXT?'Click <b>Pull from VA.gov</b> above (sign in at VA.gov first).':'Install the free <b>VA to Z Sync</b> extension and pull your VA.gov data (Tools → Sync VA Data). Or import a VA data file there.')+'</p><button class="b alt" data-go="tool-sync">Go to Sync VA Data</button></div>';return}
+  var open=L.filter(isOpenClaim),closed=L.filter(function(c){return !isOpenClaim(c)});
+  var card=function(c){var d=csDetail(c.id),a=d&&d.data&&d.data.attributes||{},pd=a.claimPhaseDates||{},n=phaseNum(pd.latestPhaseType||c.phaseType,a.status||c.status),tj=a.tempJurisdiction;
+    return '<button type="button" class="cscard" data-cs="'+esc(c.id)+'"><div class="cstop"><b>'+esc(c.type||'VA claim')+'</b><span class="muted">#'+esc(c.id)+'</span></div>'+
+    '<div class="muted">Filed '+esc(dshort(c.date)||'unknown')+(c.phaseChangeDate||pd.phaseChangeDate?' · Last changed '+esc(dshort(pd.phaseChangeDate||c.phaseChangeDate)):'')+'</div>'+
+    '<div class="csbar" role="img" aria-label="Step '+n+' of 8: '+esc(phaseName(n))+'">'+[1,2,3,4,5,6,7,8].map(function(i){return '<span class="'+(i<n?'done':i===n?'cur':'')+'"></span>'}).join('')+'</div>'+
+    '<div class="csph">Step '+(n||'?')+' of 8: <b>'+esc(phaseName(n))+'</b>'+(pd.currentPhaseBack?' <span class="csbad">Moved back</span>':'')+(tj?' <span class="cstj">Temp jurisdiction: '+esc(tj)+'</span>':'')+'</div>'+
+    '<div class="muted csupd">'+(d?'Details updated '+esc(fmtWhen(d.fetchedAt)):'Tap for full details')+'</div></button>'};
+  box.innerHTML='<h3>Open claims ('+open.length+')</h3>'+(open.length?'<div class="csgrid">'+open.map(card).join('')+'</div>':'<p class="muted">No open claims right now.</p>')+
+    '<details class="card" id="csClosed"><summary><b>Closed claims ('+closed.length+')</b></summary>'+(closed.length?closed.map(function(c){return '<div class="csrow"><button type="button" class="linkbtn" data-cs="'+esc(c.id)+'">'+esc(c.type||'VA claim')+' #'+esc(c.id)+'</button> <span class="muted">filed '+esc(dshort(c.date))+(c.closed?', closed '+esc(dshort(c.closed)):'')+'</span></div>'}).join(''):'<p class="muted">None.</p>')+'</details>'}
+function claimSnapshot(id,res){S.claimDetail=S.claimDetail||{};var prev=S.claimDetail[id],a=res.data.attributes||{},pd=a.claimPhaseDates||{};
+  var snap={at:res.fetchedAt||new Date().toISOString(),phase:phaseNum(pd.latestPhaseType,a.status),phaseType:pd.latestPhaseType||'',phaseChangeDate:pd.phaseChangeDate||'',back:!!pd.currentPhaseBack,tempJ:a.tempJurisdiction||'',jur:a.jurisdiction||'',status:a.status||''};
+  var hist=(prev&&prev.history)||[],last=hist[hist.length-1];
+  if(!last||last.phase!==snap.phase||last.tempJ!==snap.tempJ||last.jur!==snap.jur||last.back!==snap.back||last.phaseChangeDate!==snap.phaseChangeDate){
+    snap.events=[];if(last){if(snap.phase<last.phase)snap.events.push('Phase moved BACK from step '+last.phase+' to step '+snap.phase);else if(snap.phase!==last.phase)snap.events.push('Phase changed from step '+last.phase+' to step '+snap.phase);
+      if(snap.tempJ!==last.tempJ)snap.events.push(snap.tempJ?'Temporary jurisdiction set: '+snap.tempJ+(last.tempJ?' (was '+last.tempJ+')':''):'Temporary jurisdiction ended (was '+last.tempJ+')');
+      if(snap.jur!==last.jur)snap.events.push('Jurisdiction changed: '+(last.jur||'none')+' → '+(snap.jur||'none'))}
+    else{snap.events.push('First seen in VA to Z: step '+snap.phase+(snap.tempJ?', temporary jurisdiction '+snap.tempJ:''))}
+    if(snap.back&&!(last&&last.back))snap.events.push('VA marks this claim as moved back a phase (currentPhaseBack)');
+    hist=hist.concat([snap]).slice(-200)}
+  S.claimDetail[id]={data:res.data,fetchedAt:res.fetchedAt||new Date().toISOString(),history:hist};saveNow()}
+var CS_PENDING={};
+function fetchClaim(id){if(!canPullClaims()){$('csMsg').innerHTML='<div class="warn">Getting full claim details needs the <b>VA to Z Sync</b> extension (desktop Chrome or Edge). See Tools → Sync VA Data to install it, or use the all-in-one VA to Z extension.</div>';return}
+  $('csMsg').innerHTML='<p class="muted">Reading claim #'+esc(id)+' from VA.gov…</p>';
+  var done=function(r){delete CS_PENDING[id];if(!r||!r.ok){$('csMsg').innerHTML='<span class="err">'+(r&&r.error==='not-logged-in'?'You don\'t seem to be signed in to VA.gov. Sign in there, then press Refresh.':'Could not read this claim'+(r&&r.error?' ('+esc(r.error)+')':'')+'.')+'</span>';return}
+    try{var a=r.data&&r.data.attributes;if(!a||typeof a!=='object')throw 0;claimSnapshot(id,r);$('csMsg').innerHTML='<div class="okbox">✓ Claim details updated.</div>'}catch(e){$('csMsg').innerHTML='<span class="err">VA.gov sent something unexpected.</span>'}
+    if(CS_VIEW===id)renderClaimDetail(id);else renderStatus()};
+  CS_PENDING[id]=done;
+  if(IS_EXT)chrome.runtime.sendMessage({type:'VATOZ_PULL_CLAIM',id:id}).then(done,function(e){done({ok:false,error:e.message})});
+  else window.postMessage({type:'VATOZ_CLAIM_REQUEST',id:id},'*')}
+function fl(v){return v===true?'<span class="yes">Yes</span>':v===false?'No':'<span class="muted">Not shown</span>'}
+function renderClaimDetail(id){var box=$('csBody'),c=((S.vaClaims&&S.vaClaims.list)||[]).filter(function(x){return x.id===id})[0]||{id:id},d=csDetail(id);
+  var h='<button type="button" class="b alt sm" id="csBack">← All claims</button> <button type="button" class="b sm" id="csRefresh" data-id="'+esc(id)+'">Refresh from VA.gov</button>'+
+    '<div class="card"><h2 style="margin:0">'+esc(c.type||'VA claim')+' <span class="muted">#'+esc(id)+'</span></h2><p class="muted" id="csUpd">'+(d?'Last updated: '+esc(fmtWhen(d.fetchedAt)):'Not loaded yet.')+'</p>';
+  if(!d){box.innerHTML=h+'<p>Full details haven\'t been loaded for this claim.</p></div>';if(canPullClaims()&&!CS_PENDING[id])fetchClaim(id);return}
+  var a=d.data.attributes||{},pd=a.claimPhaseDates||{},pp=pd.previousPhases||{},n=phaseNum(pd.latestPhaseType,a.status);
+  h+='<div class="csfacts"><div><span>Filed</span><b>'+esc(dshort(a.claimDate||c.date)||'—')+'</b></div><div><span>Status</span><b>'+esc(a.status||c.status||'—')+'</b></div><div><span>Current phase</span><b>Step '+(n||'?')+' of 8 · '+esc(phaseName(n))+'</b></div><div><span>Phase changed</span><b>'+esc(dshort(pd.phaseChangeDate)||'—')+'</b></div>'+
+    '<div><span>Estimated decision</span><b>'+(a.minEstClaimDate||a.maxEstClaimDate?esc(dshort(a.minEstClaimDate)||'?')+' – '+esc(dshort(a.maxEstClaimDate)||'?'):'Not provided')+'</b></div><div><span>Closed</span><b>'+esc(dshort(a.closeDate)||'—')+'</b></div>'+
+    '<div><span>Claim type code</span><b>'+esc(a.claimTypeCode||'—')+'</b></div><div><span>End product code</span><b>'+esc(a.endProductCode||a.baseEndProductCode||'—')+'</b></div></div>';
+  if(pd.currentPhaseBack||pd.everPhaseBack)h+='<div class="csalert">⚠ '+(pd.currentPhaseBack?'This claim has <b>moved back</b> to an earlier phase.':'This claim <b>moved back</b> a phase at some point.')+' That often means VA needs more evidence or an exam. Check tracked items below.</div>';
+  h+='<div class="csjur'+(a.tempJurisdiction?' on':'')+'"><div><span>Station of jurisdiction</span><b>'+esc(a.jurisdiction||'—')+'</b></div><div><span>Temporary jurisdiction</span><b>'+esc(a.tempJurisdiction||'None')+'</b></div>'+(a.tempJurisdiction?'<p>Temporary jurisdiction means the claim was sent to a regional office to be worked on (often a rater or reviewer). "National Work Queue" means it\'s waiting to be assigned.</p>':'')+'</div></div>';
+  h+='<div class="card"><h3>Phase timeline</h3><ol class="cstl">'+PHASES.map(function(p,i){var k=i+1,dt=pp['phase'+k+'CompleteDate']||pp['phase'+k+'_complete_date'];return '<li class="'+(k<n?'done':k===n?'cur':'')+'"><b>Step '+k+': '+esc(p[1])+'</b>'+(dt?' <span class="muted">completed '+esc(dshort(dt))+'</span>':k===n?' <span class="muted">current'+(pd.phaseChangeDate?' since '+esc(dshort(pd.phaseChangeDate)):'')+'</span>':'')+'</li>'}).join('')+'</ol></div>';
+  var hist=d.history||[];
+  h+='<div class="card"><h3>Change history (seen by VA to Z)</h3><p class="muted">VA.gov only shows the current phase and jurisdiction, so VA to Z records changes each time you refresh.</p>'+(hist.length?'<table class="cstab"><tr><th>Seen</th><th>Step</th><th>Temp jurisdiction</th><th>What changed</th></tr>'+hist.slice().reverse().map(function(s){var back=(s.events||[]).some(function(e){return /BACK|moved back/.test(e)}),tj=(s.events||[]).some(function(e){return /Temporary jurisdiction/.test(e)});return '<tr class="'+(back?'rback':tj?'rtj':'')+'"><td>'+esc(fmtWhen(s.at))+'</td><td>'+s.phase+'</td><td>'+esc(s.tempJ||'—')+'</td><td>'+esc((s.events||[]).join('; '))+'</td></tr>'}).join('')+'</table>':'<p>None yet.</p>')+'</div>';
+  var ti=Array.isArray(a.trackedItems)?a.trackedItems:[],isOpen=function(t){return !t.closedDate&&!/ACCEPTED|NO_LONGER_REQUIRED|CLOSED/i.test(t.status||'')};
+  var trow=function(t){return '<tr class="'+(t.overdue?'rback':'')+'"><td><b>'+esc(t.displayName||t.name||'Item')+'</b>'+(t.description?'<div class="muted">'+esc(String(t.description).replace(/<[^>]*>/g,' ')).slice(0,600)+'</div>':'')+'</td><td>'+esc(t.status||'')+'</td><td>'+esc(dshort(t.requestedDate))+'</td><td>'+esc(dshort(t.suspenseDate))+(t.overdue?' <span class="csbad">Overdue</span>':'')+'</td><td>'+esc(dshort(t.receivedDate||t.closedDate))+'</td></tr>'};
+  var thd='<tr><th>Item</th><th>Status</th><th>Requested</th><th>Due</th><th>Received / closed</th></tr>';
+  var to=ti.filter(isOpen),tc=ti.filter(function(t){return !isOpen(t)});
+  h+='<div class="card"><h3>Tracked items / evidence requests ('+ti.length+')</h3>'+(to.length?'<h4>Open ('+to.length+')</h4><div class="tscroll"><table class="cstab">'+thd+to.map(trow).join('')+'</table></div>':'<p>No open items.</p>')+(tc.length?'<details><summary>Closed ('+tc.length+')</summary><div class="tscroll"><table class="cstab">'+thd+tc.map(trow).join('')+'</table></div></details>':'')+'</div>';
+  var docs=Array.isArray(a.supportingDocuments)?a.supportingDocuments:[];
+  h+='<div class="card"><h3>Documents on this claim ('+docs.length+')</h3>'+(docs.length?'<div class="tscroll"><table class="cstab"><tr><th>Type</th><th>File</th><th>Uploaded</th><th>Tracked item</th></tr>'+docs.map(function(x){return '<tr><td>'+esc(x.documentTypeLabel||'')+'</td><td>'+esc(x.originalFileName||'')+'</td><td>'+esc(dshort(x.uploadDate||x.uploadDateTime))+'</td><td>'+esc(x.trackedItemId||'')+'</td></tr>'}).join('')+'</table></div>':'<p class="muted">None listed.</p>')+'</div>';
+  var ct=Array.isArray(a.contentions)?a.contentions:[];
+  h+='<div class="card"><h3>Contentions (conditions claimed)</h3>'+(ct.length?'<ul>'+ct.map(function(x){return '<li>'+esc(x.name||x.text||JSON.stringify(x))+'</li>'}).join('')+'</ul>':'<p class="muted">None listed.</p>')+
+    '<h3>Letters and flags</h3><div class="csfacts"><div><span>Decision letter sent</span><b>'+fl(a.decisionLetterSent)+'</b></div><div><span>Development letter sent</span><b>'+fl(a.developmentLetterSent)+'</b></div><div><span>5103 waiver submitted</span><b>'+fl(a.evidenceWaiverSubmitted5103)+'</b></div><div><span>Documents needed</span><b>'+fl(a.documentsNeeded)+'</b></div></div></div>';
+  h+='<details class="card" id="csRaw"><summary><b>All data from VA.gov (nothing hidden)</b></summary><pre class="csraw">'+esc(JSON.stringify(d.data,null,2))+'</pre></details>';
+  box.innerHTML=h}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-cs]');if(b){CS_VIEW=b.dataset.cs;renderStatus();window.scrollTo(0,0);if(!csDetail(CS_VIEW))fetchClaim(CS_VIEW);return}
+  if(e.target.id==='csBack'){CS_VIEW=null;$('csMsg').innerHTML='';renderStatus()}else if(e.target.id==='csRefresh')fetchClaim(e.target.dataset.id)
+  else if(e.target.id==='csPull'&&$('extPull'))$('extPull').click()});
+var EXT_BRIDGE=false;
+window.addEventListener('message',function(e){if(e.source!==window||!e.data||e.data.source!=='vatoz-sync-ext')return;
+  if(e.data.type==='VATOZ_EXT_READY'){EXT_BRIDGE=true}
+  else if(e.data.type==='VATOZ_CLAIM_DATA'&&CS_PENDING[e.data.id]){var r=e.data.result;CS_PENDING[e.data.id](r&&typeof r==='object'?r:{ok:false,error:'bad reply'})}});
+
+/* ---------- Total Rating panel ---------- */
+function openRatingPanel(){var v=S.vaData,b=$('rpBody'),h='';
+  if(!v||!(v.conditions||[]).length&&(v.combined===null||v.combined===undefined)){
+    var r=vaCombined(S.calc.entries);h='<p><b>No VA.gov ratings yet.</b> Sync your VA.gov data to see your service-connected conditions here.</p><p class="muted">The ring now shows your calculator result: '+r.rounded+'%.</p><button class="b red" id="rpSync">Sync VA Data</button> <button class="b alt" id="rpCalc">Open calculator</button>'}
+  else{var sc=v.conditions.filter(function(c){return !/not service/i.test(c.decision||'')}),nsc=v.conditions.filter(function(c){return /not service/i.test(c.decision||'')});
+    var st=function(x){return x===true?'Static':x===false?'Not static':'Unknown'};
+    h='<div class="rptop"><div class="rpbig">'+(v.combined!==null&&v.combined!==undefined?esc(String(v.combined))+'%':'—')+'</div><div><b>Combined rating from VA.gov</b><div class="muted">Last synced: '+esc(S.vaSyncedAt?fmtWhen(S.vaSyncedAt):'—')+(v.pulledAt?' · pulled '+esc(fmtWhen(v.pulledAt)):'')+'</div></div></div>'+
+      '<h3>Service-connected disabilities ('+sc.length+')</h3>'+(sc.length?'<div class="tscroll"><table class="cstab rptab"><tr><th>Condition</th><th>DC</th><th>%</th><th>Effective</th><th>Static?</th></tr>'+sc.map(function(c){return '<tr><td>'+esc(c.name||'')+'</td><td>'+esc(c.dc||'')+'</td><td><b>'+(c.percent===null||c.percent===undefined?'—':esc(String(c.percent))+'%')+'</b></td><td>'+esc(dshort(c.effective)||'—')+'</td><td>'+st(c.static)+'</td></tr>'}).join('')+'</table></div>':'<p class="muted">None listed.</p>')+
+      '<h3>Not service connected ('+nsc.length+')</h3>'+(nsc.length?'<ul class="rpnsc">'+nsc.map(function(c){return '<li>'+esc(c.name||'Condition')+(c.dc?' (DC '+esc(c.dc)+')':'')+(c.effective?' — decided '+esc(dshort(c.effective)):'')+'</li>'}).join('')+'</ul>':'<p class="muted">None listed.</p>')+
+      '<p><button class="b alt" id="rpCalc">Open calculator</button> <button class="b alt" id="rpSync">Sync again</button></p>'}
+  b.innerHTML=h;$('ratingModal').hidden=false;setTimeout(function(){$('rpClose').focus()},0)}
+function closeRatingPanel(){$('ratingModal').hidden=true}
+document.addEventListener('click',function(e){var id=e.target.id;if(id==='hdrRing'||e.target.closest&&e.target.closest('#hdrRing')){openRatingPanel();return}
+  if(id==='rpClose'||e.target===$('ratingModal'))closeRatingPanel();else if(id==='rpCalc'){closeRatingPanel();goTool('tool-calc')}else if(id==='rpSync'){closeRatingPanel();goTool('tool-sync')}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('ratingModal')&&!$('ratingModal').hidden)closeRatingPanel()});
 
 /* ---------- lookup ---------- */
 var COMMON=[['6260','Tinnitus'],['6100','Hearing loss'],['9411','PTSD'],['9434','Depression'],['9400','Anxiety'],['8100','Migraines'],['5237','Back/neck strain'],['5242','Spine arthritis/DDD'],['5243','Disc (IVDS)'],['5260','Knee flexion'],['5261','Knee extension'],['5257','Knee instability'],['5201','Shoulder'],['8520','Sciatic (leg) nerve'],['8515','Median nerve (wrist)'],['6847','Sleep apnea'],['6522','Allergic rhinitis'],['6602','Asthma'],['7101','Hypertension'],['7346','Hiatal hernia/GERD'],['7319','IBS'],['7913','Diabetes'],['5276','Flat feet'],['5271','Ankle'],['5252','Hip flexion'],['7806','Dermatitis/eczema'],['7522','Erectile dysfunction'],['8045','TBI']];
@@ -615,7 +708,7 @@ function renderClaims(){
 $('claimList').addEventListener('click',function(e){var b=e.target.closest('[data-cl]');if(b){S.current=b.dataset.cl;save();renderClaims()}});
 function renderClaim(){
   var c=S.claims[S.current],V=$('claimView');
-  if(!c){V.innerHTML='<div class="card"><p>Pick a claim on the left, or go to <b>Lookup</b> and press <b>Let\'s File It</b> on a condition.</p></div>';return}
+  if(!c){V.innerHTML='<div class="card"><p>Pick a claim on the left, or go to <b>Conditions</b> and press <b>Let\'s File It</b> on a condition.</p></div>';return}
   var e=BYDC[c.dc];
   V.innerHTML='<div class="card"><h2><span class="dc">'+esc(c.dc)+'</span> '+esc(c.name)+'</h2>'+
   '<div class="row"><div><label for="cStat">Status</label><select id="cStat">'+STAT.map(function(s){return '<option'+(s===c.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div><div><label for="cDen">Denied before?</label><select id="cDen"><option value="0">No / first time</option><option value="1"'+(c.prevDenied?' selected':'')+'>Yes (use 21-0995 Supplemental)</option></select></div></div>'+
