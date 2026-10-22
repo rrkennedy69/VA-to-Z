@@ -209,7 +209,7 @@ function renderCalc(){
   if(r.bilateral)h+='<p class="muted">Bilateral factor applied ('+r.pairs.map(function(p){return p==='arm'?'both arms':p==='leg'?'both legs':'both sides'}).join(' and ')+'): those ratings combine to '+r.bilCombinedStr+'%, plus 10% of that ('+r.bilFactorStr+'), rounded = '+r.bilValueStr+'%, then combined with the rest.</p>';
   else if(E.some(function(e){return e.limb}))h+='<p class="muted">No bilateral factor yet: it needs ratings on both arms, or on both legs.</p>';
   if(E.length)h+='<details class="howc"><summary>How we got this</summary><ol>'+r.steps.map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol></details>';
-  $('cResult').innerHTML=h;renderRing($('ringBox'),r.rounded,E.length?r.exactStr:null,'Total Rating');renderCalcVA();if($('sum-calc'))setTimeout(toolSums,0);
+  $('cResult').innerHTML=h;renderRing($('ringBox'),r.rounded,E.length?r.exactStr:null,'Total Rating');renderHdrRing();renderCalcVA();if($('sum-calc'))setTimeout(toolSums,0);
   document.querySelectorAll('#mar button').forEach(function(b){var v=+b.dataset.mar,on=(v===0&&!d.spouse)||(v===1&&d.spouse&&!d.aa)||(v===2&&d.spouse&&d.aa);b.classList.toggle('on',on);b.setAttribute('aria-checked',on);b.setAttribute('role','radio')});
   ['kids','school','parents'].forEach(function(k){$('v_'+k).textContent=d[k]});
   var sm=S.calc.smc;$('v_smck').textContent=sm.k;document.querySelectorAll('input[name=smclvl]').forEach(function(i){i.checked=i.value===sm.level});
@@ -246,7 +246,13 @@ function renderCalcVA(){var b=$('calcVA');if(!b)return;var v=S.vaData;if(!v){b.i
   var when=v.pulledAt?new Date(v.pulledAt).toLocaleDateString():'';var loaded=S.calc.entries.some(function(e){return e.va});
   b.innerHTML='<div class="vanote">'+(loaded?'Loaded from your VA.gov data (pulled '+esc(when)+'). Check arm/leg sides for the bilateral factor; change anything that looks off.':'You have imported VA.gov ratings (pulled '+esc(when)+').')+' <button type="button" class="b alt sm" id="calcVAReload">Reload my VA ratings</button></div>'}
 document.addEventListener('click',function(e){if(e.target.id==='calcVAReload'){var n=preloadCalc(true);renderCalc();saveNow();$('calcVA').insertAdjacentHTML('beforeend','<p class="muted" id="calcVAMsg">'+(n?n+' VA rating'+(n>1?'s':'')+' added.':'Your VA ratings are already in the calculator.')+'</p>')}});
-function renderVARings(){[['ringProfile','profile'],['ringClaims','claims']].forEach(function(x){var b=$(x[0]);if(!b)return;var v=S.vaData;if(!v||v.combined===null||v.combined===undefined){b.innerHTML='';b.style.display='none';return}
+function renderHdrRing(){var b=$('hdrRing');if(!b)return;var r;try{r=vaCombined(S.calc.entries)}catch(e){r={rounded:0,exactStr:'0.00'}}
+  var v=S.vaData,useVA=v&&v.combined!==null&&v.combined!==undefined,pct=useVA?+v.combined:r.rounded,ex=S.calc.entries.length?r.exactStr:'0.00';
+  var src=useVA?'From VA.gov '+(v.pulledAt?fmtWhen(v.pulledAt):''):'From calculator';
+  var tip='Total Rating '+pct+'% · '+src+(useVA?' (VA gives whole numbers; calculator exact: '+ex+'%)':' · exact combined value '+ex+'%')+'. Click to open the calculator.';
+  renderRing(b,pct,null,'Total Rating',true);if(!b.querySelector('.hrlbl'))b.insertAdjacentHTML('beforeend','<span class="hrlbl">Total Rating</span>');
+  var ring=b.querySelector('.ring');ring.removeAttribute('role');ring.removeAttribute('aria-label');b.setAttribute('aria-label',tip);b.title=tip;b.dataset.src=useVA?'va':'calc';b.dataset.exact=ex}
+function renderVARings(){renderHdrRing();[['ringProfile','profile'],['ringClaims','claims']].forEach(function(x){var b=$(x[0]);if(!b)return;var v=S.vaData;if(!v||v.combined===null||v.combined===undefined){b.innerHTML='';b.style.display='none';return}
   b.style.display='';renderRing(b,v.combined,null,'VA rating',true);var m=b.querySelector('.rexact');m.textContent='From VA.gov, '+(v.pulledAt?new Date(v.pulledAt).toLocaleDateString():'')})}
 /* SMC UI */
 var SMC_INFO=[['','None','No SMC level other than K.'],

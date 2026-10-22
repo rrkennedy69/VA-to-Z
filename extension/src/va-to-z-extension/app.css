@@ -22,6 +22,12 @@ nav{display:flex;gap:4px;overflow-x:auto;background:#16304f;padding:6px}
 .rpct{font-size:2.6rem;font-weight:800;color:#162e51;line-height:1}.ring.sm .rpct{font-size:1.4rem}.rlbl{font-size:.8rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;margin-top:4px}.ring.sm .rlbl{font-size:.6rem}
 .rexact{font-size:.85rem;color:#444;margin-top:6px;text-align:center}.ringsm{float:right;margin:0 0 6px 12px}.ringsm .rexact{font-size:.7rem;max-width:110px}
 .ringcard{background:#f4f7fb;border:1px solid #dde4ee;border-radius:12px;padding:14px 10px}.card>.ringsm+h2+.okbox{clear:both}
+.hdrring{background:none;border:0;padding:0;margin:0 10px 0 0;cursor:pointer;color:#fff;display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;flex:0 0 auto}
+.hdrring .ring{width:52px}.hdrring .rtrack{stroke:rgba(255,255,255,.25);stroke-width:13}.hdrring .rarc{stroke:#ffc72c;stroke-width:13}.hdrring .rpct{color:#fff;font-size:.95rem;font-weight:800}.hdrring .rlbl{display:none}
+.hdrring .rexact{display:none}.hdrring .hrlbl{font-size:.6rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;margin-top:2px;white-space:nowrap;opacity:.9}.hdrring:focus-visible{outline:2px solid #ffc72c;outline-offset:3px;border-radius:8px}
+.hr{display:flex;align-items:center;gap:0}.hr .hrsave{display:flex;flex-direction:column;align-items:flex-end}
+@media (max-width:480px){.hdrring .ring{width:46px}.hdrring .rpct{font-size:.82rem}.hdrring{margin-right:8px}}
+html.ispopup .hdrring .ring{width:40px}html.ispopup .hdrring .rpct{font-size:.78rem}html.ispopup .hdrring{flex-direction:row;gap:6px}html.ispopup .hdrring .hrlbl{margin:0}
 .popwin{display:none}html.ispopup .popwin{display:inline-flex;align-items:center;gap:4px;background:#ffc72c;color:#162e51;border:0;border-radius:8px;padding:6px 10px;font-weight:700;cursor:pointer;margin-right:8px;font-size:.85rem;vertical-align:middle}
 html.ispopup,html.ispopup body{width:800px;height:600px;overflow:hidden;margin:0}html.ispopup body{overflow-y:auto;overflow-x:hidden}
 html.ispopup header{padding:6px 12px}html.ispopup .logo{height:30px}html.ispopup .tag{display:none}html.ispopup .saveind{font-size:.7rem}html.ispopup .savebtn{padding:6px 12px;font-size:.85rem}html.ispopup .hr{display:flex;align-items:center;gap:6px}
