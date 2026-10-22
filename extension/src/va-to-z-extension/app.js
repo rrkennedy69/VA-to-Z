@@ -1,4 +1,4 @@
-var IS_EXT=!!(window.VATOZ_EXT);if(IS_EXT)document.documentElement.classList.add("isext");
+var IS_EXT=!!(window.VATOZ_EXT);if(IS_EXT)document.documentElement.classList.add("isext");var IS_POPUP=IS_EXT&&/[?&]popup=1/.test(location.search);if(IS_POPUP)document.documentElement.classList.add("ispopup");
 /*CALC_START*/
 // OFFICIAL method = 38 CFR 4.25 Table I: arrange in order of severity; combine two at a time; each result is
 // the whole number shown in Table I (= a + b*(100-a)/100 rounded half up; verified against all 684 entries
@@ -121,14 +121,14 @@ function saveNow(){clearTimeout(saveT);if(!BOOTED)return;S._savedAt=new Date().t
   if(DB){idbPut('kv','state',json).then(function(){savedOK()},function(e){if(okLS)savedOK('backup copy only');else saveFail(e)})}
   else if(okLS)savedOK('basic storage');else saveFail(new Error(DBERR||'storage blocked'));
   scheduleMirror();renderRemind()}
-function save(){clearTimeout(saveT);setInd('Saving…');saveT=setTimeout(saveNow,250)}
+function save(){clearTimeout(saveT);setInd('Saving…');saveT=setTimeout(saveNow,IS_POPUP?60:250)}
 async function boot(){DB=await idbOpen();var a=null,b=null;
   if(DB){try{var j=await idbGet('kv','state');if(j)a=JSON.parse(j)}catch(e){}}
   try{var l=localStorage.getItem(KEY);if(l)b=JSON.parse(l)}catch(e){}
   var pick=(a&&b)?(((b._savedAt||'')>(a._savedAt||''))?b:a):(a||b);
   if(pick)for(var k in pick)S[k]=pick[k];
   BOOTED=true;init();if(DB&&!a&&b)saveNow(); // one-time migration from localStorage
-  requestPersist();await dirBoot();renderRemind();document.body.setAttribute('data-ready','1')}
+  requestPersist();await dirBoot();renderRemind();document.body.setAttribute('data-ready','1');try{applyIntent()}catch(e){}}
 /* persistent storage */
 async function requestPersist(){var el=$('storageInfo');if(!el)return;var h='';
   try{if(navigator.storage&&navigator.storage.persist){var p=await navigator.storage.persisted();if(!p)p=await navigator.storage.persist();
@@ -492,6 +492,26 @@ $('syncImp').onchange=function(){var f=this.files[0];if(!f)return;this.value='';
 window.addEventListener('message',function(e){if(e.source!==window||!e.data||e.data.source!=='vatoz-sync-ext')return;
   if(e.data.type==='VATOZ_EXT_READY'){$('syncExt').innerHTML='✓ VA to Z Sync extension detected. <button class="b alt sm" id="syncAsk">Get my last pull</button>'}
   else if(e.data.type==='VATOZ_VA_DATA'){try{startSync(e.data.data,'from the extension')}catch(x){$('syncMsg').innerHTML='<span class="err">'+esc(x.message)+'</span>'}}});
+
+/* ---------- extension popup → window handoff ---------- */
+var HANDOFF={imp:['tools','tool-backup','Restore from Backup'],imp2:['setup','','Restore from Backup'],syncImp:['tools','tool-sync','Import VA data file'],
+  dirChoose:['tools','tool-backup','Choose save folder'],dirFirstGo:['tools','tool-backup','Choose save folder'],dirRestore:['tools','tool-backup','Restore from save folder'],
+  dirReconnect:['tools','tool-backup','Reconnect save folder'],dirReconnect2:['tools','tool-backup','Reconnect save folder'],exp:['tools','tool-backup','Download Backup']};
+function openWindow(intent){saveNow();var go=function(){try{chrome.runtime.sendMessage({type:'VATOZ_OPEN_WINDOW',intent:intent||null}).then(function(){window.close()},function(){window.close()})}catch(e){}};
+  if(DB)idbPut('kv','state',JSON.stringify(S)).then(go,go);else go()}
+if(IS_POPUP){$('openWin').onclick=function(){openWindow(null)};
+  document.addEventListener('click',function(e){var el=e.target.closest('input[type=file],label,button');if(!el)return;
+    var inp=el.matches('input[type=file]')?el:el.querySelector&&el.querySelector('input[type=file]');var id=(inp||el).id,h=HANDOFF[id];
+    if(!h&&inp&&inp.dataset.up)h=['docs','','Add files / Take photo in "'+catName(inp.dataset.up)+'"'];
+    if(!h)return;e.preventDefault();e.stopImmediatePropagation();openWindow({tab:h[0],open:h[1],hl:id,label:h[2]})},true)}
+function applyIntent(){var m=/[#&]intent=([^&]+)/.exec(location.hash);if(!m)return;var it;try{it=JSON.parse(decodeURIComponent(m[1]))}catch(e){return}history.replaceState(null,'',location.pathname+location.search);
+  tab(it.tab||'tools');if(it.open&&$(it.open))$(it.open).open=true;var el=it.hl&&$(it.hl);var tgt=el?(el.closest('label')||el):null;if(el&&el.dataset.up)tgt=el.closest('details');if(tgt&&tgt.tagName==='DETAILS')tgt.open=true;
+  var old=$('handoffMsg');if(old)old.remove();document.querySelectorAll('.hl-flash').forEach(function(x){x.classList.remove('hl-flash')});
+  var main=document.querySelector('main');main.insertAdjacentHTML('afterbegin','<div class="handoff" id="handoffMsg">Continue here: click <u>'+esc(it.label||'the highlighted button')+'</u>. (File and folder windows only work in the full window.)</div>');
+  if(tgt){tgt.classList.add('hl-flash');setTimeout(function(){tgt.scrollIntoView({block:'center'})},60)}}
+window.addEventListener('hashchange',function(){try{applyIntent()}catch(e){}});
+// keep popup and window in step: if the other one saved newer data, load it
+window.addEventListener('storage',function(e){if(e.key!==KEY||!e.newValue)return;try{var d=JSON.parse(e.newValue);if(d._savedAt&&(!S._savedAt||d._savedAt>S._savedAt)){var tb=S.tab;S=Object.assign(blankState(),d);S.tab=tb;init()}}catch(x){}});
 
 /* ---------- lookup ---------- */
 var COMMON=[['6260','Tinnitus'],['6100','Hearing loss'],['9411','PTSD'],['9434','Depression'],['9400','Anxiety'],['8100','Migraines'],['5237','Back/neck strain'],['5242','Spine arthritis/DDD'],['5243','Disc (IVDS)'],['5260','Knee flexion'],['5261','Knee extension'],['5257','Knee instability'],['5201','Shoulder'],['8520','Sciatic (leg) nerve'],['8515','Median nerve (wrist)'],['6847','Sleep apnea'],['6522','Allergic rhinitis'],['6602','Asthma'],['7101','Hypertension'],['7346','Hiatal hernia/GERD'],['7319','IBS'],['7913','Diabetes'],['5276','Flat feet'],['5271','Ankle'],['5252','Hip flexion'],['7806','Dermatitis/eczema'],['7522','Erectile dysfunction'],['8045','TBI']];
