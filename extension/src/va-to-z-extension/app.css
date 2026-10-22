@@ -23,11 +23,16 @@ nav{display:flex;gap:4px;overflow-x:auto;background:#16304f;padding:6px}
 .rexact{font-size:.85rem;color:#444;margin-top:6px;text-align:center}.ringsm{float:right;margin:0 0 6px 12px}.ringsm .rexact{font-size:.7rem;max-width:110px}
 .ringcard{background:#f4f7fb;border:1px solid #dde4ee;border-radius:12px;padding:14px 10px}.card>.ringsm+h2+.okbox{clear:both}
 .hdrring{background:none;border:0;padding:0;margin:0 10px 0 0;cursor:pointer;color:#fff;display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;flex:0 0 auto}
-.hdrring .ring{width:52px}.hdrring .rtrack{stroke:rgba(255,255,255,.25);stroke-width:13}.hdrring .rarc{stroke:#ffc72c;stroke-width:13}.hdrring .rpct{color:#fff;font-size:.95rem;font-weight:800}.hdrring .rlbl{display:none}
+.hdrring .rtrack{stroke:rgba(255,255,255,.25);stroke-width:13}.hdrring .rarc{stroke:#ffc72c;stroke-width:13}#hdrRing{--rs:72px}.hdrring .ring{width:var(--rs);height:var(--rs);flex:0 0 auto}
+#hdrRing .rpct{color:#fff;font-size:calc(var(--rs)*.28);font-weight:800;line-height:1;letter-spacing:-.02em;white-space:nowrap}
+.hdrring .hrlbl{font-size:.62rem;margin-top:3px;line-height:1}#hdrRing[data-len="3"] .rpct{font-size:calc(var(--rs)*.25)}#hdrRing[data-len="4"] .rpct{font-size:calc(var(--rs)*.2)}#hdrRing .rtrack,#hdrRing .rarc{stroke-width:10}
+@media (max-width:600px){#hdrRing{--rs:60px}.hdrring .hrlbl{font-size:.56rem}}
+html.ispopup #hdrRing{--rs:56px}html.ispopup .hdrring .hrlbl{font-size:.55rem}
+header{min-height:calc(var(--hmin,0px))}.hdrring .rlbl{display:none}
 .hdrring .rexact{display:none}.hdrring .hrlbl{font-size:.6rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;margin-top:2px;white-space:nowrap;opacity:.9}.hdrring:focus-visible{outline:2px solid #ffc72c;outline-offset:3px;border-radius:8px}
 .hr{display:flex;align-items:center;gap:0}.hr .hrsave{display:flex;flex-direction:column;align-items:flex-end}
-@media (max-width:480px){.hdrring .ring{width:46px}.hdrring .rpct{font-size:.82rem}.hdrring{margin-right:8px}}
-html.ispopup .hdrring .ring{width:40px}html.ispopup .hdrring .rpct{font-size:.78rem}html.ispopup .hdrring{flex-direction:row;gap:6px}html.ispopup .hdrring .hrlbl{margin:0}
+
+
 header{position:relative}
 #hdrRing{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;z-index:1}
 header .hl{max-width:calc(50% - 60px);min-width:0}header .hr{margin-left:auto;max-width:calc(50% - 50px);justify-content:flex-end}

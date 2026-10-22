@@ -253,7 +253,7 @@ function renderHdrRing(){var b=$('hdrRing');if(!b)return;var r;try{r=vaCombined(
   var src=useVA?'From VA.gov '+(v.pulledAt?fmtWhen(v.pulledAt):''):'From calculator';
   var tip='Total Rating '+pct+'% · '+src+(useVA?' (VA gives whole numbers; calculator exact: '+ex+'%)':' · exact combined value '+ex+'%')+'. Click to open the calculator.';
   renderRing(b,pct,null,'Total Rating',true);if(!b.querySelector('.hrlbl'))b.insertAdjacentHTML('beforeend','<span class="hrlbl">Total Rating</span>');
-  var ring=b.querySelector('.ring');ring.removeAttribute('role');ring.removeAttribute('aria-label');b.setAttribute('aria-label',tip);b.title=tip;b.dataset.src=useVA?'va':'calc';b.dataset.exact=ex}
+  var ring=b.querySelector('.ring');ring.removeAttribute('role');ring.removeAttribute('aria-label');b.setAttribute('aria-label',tip);b.title=tip;b.dataset.len=String(pct+'%').length;b.dataset.src=useVA?'va':'calc';b.dataset.exact=ex}
 function renderVARings(){renderHdrRing();[['ringProfile','profile'],['ringClaims','claims']].forEach(function(x){var b=$(x[0]);if(!b)return;var v=S.vaData;if(!v||v.combined===null||v.combined===undefined){b.innerHTML='';b.style.display='none';return}
   b.style.display='';renderRing(b,v.combined,null,'VA rating',true);var m=b.querySelector('.rexact');m.textContent='From VA.gov, '+(v.pulledAt?new Date(v.pulledAt).toLocaleDateString():'')})}
 /* SMC UI */
