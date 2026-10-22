@@ -27,3 +27,17 @@ Publish the site (see below), then open it in the phone's browser and add it to 
 4. Confirm.
 
 Installed from the home screen, VA to Z still keeps your data on the device. Open the site once while online so the phone can save the page for offline use.
+
+## VA to Z Sync (Chrome and Edge)
+
+**VA to Z Sync** is a browser extension for a Windows or Mac computer. While you are logged in to VA.gov, it reads your own profile, service history, ratings, and claims and hands them to this app. You review each item before anything is saved. It does not run on phones or tablets.
+
+Install it in developer mode:
+
+1. Download [va-to-z-sync.zip](extension/va-to-z-sync.zip).
+2. Unzip it. You get a folder named `va-to-z-sync`. Keep that folder; the extension runs from it.
+3. Open `chrome://extensions` in Chrome, or `edge://extensions` in Edge.
+4. Turn on **Developer mode**.
+5. Click **Load unpacked** and select the unzipped `va-to-z-sync` folder.
+
+Then open the **Tools** tab in VA to Z and use **Sync VA Data**. The extension source is in `extension/src/va-to-z-sync/` so it can be read in this repository. The zip is the copy to download and load.
