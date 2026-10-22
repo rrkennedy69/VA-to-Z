@@ -86,9 +86,9 @@ footer{max-width:980px;margin:0 auto;padding:6px 14px 30px;font-size:.85rem;colo
 .res{display:flex;gap:10px;align-items:baseline;width:100%;text-align:left;background:#fff;border:0;border-bottom:1px solid var(--line);padding:11px 12px;font:inherit;color:var(--ink);cursor:pointer}
 .res:hover{background:var(--soft)}.res.sel{background:#dbe7f6;outline:2px solid var(--brand);outline-offset:-2px}
 #detail .reg{margin:10px 0}#detail .howto{margin:8px 0}
-.fileit{background:#b22234;color:#fff;font-size:1.2rem;font-weight:700;padding:14px 22px;width:100%;max-width:420px;border-radius:10px}
-.fileit:not(:disabled):hover{background:#8f1b2a}.fileit:focus-visible{outline:3px solid #1f3a5f;outline-offset:3px}
-.fileit:disabled{background:#6b7280;opacity:1;cursor:not-allowed}
+.b.fileit{background:#b22234;color:#fff;font-size:1.2rem;font-weight:700;padding:14px 22px;width:100%;max-width:420px;border-radius:10px}
+.b.fileit:not(:disabled):hover{background:#8f1b2a}.fileit:focus-visible{outline:3px solid #1f3a5f;outline-offset:3px}
+.b.fileit:disabled{background:#6b7280;opacity:1;cursor:not-allowed}
 .step3{border:2px solid #b22234}
 .ccgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin:8px 0}
 .cc{display:flex;gap:10px;align-items:center;text-align:left;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;color:var(--ink);cursor:pointer;min-height:56px}
