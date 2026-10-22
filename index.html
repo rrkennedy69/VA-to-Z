@@ -24,6 +24,13 @@ nav{display:flex;gap:4px;overflow-x:auto;background:#16304f;padding:6px}
 .tool{border-top:5px solid var(--brand)}.tool.danger{border-top-color:var(--accent)}
 .tool>h2{font-size:1.3rem}.sub{border-top:1px solid var(--line);margin-top:14px;padding-top:6px}
 .bigbtn{font-size:1.15rem;font-weight:700;padding:14px 22px;width:100%;max-width:380px;display:block;text-align:center}
+.ringwrap{display:flex;flex-direction:column;align-items:center;margin:6px 0 12px}.ring{position:relative;width:min(180px,52vw);aspect-ratio:1}.ring.sm{width:96px}.ring svg{width:100%;height:100%;display:block}
+.rtrack{fill:none;stroke:#e3e8f0;stroke-width:12}.rarc{fill:none;stroke:#162e51;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1)}
+@media (prefers-reduced-motion:reduce){.rarc{transition:none}}.rmid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.rpct{font-size:2.6rem;font-weight:800;color:#162e51;line-height:1}.ring.sm .rpct{font-size:1.4rem}.rlbl{font-size:.8rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;margin-top:4px}.ring.sm .rlbl{font-size:.6rem}
+.rexact{font-size:.85rem;color:#444;margin-top:6px;text-align:center}.ringsm{float:right;margin:0 0 6px 12px}.ringsm .rexact{font-size:.7rem;max-width:110px}
+.ringcard{background:#f4f7fb;border:1px solid #dde4ee;border-radius:12px;padding:14px 10px}.card>.ringsm+h2+.okbox{clear:both}
+.vanote{background:#eef3fa;border:1px solid #c5d3e8;border-radius:10px;padding:8px 12px;font-size:.92rem;margin:8px 0}
 .okbox{background:#e8f5ec;border:1px solid #9fd1ae;border-radius:10px;padding:10px 12px;color:#14532d;font-weight:600}
 .hl{display:flex;align-items:center;flex-wrap:wrap;column-gap:14px}.tag{margin:0;font-size:.85rem;opacity:.92;border-left:3px solid #ffc72c;padding-left:10px;max-width:520px;line-height:1.35}.tag b{color:#ffc72c;letter-spacing:.02em}
 @media(max-width:560px){header h1{font-size:1.15rem}.hl{display:block}.tag{font-size:.74rem;margin-top:3px;border-left:0;padding-left:0}}
@@ -146,7 +153,7 @@ html{scroll-padding-top:150px}
 </nav><div id="dirBanner"></div></div>
 <main>
 <div id="remind"></div>
-<div class="card" id="dirFirst" style="display:none;border:2px solid #162e51"><h3 style="margin-top:0">Save your work to a folder on this computer?</h3><p>VA to Z can keep a copy of everything, including your documents, in a folder you choose. It updates automatically when you make changes.</p><p class="muted">In the window that opens: go to <b>Documents</b>, click <b>New folder</b>, name it <b>VAtoZ</b>, then select it and click <b>Select Folder</b>. If asked, allow VA to Z to save changes.</p><button class="b" id="dirFirstGo">Choose save folder</button><button class="b alt" id="dirFirstLater">Not now</button></div>
+<div class="card" id="dirFirst" style="display:none;border:2px solid #162e51"><h3 style="margin-top:0">Save your work to a folder on this computer?</h3><p>VA to Z can keep a copy of everything, including your documents, in a folder you choose. It updates automatically when you make changes.</p><ol class="dirsteps"><li>Click <b>Choose save folder</b>. A folder window opens.</li><li>Go to your <b>Documents</b> folder. <b>Don't select Documents itself.</b> The browser blocks it ("contains system files").</li><li>Click <b>New folder</b> and name it <b>VAtoZ</b>.</li><li><b>Double-click VAtoZ</b> so you are <b>inside</b> it. The window should show VAtoZ at the top and an empty folder.</li><li>Click <b>Select Folder</b>. If asked, click <b>Allow</b> / <b>View files</b> / <b>Save changes</b>.</li></ol><button class="b" id="dirFirstGo">Choose save folder</button><button class="b alt" id="dirFirstLater">Not now</button><div id="dirFirstHint"></div></div>
 <div class="warn" style="margin-bottom:14px"><b>Important:</b> This tool is not legal or medical advice. It is not made by, affiliated with, or endorsed by the U.S. Department of Veterans Affairs (VA). Only VA decides ratings and payments. For free help, contact an accredited Veterans Service Officer (VSO).</div>
 
 <section id="setup">
@@ -179,7 +186,7 @@ html{scroll-padding-top:150px}
 
 
 <section id="profile">
-<div class="card"><h2>My Profile</h2>
+<div class="card"><div class="ringwrap ringsm" id="ringProfile" style="display:none"></div><h2>My Profile</h2>
 <div class="okbox" style="font-weight:400">Your profile is saved only on this device, in this browser. VA to Z has no servers, and no third party can see or store it. The only exception is if you turn on AI access below: then your profile is sent with your questions to xAI (Grok) to answer them.</div>
 <p class="muted" style="margin-top:8px">Your profile is also included in backups you download in Tools, so keep backup files private. Fill in only what you want. These are details VA forms often ask for (21-526EZ, 21-0995, 21-10210, 21-4138, 21-686c), so you have them in one place. Tap a section to open it.</p></div>
 <div id="profForm"></div>
@@ -217,7 +224,7 @@ html{scroll-padding-top:150px}
 
 <section id="claims">
 <div class="grid2">
-<div><div class="card"><h2>My claims</h2><div id="claimList" class="claimlist"></div><p class="muted">Add claims from the Lookup tab with "Let's File It".</p></div></div>
+<div><div class="card"><div class="ringwrap ringsm" id="ringClaims" style="display:none"></div><h2>My claims</h2><div id="claimList" class="claimlist"></div><p class="muted">Add claims from the Lookup tab with "Let's File It".</p></div></div>
 <div id="claimView"><div class="card"><p>Pick a claim on the left, or go to <b>Lookup</b> and press <b>Let's File It</b> on a condition.</p></div></div>
 </div></section>
 
@@ -244,7 +251,8 @@ html{scroll-padding-top:150px}
 <div class="muted" id="extHint" style="margin:4px 0 8px">No body part chosen: next rating is added as "other" (not an arm or leg).</div>
 <div class="pctgrid" id="pctBtns" role="group" aria-label="Add a rating percent"></div>
 <div class="ratings" id="cList" aria-live="polite"></div>
-<div class="calcres" id="cResult"></div>
+<div id="calcVA"></div>
+<div class="ringwrap ringcard" id="ringBox"></div><div class="calcres" id="cResult"></div>
 <h3 class="step" style="margin-top:18px"><span class="num">2</span>Add your dependents</h3>
 <p class="muted">Dependents raise pay only at a combined 30% or higher.</p>
 <label>Marital status</label>
@@ -262,7 +270,7 @@ html{scroll-padding-top:150px}
 <div class="smclist" id="smcLevels" role="radiogroup" aria-label="SMC level"></div>
 </div></details>
 <div class="payres" id="payOut" aria-live="polite"></div>
-<button type="button" class="b alt" id="cReset">Reset calculator</button>
+<button type="button" class="b alt" id="cReset">Clear calculator</button>
 <p class="muted" id="rateLabel"></p>
 <p class="muted">This is an estimate, not a VA decision. Individual Unemployability (TDIU) and some other add-ons are not included. SMC amounts are estimates; VA decides SMC. Check va.gov for your official amount.</p>
 </div></details>
@@ -277,7 +285,7 @@ html{scroll-padding-top:150px}
 <div id="expMsg" aria-live="polite"></div>
 <div class="sub"><h3>Save folder on this computer</h3>
 <p class="muted">On a Windows or Mac computer with Chrome or Edge, VA to Z can keep an always-updated copy in a folder you pick: <b>va-to-z-data.json</b> (all your info, readable) and a <b>Documents</b> folder with your original files.</p>
-<p class="muted">In the window that opens: go to <b>Documents</b>, click <b>New folder</b>, name it <b>VAtoZ</b>, select it, and click <b>Select Folder</b>. Allow VA to Z to save changes if asked.</p>
+<ol class="dirsteps"><li>Click <b>Choose save folder</b>. A folder window opens.</li><li>Go to your <b>Documents</b> folder. <b>Don't select Documents itself.</b> The browser blocks it ("contains system files").</li><li>Click <b>New folder</b> and name it <b>VAtoZ</b>.</li><li><b>Double-click VAtoZ</b> so you are <b>inside</b> it. The window should show VAtoZ at the top and an empty folder.</li><li>Click <b>Select Folder</b>. If asked, click <b>Allow</b> / <b>View files</b> / <b>Save changes</b>.</li></ol><div id="dirHint"></div>
 <div id="dirStatus"></div>
 <button class="b" id="dirChoose">Choose save folder</button><button class="b alt" id="dirRestore">Restore from save folder</button><button class="b alt sm" id="dirForget">Stop using folder</button>
 </div>
@@ -309,7 +317,7 @@ html{scroll-padding-top:150px}
 <ol><li>Go to <a href="https://www.va.gov/" target="_blank" rel="noopener">VA.gov</a> and sign in (Login.gov or ID.me) as usual.</li>
 <li>Click the <b>VA to Z Sync</b> button in your toolbar, then <b>Pull my VA data</b>.</li>
 <li>If this app is open in another tab, the info appears below for review. If not, click <b>Download VA data file</b> in the extension, then use <b>Import VA data file</b> here.</li></ol>
-<div id="syncExt" class="muted"></div>
+<p id="syncLast" style="font-weight:700;margin:6px 0"></p><div id="syncExt" class="muted"></div>
 <label class="b alt" style="display:inline-block;cursor:pointer">Import VA data file<input type="file" id="syncImp" class="hidefile" accept=".json,application/json"></label>
 <div id="syncMsg"></div></div>
 <div id="syncReview"></div>
@@ -494,7 +502,7 @@ function tab(t){if(t==='calc'||t==='data')t='tools';S.tab=t;document.querySelect
 $('nav').addEventListener('click',function(e){if(e.target.dataset.t)tab(e.target.dataset.t)});
 function goTool(id){if(S.tab!=='tools')tab('tools');var el=$(id);if(!el)return;if(el.tagName==='DETAILS')el.open=true;setTimeout(function(){var y=el.getBoundingClientRect().top+window.scrollY-150;window.scrollTo({top:y,behavior:'smooth'});var s=el.querySelector('summary');if(s)s.focus({preventScroll:true})},30)}
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-go]');if(b){e.preventDefault();goTool(b.dataset.go)}});
-function toolSums(){try{$('sum-sync').textContent='Copy your info from VA.gov (computer, Chrome or Edge)';}catch(e){}try{var r=vaCombined(S.calc.entries),sm=S.calc.smc||{},p=vaPay(RATES,r.rounded,S.calc.deps,sm);
+function toolSums(){try{renderSyncLast();}catch(e){}try{var r=vaCombined(S.calc.entries),sm=S.calc.smc||{},p=vaPay(RATES,r.rounded,S.calc.deps,sm);
   $('sum-calc').textContent=(S.calc.entries.length||sm.level||sm.k)?('Official rating '+r.rounded+'% · '+money(p.total)+'/mo'+(sm.level||sm.k?' · SMC':'')):'Combine your ratings and estimate monthly pay';}catch(x){}
   $('sum-backup').textContent=(S.lastBackup?'Last backup: '+new Date(S.lastBackup).toLocaleDateString():'No backup saved yet — tap to make one')+(DIRSTATE==='ok'?' · Save folder on':DIRSTATE==='needs'?' · Save folder needs reconnect':'');
   $('sum-clear').textContent='Erase everything on this device';
@@ -518,7 +526,7 @@ $('testKey').onclick=async function(){S.apiKey=$('apikey').value.trim();S.model=
 
 /* ---------- calculator ---------- */
 var EXT=null; // 'arm:L' etc
-function migrateCalc(){var c=S.calc||(S.calc={});c.entries=(c.entries||[]).map(function(e){return {name:e.name||'',pct:+e.pct||0,side:e.side||'',limb:!!e.limb,part:e.part||''}});var d=c.deps||(c.deps={});['spouse','aa','parents','kids','school'].forEach(function(k){d[k]=Math.max(0,+d[k]||0)});if(d.parents>2)d.parents=2;if(!d.spouse)d.aa=0;var sm=c.smc||(c.smc={level:'',k:0});sm.level=sm.level||'';sm.k=Math.max(0,Math.min(3,+sm.k||0))}
+function migrateCalc(){var c=S.calc||(S.calc={});c.entries=(c.entries||[]).map(function(e){var o={name:e.name||'',pct:+e.pct||0,side:e.side||'',limb:!!e.limb,part:e.part||''};if(e.va)o.va=e.va;return o});var d=c.deps||(c.deps={});['spouse','aa','parents','kids','school'].forEach(function(k){d[k]=Math.max(0,+d[k]||0)});if(d.parents>2)d.parents=2;if(!d.spouse)d.aa=0;var sm=c.smc||(c.smc={level:'',k:0});sm.level=sm.level||'';sm.k=Math.max(0,Math.min(3,+sm.k||0))}
 (function(){var h='';for(var p=10;p<=100;p+=10)h+='<button type="button" data-pct="'+p+'">'+p+'%</button>';$('pctBtns').innerHTML=h})();
 $('extBtns').addEventListener('click',function(e){var b=e.target.closest('[data-ext]');if(!b)return;EXT=(EXT===b.dataset.ext)?null:b.dataset.ext;showExt()});
 function showExt(){document.querySelectorAll('#extBtns button').forEach(function(b){var on=b.dataset.ext===EXT;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});
@@ -538,7 +546,7 @@ function renderCalc(){
   if(r.bilateral)h+='<p class="muted">Bilateral factor applied ('+r.pairs.map(function(p){return p==='arm'?'both arms':p==='leg'?'both legs':'both sides'}).join(' and ')+'): those ratings combine to '+r.bilCombinedStr+'%, plus 10% of that ('+r.bilFactorStr+'), rounded = '+r.bilValueStr+'%, then combined with the rest.</p>';
   else if(E.some(function(e){return e.limb}))h+='<p class="muted">No bilateral factor yet: it needs ratings on both arms, or on both legs.</p>';
   if(E.length)h+='<details class="howc"><summary>How we got this</summary><ol>'+r.steps.map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol></details>';
-  $('cResult').innerHTML=h;if($('sum-calc'))setTimeout(toolSums,0);
+  $('cResult').innerHTML=h;renderRing($('ringBox'),r.rounded,E.length?r.exactStr:null,'Total Rating');renderCalcVA();if($('sum-calc'))setTimeout(toolSums,0);
   document.querySelectorAll('#mar button').forEach(function(b){var v=+b.dataset.mar,on=(v===0&&!d.spouse)||(v===1&&d.spouse&&!d.aa)||(v===2&&d.spouse&&d.aa);b.classList.toggle('on',on);b.setAttribute('aria-checked',on);b.setAttribute('role','radio')});
   ['kids','school','parents'].forEach(function(k){$('v_'+k).textContent=d[k]});
   var sm=S.calc.smc;$('v_smck').textContent=sm.k;document.querySelectorAll('input[name=smclvl]').forEach(function(i){i.checked=i.value===sm.level});
@@ -550,7 +558,33 @@ function renderCalc(){
 $('cList').addEventListener('click',function(e){var i=e.target.dataset.del;if(i!=null){S.calc.entries.splice(+i,1);renderCalc();save()}});
 $('mar').addEventListener('click',function(e){var b=e.target.closest('[data-mar]');if(!b)return;var v=+b.dataset.mar,d=S.calc.deps;d.spouse=v>0?1:0;d.aa=v===2?1:0;renderCalc();save()});
 document.querySelector('.steps2').addEventListener('click',function(e){var b=e.target.closest('[data-st]');if(!b)return;var k=b.dataset.st,d=S.calc.deps;d[k]=Math.max(0,Math.min(k==='parents'?2:20,(d[k]||0)+(+b.dataset.d)));renderCalc();save()});
-$('cReset').onclick=function(){if(!S.calc.entries.length&&!S.calc.smc.level&&!S.calc.smc.k&&!S.calc.deps.spouse&&!S.calc.deps.kids&&!S.calc.deps.school&&!S.calc.deps.parents)return;if(!confirm('Reset the calculator? This removes all ratings and dependents you entered here.'))return;S.calc={entries:[],deps:{spouse:0,aa:0,parents:0,kids:0,school:0},smc:{level:'',k:0}};EXT=null;showExt();renderCalc();saveNow()};
+$('cReset').onclick=function(){if(!S.calc.entries.length&&!S.calc.smc.level&&!S.calc.smc.k&&!S.calc.deps.spouse&&!S.calc.deps.kids&&!S.calc.deps.school&&!S.calc.deps.parents)return;if(!confirm('Clear the calculator? This removes all ratings and dependents shown here so you can start fresh.'+(S.vaData?'\n\nYour imported VA.gov data is kept. Use "Reload my VA ratings" to load it again.':'')))return;S.calc={entries:[],deps:{spouse:0,aa:0,parents:0,kids:0,school:0},smc:{level:'',k:0},vaOff:!!S.vaData,vaSeen:{}};EXT=null;showExt();renderCalc();saveNow()};
+
+/* ---------- Total Rating ring + VA preload ---------- */
+function renderRing(box,pct,exact,label,small){if(!box)return;pct=Math.max(0,Math.min(100,+pct||0));var R=52,C=2*Math.PI*R,off=C*(1-pct/100);
+  var aria=label+': '+pct+' percent'+(exact?' (exact combined value '+exact+' percent)':'');
+  if(!box.querySelector('svg')){box.innerHTML='<div class="ring'+(small?' sm':'')+'" role="img"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><circle cx="60" cy="60" r="'+R+'" class="rtrack"/><circle cx="60" cy="60" r="'+R+'" class="rarc" transform="rotate(-90 60 60)" stroke-dasharray="'+C.toFixed(2)+'" stroke-dashoffset="'+C.toFixed(2)+'"/></svg><div class="rmid"><div class="rpct"></div><div class="rlbl"></div></div></div><div class="rexact"></div>'}
+  var ring=box.querySelector('.ring');ring.setAttribute('aria-label',aria);box.querySelector('.rpct').textContent=pct+'%';box.querySelector('.rlbl').textContent=label;
+  box.querySelector('.rexact').innerHTML=exact?'Exact combined value: <b>'+esc(exact)+'%</b>':'';
+  var arc=box.querySelector('.rarc');requestAnimationFrame(function(){arc.style.strokeDashoffset=off.toFixed(2)});box.dataset.pct=pct}
+var ARM_RE=/\b(arm|shoulder|elbow|wrist|hand|finger|thumb|forearm|humerus|ulnar|radial|median|upper extremity|carpal)\b/i,LEG_RE=/\b(leg|hip|knee|ankle|foot|feet|toe|thigh|femur|tibia|fibula|sciatic|lower extremity|plantar|achilles|hallux|pes planus|flatfoot)\b/i;
+function vaPart(c){var n=c.name||'',dc=+c.dc||0,side=/\bleft\b|\blt\b/i.test(n)?'L':/\bright\b|\brt\b/i.test(n)?'R':'';
+  var part=ARM_RE.test(n)?'arm':LEG_RE.test(n)?'leg':(dc>=5200&&dc<=5230)||(dc>=5300&&dc<=5309)?'arm':(dc>=5250&&dc<=5284)||(dc>=5310&&dc<=5312)?'leg':'';
+  return part&&side?{part:part,side:side}:null}
+function vaKey(c){return (c.dc||'')+'|'+(c.name||'').toLowerCase()}
+function preloadCalc(force){var v=S.vaData;if(!v)return 0;migrateCalc();var cs=S.calc;if(cs.vaOff&&!force)return 0;cs.vaOff=false;
+  var have={};cs.entries.forEach(function(e){if(e.va)have[e.va]=1});cs.vaSeen=cs.vaSeen||{};if(!force)Object.keys(cs.vaSeen).forEach(function(k){have[k]=1});var n=0;
+  (v.conditions||[]).forEach(function(c){if(c.percent===null||c.percent===undefined||+c.percent<=0)return;var k=vaKey(c);if(have[k])return;
+    var pt=vaPart(c),e={name:c.name||(BYDC[c.dc]?BYDC[c.dc].n:''),pct:Math.min(100,Math.round(+c.percent/10)*10)||10,side:pt?pt.side:'',limb:!!pt,part:pt?pt.part:'',va:k};cs.entries.push(e);have[k]=1;cs.vaSeen[k]=1;n++});
+  var d=cs.deps,p=ensureProfile();if(n&&!d.spouse&&!d.kids&&!d.school&&!d.parents){if(p.f.marital==='Married')d.spouse=1;
+    (p.l.children||[]).forEach(function(ch){if(ch.status==='Under 18'||ch.status==='Stepchild'||ch.status==='Adopted')d.kids++;else if(ch.status==='18–23 and in school')d.school++})}
+  if(n)cs.vaLoaded=v.pulledAt||'';return n}
+function renderCalcVA(){var b=$('calcVA');if(!b)return;var v=S.vaData;if(!v){b.innerHTML='';return}
+  var when=v.pulledAt?new Date(v.pulledAt).toLocaleDateString():'';var loaded=S.calc.entries.some(function(e){return e.va});
+  b.innerHTML='<div class="vanote">'+(loaded?'Loaded from your VA.gov data (pulled '+esc(when)+'). Check arm/leg sides for the bilateral factor; change anything that looks off.':'You have imported VA.gov ratings (pulled '+esc(when)+').')+' <button type="button" class="b alt sm" id="calcVAReload">Reload my VA ratings</button></div>'}
+document.addEventListener('click',function(e){if(e.target.id==='calcVAReload'){var n=preloadCalc(true);renderCalc();saveNow();$('calcVA').insertAdjacentHTML('beforeend','<p class="muted" id="calcVAMsg">'+(n?n+' VA rating'+(n>1?'s':'')+' added.':'Your VA ratings are already in the calculator.')+'</p>')}});
+function renderVARings(){[['ringProfile','profile'],['ringClaims','claims']].forEach(function(x){var b=$(x[0]);if(!b)return;var v=S.vaData;if(!v||v.combined===null||v.combined===undefined){b.innerHTML='';b.style.display='none';return}
+  b.style.display='';renderRing(b,v.combined,null,'VA rating',true);var m=b.querySelector('.rexact');m.textContent='From VA.gov, '+(v.pulledAt?new Date(v.pulledAt).toLocaleDateString():'')})}
 /* SMC UI */
 var SMC_INFO=[['','None','No SMC level other than K.'],
 ['S','SMC-S (housebound)','You have one service-connected disability rated 100%, and either other service-connected disabilities rated 60% or more, or you are permanently housebound (substantially confined to your home) because of service-connected disability.'],
@@ -685,7 +719,12 @@ function renderDir(){var st=$('dirStatus'),bn=$('dirBanner');if(!st)return;var h
   $('dirRestore').style.display=FS_OK?'':'none';$('dirForget').style.display=DIR?'':'none';
   bn.innerHTML=DIRSTATE==='needs'?'<div class="dirbar">Your save folder is disconnected. <button class="b sm" id="dirReconnect">Reconnect save folder</button></div>':'';
   if(typeof toolSums==='function')setTimeout(toolSums,0)}
-async function chooseFolder(){try{var h=await window.showDirectoryPicker({id:'vatoz',startIn:'documents',mode:'readwrite'});DIR=h;DIRSTATE='ok';S.dirName=h.name;S.dirAsked=true;$('dirFirst').style.display='none';
+function dirHint(msg){var h='<div class="warn" id="dirHintBox" role="alert"><b>'+msg+'</b><br>Try again: in the folder window open <b>Documents</b>, make (or find) a folder named <b>VAtoZ</b>, <b>double-click VAtoZ to go inside it</b>, then click <b>Select Folder</b>. Picking Documents itself, Desktop, Downloads, or a drive like C:\\ is blocked by the browser.</div>';
+  ['dirHint','dirFirstHint'].forEach(function(id){if($(id))$(id).innerHTML=h})}
+async function pickDir(){var o={id:'vatoz',mode:'readwrite'};try{return await window.showDirectoryPicker(Object.assign({startIn:'documents'},o))}catch(e){if(e&&e.name==='TypeError')return await window.showDirectoryPicker(o);throw e}}
+async function chooseFolder(){['dirHint','dirFirstHint'].forEach(function(id){if($(id))$(id).innerHTML=''});
+  var h;try{h=await pickDir()}catch(e){if(e&&e.name==='AbortError')dirHint('No folder was picked.');else dirHint('That folder can\'t be used ('+esc(e&&e.message||e&&e.name||'error')+').');return}
+  try{DIR=h;DIRSTATE='ok';S.dirName=h.name;S.dirAsked=true;$('dirFirst').style.display='none';
     try{await idbPut('kv','dir',h)}catch(e){} // keep in memory if this browser can't store handles
     S.docs.forEach(function(d){d.mpath=''});await mirrorAll(true);saveNow();renderDir()}
   catch(e){if(e&&e.name==='AbortError')return;DIRSTATE=DIR?DIRSTATE:'error';S.dirErr=(e&&e.name==='SecurityError'?'your browser blocked folder access for this page. ':'')+(e&&e.message||e);renderDir()}}
@@ -756,10 +795,13 @@ function syncItems(v){var p=ensureProfile(),f=p.f,it=[],P=v.profile;
   v.conditions.forEach(function(c){if(c.dc&&have['dc'+c.dc])return;var known=c.dc&&BYDC[c.dc];
     it.push({g:'Rated conditions → My Claims',kind:'cond',c:c,label:(c.name||(known?known.n:'Condition'))+(c.dc?' (DC '+c.dc+')':'')+(c.percent!==null?' — '+c.percent+'%':'')+(c.effective?' since '+isoDate(c.effective):''),on:true})});
   var rated=v.conditions.filter(function(c){return c.percent!==null});
-  if(rated.length)it.push({g:'Calculator',kind:'calc',list:rated,label:'Replace the Calculator\'s list with these '+rated.length+' VA rating'+(rated.length>1?'s':'')+(S.calc.entries.length?' (you have '+S.calc.entries.length+' there now)':''),on:!S.calc.entries.length});
+  if(rated.length)it.push({g:'Calculator',kind:'calc',label:'Load these '+rated.length+' VA rating'+(rated.length>1?'s':'')+' into the Calculator (no duplicates; your own entries stay)',on:true});
   v.claims.forEach(function(c){if(c.id&&have['va'+c.id])return;it.push({g:'VA claims → My Claims',kind:'claim',c:c,label:(c.type||'VA claim')+(c.date?' filed '+isoDate(c.date):'')+(c.status?' — '+c.status:''),on:true})});
   return it}
-function renderSync(){var R=$('syncReview');if(!SYNC){R.innerHTML='';return}
+function fmtWhen(s){var d=new Date(s);return isNaN(d)?'':d.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}
+function renderSyncLast(){var e=$('syncLast');if(!e)return;e.textContent=S.vaSyncedAt?'Last synced: '+fmtWhen(S.vaSyncedAt)+(S.vaData&&S.vaData.pulledAt?' (VA.gov data pulled '+fmtWhen(S.vaData.pulledAt)+')':''):'Never synced';
+  if($('sum-sync'))$('sum-sync').textContent=S.vaSyncedAt?'Last synced: '+fmtWhen(S.vaSyncedAt):'Never synced · copy your info from VA.gov'}
+function renderSync(){renderSyncLast();var R=$('syncReview');if(!SYNC){R.innerHTML='';return}
   var it=SYNC.items,h='<div class="sub" style="border:2px solid #162e51;border-radius:10px;padding:12px"><h3 style="margin-top:0">Review your VA.gov info</h3><p class="muted">Pulled '+esc(SYNC.v.pulledAt?new Date(SYNC.v.pulledAt).toLocaleString():'')+'. Checked items will be added. Items that would <b>replace</b> something you already typed are unchecked; check them only if VA.gov is right.</p>';
   if(!it.length)h+='<p><b>Nothing new.</b> Everything from VA.gov already matches what\'s in the app.</p>';
   var g='';it.forEach(function(x,i){if(x.g!==g){g=x.g;h+='<h4 style="margin:12px 0 4px">'+esc(g)+'</h4>'}
@@ -767,16 +809,17 @@ function renderSync(){var R=$('syncReview');if(!SYNC){R.innerHTML='';return}
   h+='<button class="b" id="syncApply"'+(it.length?'':' disabled')+'>Apply checked items</button><button class="b alt" id="syncCancel">Cancel</button></div>';R.innerHTML=h}
 function startSync(raw,how){var v=cleanVA(raw);SYNC={v:v,items:syncItems(v)};var d=$('tool-sync');if(d)d.open=true;tab('tools');renderSync();
   $('syncMsg').innerHTML='<div class="okbox">✓ VA.gov info received'+(how?' '+how:'')+'. Review it below.</div>';setTimeout(function(){try{$('syncReview').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}},50)}
-function applySync(){var p=ensureProfile(),n=0,nc=0;document.querySelectorAll('[data-sy]').forEach(function(b){SYNC.items[+b.dataset.sy].on=b.checked});
+function applySync(){var p=ensureProfile(),n=0,nc=0,wantCalc=false;S.vaData=SYNC.v;S.vaSyncedAt=new Date().toISOString();document.querySelectorAll('[data-sy]').forEach(function(b){SYNC.items[+b.dataset.sy].on=b.checked});
   SYNC.items.forEach(function(x){if(!x.on)return;
     if(x.kind==='f'){p.f[x.k]=x.val;n++}
     else if(x.kind==='per'){var empty=p.l.periods.filter(function(r){return !Object.keys(r).some(function(k){return r[k]})})[0];if(empty)Object.assign(empty,x.row);else p.l.periods.push(Object.assign({},x.row));n++}
-    else if(x.kind==='calc'){S.calc.entries=x.list.map(function(c){return {name:c.name||(BYDC[c.dc]?BYDC[c.dc].n:''),pct:Math.round(c.percent/10)*10,side:'',limb:false,part:''}});n++}
+    else if(x.kind==='calc'){wantCalc=true}
     else if(x.kind==='cond'||x.kind==='claim'){var c=x.c,id='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),e=x.kind==='cond'&&c.dc?BYDC[c.dc]:null;
       S.claims[id]=x.kind==='cond'?{id:id,dc:c.dc||'',name:c.name||(e?e.n:'Rated condition'),status:'Granted',created:new Date().toISOString(),checklist:e?checklistFor(e):[],notes:'From VA.gov: rated '+(c.percent!==null?c.percent+'%':'(percent not shown)')+(c.effective?', effective '+isoDate(c.effective):'')+(c.decision?' ('+c.decision+')':'')+'.',evidence:'',chat:[],prevDenied:false,fromVA:true}
         :{id:id,dc:'',name:(c.type||'VA claim')+(c.date?' ('+isoDate(c.date)+')':''),status:/^(complete|closed|canceled|cancelled)/i.test(c.status)||c.closed?'Decision received':'Filed',created:new Date().toISOString(),checklist:[],notes:'From VA.gov: claim '+(c.id?'#'+c.id+' ':'')+(c.date?'filed '+isoDate(c.date)+', ':'')+'status '+(c.status||'unknown')+(c.closed?', closed '+isoDate(c.closed):'')+'.',evidence:'',chat:[],prevDenied:false,vaId:c.id,fromVA:true};
       S.order.push(id);nc++}});
-  SYNC=null;saveNow();renderProfile();renderCalc();renderClaims();renderSync();toolSums();
+  var nCalc=0;if(wantCalc)nCalc=preloadCalc(true);n+=nCalc;
+  SYNC=null;saveNow();renderProfile();renderCalc();renderVARings();renderClaims();renderSync();toolSums();
   $('syncMsg').innerHTML='<div class="okbox">✓ Applied: '+n+' profile/calculator item'+(n===1?'':'s')+' and '+nc+' claim'+(nc===1?'':'s')+' added.<br><b>Next:</b> make a backup (Tools → Backup and Restore) to save it and to move it to your phone.</div>'}
 document.addEventListener('click',function(e){var t=e.target;if(t.id==='syncApply')applySync();else if(t.id==='syncCancel'){SYNC=null;renderSync();$('syncMsg').innerHTML=''}else if(t.id==='syncAsk')window.postMessage({type:'VATOZ_REQUEST'},'*')});
 $('syncImp').onchange=function(){var f=this.files[0];if(!f)return;this.value='';f.text().then(function(t){startSync(JSON.parse(t),'from file')}).catch(function(e){$('syncMsg').innerHTML='<span class="err">Import failed: '+esc(e.message)+'</span>'})};
@@ -951,7 +994,7 @@ $('clr').onclick=async function(){if(!confirm('Erase ALL data from this device: 
   S=blankState();S.tab='tools';init();saveNow();renderDir();alert('All data cleared.')};
 $('about').textContent='Regulation text: '+CFR.length+' diagnostic codes from 38 CFR Part 4 (eCFR, current as of October 19, 2026 (last amended August 27, 2026)), embedded word-for-word. Rating tables in the VA Disability Calculator (Tools): VA '+RATES.year+'. Some codes are rated under a shared formula, which is shown with the code. Hearing loss (6100) shows the § 4.85 text; the audiometric tables are on eCFR.';
 
-function init(){ensureProfile();ensureDocs();renderProfile();renderDocs();$('apikey').value=S.apiKey||'';$('model').value=S.model||'grok-4.7';migrateCalc();renderCalc();doSearch();renderClaims();showLastBackup();tab(S.tab||'setup');if(!storageOK)$('saveStatus').innerHTML='<span class="err">This browser is blocking local storage. Use <a href="#" data-go="tool-backup">Download Backup in Tools</a> to save your work.</span>';$('saveInd').innerHTML='<a href="#" data-go="tool-backup" style="color:#ffc72c">⚠ Not saved · Back up</a>'}
+function init(){ensureProfile();ensureDocs();renderProfile();renderDocs();$('apikey').value=S.apiKey||'';$('model').value=S.model||'grok-4.7';migrateCalc();preloadCalc(false);renderCalc();renderVARings();renderSyncLast();doSearch();renderClaims();showLastBackup();tab(S.tab||'setup');if(!storageOK)$('saveStatus').innerHTML='<span class="err">This browser is blocking local storage. Use <a href="#" data-go="tool-backup">Download Backup in Tools</a> to save your work.</span>';$('saveInd').innerHTML='<a href="#" data-go="tool-backup" style="color:#ffc72c">⚠ Not saved · Back up</a>'}
 boot();
 </script>
 <script>
