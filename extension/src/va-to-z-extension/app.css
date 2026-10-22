@@ -173,3 +173,5 @@ html{scroll-padding-top:200px}
 .docitem{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0;background:#fafbfd}.docname{font-weight:700;word-break:break-word}
 .dirbar{background:#ffc72c;color:#162e51;padding:8px 14px;font-weight:600;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .remind{margin-bottom:14px}
+.brandcol{min-width:0;max-width:100%;flex:0 1 auto}.welcome{margin-top:4px;font-size:.85rem;font-weight:700;color:#ffc72c;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.welcome[hidden]{display:none}
+@media(max-width:600px){.welcome{font-size:.76rem;margin-top:2px}}html.ispopup .welcome{font-size:.72rem;margin-top:1px}
