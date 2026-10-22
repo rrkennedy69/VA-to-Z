@@ -119,12 +119,15 @@ var saveT=null;
 function setInd(m){var i=$('saveInd');if(i)i.textContent=m}
 function savedOK(where){storageOK=true;var t=new Date(S._savedAt);$('saveStatus').textContent='Saved on this device'+(where?' ('+where+')':'')+' at '+t.toLocaleTimeString();setInd('All changes saved')}
 function saveFail(e){storageOK=false;$('saveStatus').innerHTML='<span class="err">Could not save in this browser ('+esc(e&&e.message||'storage blocked')+'). Use <a href="#" data-go="tool-backup">Download Backup in Tools</a> to keep your work.</span>';$('saveInd').innerHTML='<a href="#" data-go="tool-backup" style="color:#ffc72c">⚠ Not saved · Back up</a>'}
-function saveNow(){clearTimeout(saveT);if(!BOOTED)return;S._savedAt=new Date().toISOString();var json=JSON.stringify(S),okLS=false;
+function saveNow(){clearTimeout(saveT);try{renderWelcome()}catch(e){}if(!BOOTED)return;S._savedAt=new Date().toISOString();var json=JSON.stringify(S),okLS=false;
   try{localStorage.setItem(KEY,json);okLS=true}catch(e){}
   if(DB){idbPut('kv','state',json).then(function(){savedOK()},function(e){if(okLS)savedOK('backup copy only');else saveFail(e)})}
   else if(okLS)savedOK('basic storage');else saveFail(new Error(DBERR||'storage blocked'));
   scheduleMirror();renderRemind()}
-function save(){clearTimeout(saveT);setInd('Saving…');saveT=setTimeout(saveNow,IS_POPUP?60:250)}
+function welcomeName(){var p=S.profile&&S.profile.f||{},n=String(p.first||'').trim();if(!n){var v=S.vaData&&S.vaData.profile;n=String(v&&v.first||'').trim()}
+  return n.toLowerCase().replace(/(^|[\s\-'’])([a-z])/g,function(m,a,b){return a+b.toUpperCase()})}
+function renderWelcome(){var el=$('welcome');if(!el)return;var n=welcomeName();el.hidden=!n;el.textContent=n?'Welcome, '+n:'';el.title=n?'Welcome, '+n:''}
+function save(){renderWelcome();clearTimeout(saveT);setInd('Saving…');saveT=setTimeout(saveNow,IS_POPUP?60:250)}
 async function boot(){DB=await idbOpen();var a=null,b=null;
   if(DB){try{var j=await idbGet('kv','state');if(j)a=JSON.parse(j)}catch(e){}}
   try{var l=localStorage.getItem(KEY);if(l)b=JSON.parse(l)}catch(e){}
@@ -843,5 +846,5 @@ $('clr').onclick=async function(){if(!confirm('Erase ALL data from this device: 
   S=blankState();S.tab='tools';init();saveNow();renderDir();alert('All data cleared.')};
 $('about').textContent='Regulation text: '+CFR.length+' diagnostic codes from 38 CFR Part 4 (eCFR, current as of October 19, 2026 (last amended August 27, 2026)), embedded word-for-word. Rating tables in the VA Disability Calculator (Tools): VA '+RATES.year+'. Some codes are rated under a shared formula, which is shown with the code. Hearing loss (6100) shows the § 4.85 text; the audiometric tables are on eCFR.';
 
-function init(){ensureProfile();ensureDocs();renderProfile();renderDocs();$('apikey').value=S.apiKey||'';$('model').value=S.model||'grok-4.7';migrateCalc();preloadCalc(false);renderCalc();renderVARings();renderSyncLast();doSearch();renderClaims();showLastBackup();tab(S.tab||'setup');if(!storageOK)$('saveStatus').innerHTML='<span class="err">This browser is blocking local storage. Use <a href="#" data-go="tool-backup">Download Backup in Tools</a> to save your work.</span>';$('saveInd').innerHTML='<a href="#" data-go="tool-backup" style="color:#ffc72c">⚠ Not saved · Back up</a>'}
+function init(){ensureProfile();renderWelcome();ensureDocs();renderProfile();renderDocs();$('apikey').value=S.apiKey||'';$('model').value=S.model||'grok-4.7';migrateCalc();preloadCalc(false);renderCalc();renderVARings();renderSyncLast();doSearch();renderClaims();showLastBackup();tab(S.tab||'setup');if(!storageOK)$('saveStatus').innerHTML='<span class="err">This browser is blocking local storage. Use <a href="#" data-go="tool-backup">Download Backup in Tools</a> to save your work.</span>';$('saveInd').innerHTML='<a href="#" data-go="tool-backup" style="color:#ffc72c">⚠ Not saved · Back up</a>'}
 boot();
