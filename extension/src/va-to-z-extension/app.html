@@ -109,7 +109,7 @@
 
 <section id="tools">
 <div class="card"><h2>Tools</h2><p>Extra tools for your claim. Pick one:</p>
-<div class="toolnav"><button class="b alt sm" data-go="tool-calc">VA Disability Calculator</button><button class="b alt sm" data-go="tool-backup">Backup and Restore</button><button class="b alt sm" data-go="tool-about">About the data</button></div></div>
+<div class="toolnav"><button class="b alt sm" data-go="tool-calc">VA Disability Calculator</button><button class="b alt sm" data-go="tool-backup">Backup and Restore</button><button class="b alt sm" data-go="tool-cloud">Cloud Backup</button><button class="b alt sm" data-go="tool-about">About the data</button></div></div>
 
 <details class="card tool tcard" id="tool-calc"><summary><span class="smct">VA Disability Calculator<span class="tsum" id="sum-calc"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">
 <p>VA doesn't add ratings. It uses "VA math": each rating takes a share of what's left, then the total rounds to the nearest 10. Results update as you go.</p>
@@ -165,6 +165,20 @@
 <div id="restoreMsg" aria-live="polite" style="margin-top:10px"></div>
 <div class="warn" style="margin-top:12px"><b>Keep your backup private.</b> If you saved your xAI API key, it is inside the backup file. Anyone with the file could use your key and run up charges. Don't email or share it. If it leaks, delete the key at console.x.ai and make a new one.</div>
 <div id="saveStatus" class="muted" style="margin-top:8px"></div>
+</div></details>
+
+<details class="card tool tcard" id="tool-cloud"><summary><span class="smct">Cloud Backup (Google Drive)<span class="tsum" id="sum-cloud"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">
+<div id="cloudExtNote" class="note ext-only"><b>Cloud backup is coming to the extension.</b> For now, use <b>Download Backup</b> above, or open the VA to Z website to back up to Google Drive. (Chrome extensions need a different Google sign-in setup.)</div>
+<div class="web-only">
+<p>Keep a copy of your work in <b>your own Google Drive</b>. It goes into a hidden app folder that only VA to Z can see. It does not show up in your Drive file list, and it never goes to us. This is optional.</p>
+<p class="muted">There is one backup file. Each time you click <b>Back up now</b>, it is replaced with your newest work.</p>
+<div id="cloudNotSet" class="warn" hidden><b>Cloud backup is not set up yet.</b> This copy of VA to Z isn't connected to Google yet, so these buttons are turned off. Use <b>Download Backup</b> above to keep your work safe.</div>
+<p id="cloudStatus" class="muted">Not signed in.</p>
+<p class="muted" id="cloudLast">No cloud backup made from this device yet.</p>
+<label class="chk"><input type="checkbox" id="cloudSSN"> Include Social Security numbers in the cloud backup (off = SSNs stay only on this device)</label>
+<div style="margin-top:8px"><button class="b" id="cloudIn">Sign in with Google</button><button class="b" id="cloudUp">⬆ Back up now</button><button class="b alt" id="cloudRestore">Restore from Google Drive</button><button class="b alt sm" id="cloudOut">Sign out</button></div>
+<div id="cloudMsg" aria-live="polite" style="margin-top:8px"></div>
+</div>
 </div></details>
 
 <details class="card tool tcard" id="tool-sync"><summary><span class="smct">Sync VA Data<span class="tsum" id="sum-sync"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">

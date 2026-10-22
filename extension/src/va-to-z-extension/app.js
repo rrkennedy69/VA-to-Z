@@ -1,5 +1,6 @@
 /* Donation link: set DONATE_URL to your donation page (e.g. 'https://...'). Leave '' to show "Donation link coming soon". */
 var DONATE_URL='';
+var GOOGLE_CLIENT_ID=''; // Google OAuth Web client ID for Cloud Backup (Drive appDataFolder). Empty = cloud backup turned off.
 var IS_EXT=!!(window.VATOZ_EXT);if(IS_EXT)document.documentElement.classList.add("isext");var IS_POPUP=IS_EXT&&/[?&]popup=1/.test(location.search);if(IS_POPUP)document.documentElement.classList.add("ispopup");
 /*CALC_START*/
 // OFFICIAL method = 38 CFR 4.25 Table I: arrange in order of severity; combine two at a time; each result is
@@ -167,7 +168,7 @@ function tab(t){if(t==='calc'||t==='data')t='tools';S.tab=t;document.querySelect
 $('nav').addEventListener('click',function(e){if(e.target.dataset.t)tab(e.target.dataset.t)});
 function goTool(id){if(S.tab!=='tools')tab('tools');var el=$(id);if(!el)return;if(el.tagName==='DETAILS')el.open=true;setTimeout(function(){var y=el.getBoundingClientRect().top+window.scrollY-150;window.scrollTo({top:y,behavior:'smooth'});var s=el.querySelector('summary');if(s)s.focus({preventScroll:true})},30)}
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-go]');if(b){e.preventDefault();goTool(b.dataset.go)}});
-function toolSums(){try{renderSyncLast();}catch(e){}try{var r=vaCombined(S.calc.entries),sm=S.calc.smc||{},p=vaPay(RATES,r.rounded,S.calc.deps,sm);
+function toolSums(){try{renderSyncLast();}catch(e){}try{renderCloud()}catch(e){}try{var r=vaCombined(S.calc.entries),sm=S.calc.smc||{},p=vaPay(RATES,r.rounded,S.calc.deps,sm);
   $('sum-calc').textContent=(S.calc.entries.length||sm.level||sm.k)?('Official rating '+r.rounded+'% · '+money(p.total)+'/mo'+(sm.level||sm.k?' · SMC':'')):'Combine your ratings and estimate monthly pay';}catch(x){}
   $('sum-backup').textContent=(S.lastBackup?'Last backup: '+new Date(S.lastBackup).toLocaleDateString():'No backup saved yet — tap to make one')+(DIRSTATE==='ok'?' · Save folder on':DIRSTATE==='needs'?' · Save folder needs reconnect':'');
   $('sum-clear').textContent='Erase everything on this device';
@@ -780,6 +781,58 @@ async function restoreFrom(text,msgId,tabAfter){msgId=msgId||'restoreMsg';var o=
   if(DB){await idbClear('files').catch(function(){});for(var j=0;j<docs.length;j++){var x=docs[j],r=await storeFile(x.id,bufs[x.id][0],bufs[x.id][1]||x.type,x.hash);x.stored=r.stored;x.gz=r.gz;x.mpath=''}}
   var lb=S.lastBackup;d.docs=docs;S=Object.assign(blankState(),d);S.tab=tabAfter||'tools';if(!S.lastBackup)S.lastBackup=lb;S.mirrorTrash=[];saveNow();init();if(DIRSTATE==='ok')mirrorAll(true);
   $('restoreMsg').innerHTML=$('restoreMsg2').innerHTML='';$(msgId).innerHTML='<div class="okbox">✓ Backup restored. '+n+' claim'+(n===1?'':'s')+(docs.length?' and '+docs.length+' document'+(docs.length===1?'':'s'):'')+' loaded (backup from '+esc(when)+'). All integrity checks passed.</div>';return true}
+// ---- Cloud Backup (Google Drive, website only). Uses Google Identity Services token client + Drive appDataFolder. ----
+var CLOUD={token:null,exp:0,fileId:null,gisP:null},CLOUD_FILE='va-to-z-backup.json',CLOUD_SCOPE='https://www.googleapis.com/auth/drive.appdata';
+function cloudOn(){return !IS_EXT&&!!GOOGLE_CLIENT_ID}
+function cloudSigned(){return !!CLOUD.token&&Date.now()<CLOUD.exp}
+function cloudMsg(h){$('cloudMsg').innerHTML=h}
+function renderCloud(){if(!$('tool-cloud'))return;var c=S.cloud||{};
+  $('cloudNotSet').hidden=IS_EXT||!!GOOGLE_CLIENT_ID;$('cloudSSN').checked=!!c.incSSN;
+  var on=cloudOn(),si=cloudSigned();
+  $('cloudIn').disabled=!on||si;$('cloudUp').disabled=!on||!si;$('cloudRestore').disabled=!on||!si;$('cloudOut').disabled=!on||!si;$('cloudSSN').disabled=!on;
+  $('cloudStatus').innerHTML=!on?'Cloud backup is turned off.':si?'✓ Signed in to Google Drive.':'Not signed in. Click <b>Sign in with Google</b> to start.';
+  $('cloudLast').innerHTML=c.lastBackup?'Last cloud backup: <b>'+esc(new Date(c.lastBackup).toLocaleString())+'</b>':'No cloud backup made from this device yet.';
+  var s=$('sum-cloud');if(s)s.textContent=IS_EXT?'Coming soon':!GOOGLE_CLIENT_ID?'Not set up':c.lastBackup?'Last: '+new Date(c.lastBackup).toLocaleDateString():'Optional'}
+function loadGIS(){if(window.google&&google.accounts&&google.accounts.oauth2)return Promise.resolve();if(CLOUD.gisP)return CLOUD.gisP;
+  CLOUD.gisP=new Promise(function(ok,no){var s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=function(){ok()};s.onerror=function(){CLOUD.gisP=null;no(new Error('Could not load Google sign-in. Check your internet connection.'))};document.head.appendChild(s)});return CLOUD.gisP}
+function cloudSignIn(){return loadGIS().then(function(){return new Promise(function(ok,no){
+  var tc=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:CLOUD_SCOPE,callback:function(r){if(!r||r.error||!r.access_token)return no(new Error(r&&r.error?'Google said: '+r.error:'Sign-in did not finish.'));
+      CLOUD.token=r.access_token;CLOUD.exp=Date.now()+((+r.expires_in||3600)-60)*1000;CLOUD.fileId=null;ok()},
+    error_callback:function(e){no(new Error(e&&e.type==='popup_closed'?'The Google window was closed before sign-in finished.':'Google sign-in was blocked or canceled ('+(e&&e.type||'error')+').'))}});
+  tc.requestAccessToken({prompt:''})})})}
+async function gfetch(url,opt){opt=opt||{};opt.headers=Object.assign({Authorization:'Bearer '+CLOUD.token},opt.headers||{});var r=await fetch(url,opt);
+  if(r.status===401){CLOUD.token=null;renderCloud();throw new Error('Your Google sign-in expired. Please sign in again.')}
+  if(!r.ok)throw new Error('Google Drive error '+r.status+'.');return r}
+async function cloudFind(){var q=encodeURIComponent("name='"+CLOUD_FILE+"' and trashed=false");
+  var r=await gfetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q='+q+'&fields=files(id,name,modifiedTime,size)&orderBy=modifiedTime desc');
+  var j=await r.json(),f=(j.files||[])[0]||null;CLOUD.fileId=f?f.id:null;return f}
+function stripSSN(d){var p=d.profile;if(!p)return d;if(p.f){delete p.f.ssn;delete p.f.spSsn}if(p.l&&Array.isArray(p.l.children))p.l.children.forEach(function(c){delete c.ssn});return d}
+async function buildCloudPayload(){ensureDocs();var files=[];for(var i=0;i<S.docs.length;i++){var d=S.docs[i],r=await readFile(d.id);files.push({id:d.id,hash:d.hash||await sha(r.buf),type:r.type,b64:await b64(r.buf)})}
+  var data=JSON.parse(JSON.stringify(S)),inc=!!(S.cloud&&S.cloud.incSSN);if(!inc)stripSSN(data);delete data.cloud;
+  return JSON.stringify({app:'VA to Z',version:2,exported:new Date().toISOString(),ssnIncluded:inc,dataHash:await sha(new TextEncoder().encode(JSON.stringify(data))),data:data,files:files})}
+async function cloudUpload(){var body=await buildCloudPayload();if(CLOUD.fileId===null)await cloudFind();
+  var meta=CLOUD.fileId?{name:CLOUD_FILE,mimeType:'application/json'}:{name:CLOUD_FILE,mimeType:'application/json',parents:['appDataFolder']},b='vaz'+Math.random().toString(36).slice(2);
+  var mp='--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(meta)+'\r\n--'+b+'\r\nContent-Type: application/json\r\n\r\n'+body+'\r\n--'+b+'--';
+  var url=CLOUD.fileId?'https://www.googleapis.com/upload/drive/v3/files/'+encodeURIComponent(CLOUD.fileId)+'?uploadType=multipart&fields=id,modifiedTime':'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,modifiedTime';
+  var r=await gfetch(url,{method:CLOUD.fileId?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body:mp});var j=await r.json();CLOUD.fileId=j.id||CLOUD.fileId;return j}
+function keepLocalSSN(old){var p=S.profile,o=old&&old.profile;if(!p||!o)return;p.f=p.f||{};o.f=o.f||{};['ssn','spSsn'].forEach(function(k){if(!p.f[k]&&o.f[k])p.f[k]=o.f[k]});
+  var oc=(o.l&&o.l.children)||[];((p.l&&p.l.children)||[]).forEach(function(c,i){if(c.ssn)return;var m=oc.filter(function(x){return x.name&&x.name===c.name})[0]||(!c.name?oc[i]:null);if(m&&m.ssn)c.ssn=m.ssn})}
+if($('tool-cloud')){
+  $('cloudSSN').onchange=function(){S.cloud=S.cloud||{};S.cloud.incSSN=this.checked;save()};
+  $('cloudIn').onclick=async function(){if(!cloudOn())return;cloudMsg('<p class="muted">Opening Google sign-in…</p>');try{await cloudSignIn();cloudMsg('<div class="okbox">✓ Signed in. You can back up now.</div>')}catch(e){cloudMsg('<span class="err">'+esc(e.message)+'</span>')}renderCloud()};
+  $('cloudUp').onclick=async function(){if(!cloudSigned())return renderCloud();cloudMsg('<p class="muted">Backing up to Google Drive…</p>');
+    try{var j=await cloudUpload();S.cloud=S.cloud||{};S.cloud.lastBackup=j.modifiedTime||new Date().toISOString();saveNow();renderCloud();
+      cloudMsg('<div class="okbox">✓ Backed up to your Google Drive ('+(S.cloud.incSSN?'SSNs included':'SSNs left out')+').</div>')}catch(e){cloudMsg('<span class="err">Cloud backup failed: '+esc(e.message)+'</span>')}};
+  $('cloudRestore').onclick=async function(){if(!cloudSigned())return renderCloud();cloudMsg('<p class="muted">Looking for your backup in Google Drive…</p>');
+    try{var f=await cloudFind();if(!f)return cloudMsg('<p>No cloud backup found in this Google account yet. Click <b>Back up now</b> first.</p>');
+      var r=await gfetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(f.id)+'?alt=media'),text=await r.text(),old=JSON.parse(JSON.stringify(S)),keep=S.cloud;
+      cloudMsg('<p class="muted">Found a backup saved '+esc(new Date(f.modifiedTime).toLocaleString())+'.</p>');
+      var done=await restoreFrom(text,'cloudMsg','tools');if(!done)return cloudMsg('<p class="muted">Restore canceled. Nothing changed.</p>');
+      keepLocalSSN(old);S.cloud=keep;saveNow();init();renderCloud();
+      cloudMsg('<div class="okbox">✓ Restored from your Google Drive backup (saved '+esc(new Date(f.modifiedTime).toLocaleString())+').</div>')}
+    catch(e){cloudMsg('<span class="err">Restore failed: '+esc(e.message)+'</span>')}};
+  $('cloudOut').onclick=function(){var t=CLOUD.token;CLOUD.token=null;CLOUD.fileId=null;try{if(t&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(t,function(){})}catch(e){}renderCloud();cloudMsg('<p class="muted">Signed out of Google. Your cloud backup is still in your Drive.</p>')};
+  renderCloud()}
 function wireRestore(inputId,msgId,tabAfter){$(inputId).onchange=function(){var f=this.files[0];if(!f)return;this.value='';$(msgId).innerHTML='<p class="muted">Checking backup…</p>';
   f.arrayBuffer().then(async function(buf){var u=new Uint8Array(buf),text;
     if(u[0]===0x1f&&u[1]===0x8b){if(!CAN_GZ)throw new Error('This browser can\'t open compressed (.vaz) backups. Try Chrome, Edge, or a current Safari.');text=new TextDecoder().decode(await gzip(buf,false))}else text=new TextDecoder().decode(buf);
