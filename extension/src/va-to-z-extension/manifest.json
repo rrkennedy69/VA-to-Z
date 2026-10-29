@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "VA to Z",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "VA disability claim helper with built-in VA.gov sync. Your data stays on this computer.",
   "icons": {
     "16": "icons/icon16.png",

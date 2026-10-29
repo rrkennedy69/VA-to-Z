@@ -27,8 +27,8 @@ function pairOK(list){var q={};list.forEach(function(e){var gg=bilGroup(e);q[gg]
 function evalChoice(all,inSet,steps){
   var bil=[],others=[];all.forEach(function(e,i){if(inSet[i])bil.push(e.pct);else others.push(e.pct)});
   var r={bilCombined:0,bilFactor:0,bilValue:0,exBilValue:0};
-  if(bil.length){r.bilCombined=combineTable(bil,steps,'Bilateral: ');r.bilFactor=r.bilCombined/10;r.bilValue=Math.floor(r.bilCombined*1.1+0.5+1e-9);
-    if(steps)steps.push('Bilateral factor: '+r.bilCombined+'% + 10% of it ('+h2(r.bilFactor)+') = '+h2(r.bilCombined+r.bilFactor)+'%, rounded to '+r.bilValue+'% and used as one rating');
+  if(bil.length){r.bilCombined=combineTable(bil,steps,'Bilateral: ');r.bilFactor=r.bilCombined/10;r.bilValue=Math.min(100,Math.floor(r.bilCombined*1.1+0.5+1e-9));
+    if(steps)steps.push('Bilateral factor: '+r.bilCombined+'% + 10% of it ('+h2(r.bilFactor)+') = '+h2(r.bilCombined+r.bilFactor)+'%, rounded to '+(r.bilValue<100?r.bilValue+'%':Math.floor(r.bilCombined*1.1+0.5+1e-9)+'%, capped at 100%')+' and used as one rating');
     r.exBilValue=fix(combineExact(bil)*1.1);}
   var offList=others.concat(bil.length?[r.bilValue]:[]);
   r.whole=combineTable(offList,steps,bil.length?'All: ':'');
