@@ -64,7 +64,7 @@
 <div id="profForm"></div>
 <div class="card tool"><h2>AI access to my profile</h2>
 <label class="chk big"><input type="checkbox" id="profAI"> <span>Let the AI use my profile automatically</span></label>
-<p class="muted">Off (the default): the AI helper in My Claims does <b>not</b> get your profile. It only gets that claim's rule text, checklist, notes, and your questions.</p>
+<p class="muted">Off (the default): the AI helper in My Claims does <b>not</b> get your profile. It only gets that claim's rule text, claim documents list, notes, and your questions.</p>
 <p class="muted">On: each time you chat, your profile is sent to xAI along with your question, so drafts can include your name, service dates, units, and so on.</p>
 <label class="chk" style="margin-left:24px"><input type="checkbox" id="profSSN" disabled> <span>Also include my SSN (and spouse and children SSNs)</span></label>
 <p class="muted" style="margin-left:24px">Off by default. Most drafts don't need it; you can write it on the final form yourself.</p>
@@ -90,7 +90,7 @@
 <div class="card step3"><h2 class="step"><span class="num">3</span>Step 3: Let's File It</h2>
 <p id="selInfo" class="muted">Choose a condition in Step 2 first.</p>
 <button class="b fileit" id="fileBtn" disabled>Let's File It</button>
-<p class="muted">This creates a claim workspace in My Claims with a document checklist, notes, and the AI helper.</p>
+<p class="muted">This creates a claim workspace in My Claims with a Claim Documents list, notes, and the AI helper.</p>
 </div>
 </section>
 
@@ -156,7 +156,7 @@
 </div></details>
 
 <details class="card tool tcard" id="tool-backup"><summary><span class="smct">Backup and Restore<span class="tsum" id="sum-backup"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">
-<p><b>What is a backup?</b> It is one file (ending in .vaz) with everything you've entered here: your profile, claims, notes, checklists, AI chats, calculator, settings, and your documents. It is compressed and checked for damage when you restore it.</p>
+<p><b>What is a backup?</b> It is one file (ending in .vaz) with everything you've entered here: your profile, claims, notes, claim documents, AI chats, calculator, settings, and your documents. It is compressed and checked for damage when you restore it.</p>
 <p><b>Why make one?</b> Your work is saved only inside this browser on this device. It can be lost if you clear your browsing history, use private mode, or the browser cleans up storage. A backup also lets you move your work to a new phone or computer.</p>
 <p>Make a new backup after big changes. Keep the file somewhere safe (like a USB drive or your personal cloud storage).</p>
 <p class="muted" id="lastBackup">No backup saved yet on this device.</p>
