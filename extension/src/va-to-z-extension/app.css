@@ -199,3 +199,8 @@ html.ispopup .stbox{max-height:calc(100vh - 24px);padding:14px 16px}
 .audittxt{white-space:pre-wrap;line-height:1.5;max-height:520px;overflow:auto;font-size:.95rem}
 header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text-align:right;border-left:0;border-right:3px solid #ffc72c;padding:0 10px 0 0;margin:0;max-width:none;font-size:.78rem}
 @media(max-width:900px){header .hr .tag{font-size:.7rem}}
+.cloudhdr{background:none;border:0;color:#e6efff !important;opacity:1 !important;font:inherit;font-size:.74rem;font-weight:600;padding:1px 0 0;cursor:default;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.cloudhdr.chip{cursor:pointer;color:#162e51;background:#ffc72c;border-radius:999px;padding:2px 9px;margin-top:3px;font-weight:700}.cloudhdr.chip:focus-visible{outline:3px solid #fff}
+@media(max-width:600px){.cloudhdr{font-size:.64rem}.cloudhdr.chip{padding:1px 7px}}html.ispopup .cloudhdr{font-size:.64rem}
+.gscard{border-top-color:#4285f4}.gsstatus{font-weight:700}.gsbtn{display:inline-flex;align-items:center;gap:10px;justify-content:center}.gmark{background:#fff;color:#4285f4;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-weight:900}
+.nomedhint{font-size:.85rem;color:#8a4b00;font-weight:600;margin:2px 0 6px}

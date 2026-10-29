@@ -207,6 +207,11 @@ html.ispopup .stbox{max-height:calc(100vh - 24px);padding:14px 16px}
 .audittxt{white-space:pre-wrap;line-height:1.5;max-height:520px;overflow:auto;font-size:.95rem}
 header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text-align:right;border-left:0;border-right:3px solid #ffc72c;padding:0 10px 0 0;margin:0;max-width:none;font-size:.78rem}
 @media(max-width:900px){header .hr .tag{font-size:.7rem}}
+.cloudhdr{background:none;border:0;color:#e6efff !important;opacity:1 !important;font:inherit;font-size:.74rem;font-weight:600;padding:1px 0 0;cursor:default;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.cloudhdr.chip{cursor:pointer;color:#162e51;background:#ffc72c;border-radius:999px;padding:2px 9px;margin-top:3px;font-weight:700}.cloudhdr.chip:focus-visible{outline:3px solid #fff}
+@media(max-width:600px){.cloudhdr{font-size:.64rem}.cloudhdr.chip{padding:1px 7px}}html.ispopup .cloudhdr{font-size:.64rem}
+.gscard{border-top-color:#4285f4}.gsstatus{font-weight:700}.gsbtn{display:inline-flex;align-items:center;gap:10px;justify-content:center}.gmark{background:#fff;color:#4285f4;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-weight:900}
+.nomedhint{font-size:.85rem;color:#8a4b00;font-weight:600;margin:2px 0 6px}
 </style>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#162e51">
@@ -217,7 +222,7 @@ header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 </head>
 <body>
-<div class="top"><header><div class="hl"><div class="brandcol"><h1 class="brand"><svg class="logo" role="img" aria-label="VA to Z" xmlns="http://www.w3.org/2000/svg" viewBox="18 18 384 164"><title>VA to Z</title><circle cx="100" cy="100" r="78" fill="#fff"/><text x="100" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#162e51" text-anchor="middle" letter-spacing="-3">VA</text><text x="200" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#fff">to Z</text></svg></h1><div id="welcome" class="welcome" aria-live="polite" hidden></div></div></div><div class="hr"><button type="button" id="hdrRing" class="hdrring" aria-haspopup="dialog"></button><button id="openWin" class="popwin" type="button" title="Open in window" aria-label="Open VA to Z in its own window"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg><span> Open in window</span></button><button type="button" id="donateBtn" class="donbtn" aria-haspopup="dialog" aria-label="Donate" title="Donate"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-10-9.3C.4 8.5 2.2 4.5 6 4.5c2.1 0 3.4 1.1 4 2.2.6-1.1 1.9-2.2 4-2.2 3.8 0 5.6 4 4 7.2C19.5 16.4 12 21 12 21z"/></svg><span class="dontxt">Donate</span></button><div class="hrsave"><div id="saveInd" class="saveind" aria-live="polite">All changes saved</div></div><p class="tag">Made by a Marine Veteran who strives to help fellow veterans get the benefits they've earned. <b>Semper Fi.</b></p></div></header>
+<div class="top"><header><div class="hl"><div class="brandcol"><h1 class="brand"><svg class="logo" role="img" aria-label="VA to Z" xmlns="http://www.w3.org/2000/svg" viewBox="18 18 384 164"><title>VA to Z</title><circle cx="100" cy="100" r="78" fill="#fff"/><text x="100" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#162e51" text-anchor="middle" letter-spacing="-3">VA</text><text x="200" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#fff">to Z</text></svg></h1><div id="welcome" class="welcome" aria-live="polite" hidden></div></div></div><div class="hr"><button type="button" id="hdrRing" class="hdrring" aria-haspopup="dialog"></button><button id="openWin" class="popwin" type="button" title="Open in window" aria-label="Open VA to Z in its own window"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg><span> Open in window</span></button><button type="button" id="donateBtn" class="donbtn" aria-haspopup="dialog" aria-label="Donate" title="Donate"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-10-9.3C.4 8.5 2.2 4.5 6 4.5c2.1 0 3.4 1.1 4 2.2.6-1.1 1.9-2.2 4-2.2 3.8 0 5.6 4 4 7.2C19.5 16.4 12 21 12 21z"/></svg><span class="dontxt">Donate</span></button><div class="hrsave"><div id="saveInd" class="saveind" aria-live="polite">All changes saved</div><button type="button" id="cloudHdr" class="cloudhdr" hidden aria-live="polite"></button></div><p class="tag">Made by a Marine Veteran who strives to help fellow veterans get the benefits they've earned. <b>Semper Fi.</b></p></div></header>
 <nav id="nav">
 <button data-t="setup">1. Setup</button><button data-t="profile">2. Profile</button><button data-t="lookup">3. Conditions</button><button data-t="claims">4. My Claims</button><button data-t="status">5. Claims Status</button><button data-t="docs">6. Documents</button><button data-t="tools">Tools</button>
 </nav><div id="dirBanner"></div></div>
@@ -227,6 +232,16 @@ header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text
 <div class="warn" style="margin-bottom:14px"><b>Important:</b> This tool is not legal or medical advice. It is not made by, affiliated with, or endorsed by the U.S. Department of Veterans Affairs (VA). Only VA decides ratings and payments. For free help, contact an accredited Veterans Service Officer (VSO).</div>
 
 <section id="setup">
+<div class="card tool gscard" id="setup-google"><h2>Keep your work safe with Google (optional)</h2>
+<div class="ext-only note"><b>Google backup is coming to the extension.</b> For now, use <b>Download Backup</b> in Tools.</div>
+<div class="web-only">
+<div id="gsNotSet" class="note" hidden><b>Google backup is coming soon.</b> You'll be able to sign in once and have your work backed up automatically. For now, use <b>Download Backup</b> in Tools.</div>
+<div id="gsLive"><p>Sign in once. After that, VA to Z backs up your work to <b>your own Google Drive</b> automatically. No Save or Back up buttons to remember. On a new phone or computer, sign in and your work comes back.</p>
+<p class="muted" style="font-size:.85rem">It goes to a hidden app folder only VA to Z can use. It never goes to us. Social Security numbers stay on this device unless you choose otherwise in Tools.</p>
+<p id="gsStatus" class="gsstatus"></p><p class="muted" id="gsLast" style="font-size:.85rem"></p>
+<button type="button" class="b bigbtn gsbtn" id="gsIn"><span class="gmark" aria-hidden="true">G</span> Sign in with Google</button>
+<div id="gsMsg" aria-live="polite" style="margin-top:8px"></div></div>
+</div></div>
 <div class="card tool" id="setup-restore" style="border-top-color:var(--ok)"><h2>Already have a backup? Restore your data</h2>
 <p>New phone or computer? Coming back after clearing your browser? If you saved a VA to Z backup file before, you can bring back your claims, notes, chats, and settings in one step.</p>
 <p class="muted">New here? Skip this and start below.</p>
@@ -307,8 +322,9 @@ header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text
 
 <section id="docs">
 <div class="card"><h2>My Documents</h2>
-<p>Keep copies of your VA paperwork in one place. Files are saved only on this device, in this browser (and in your save folder if you set one up in Tools). They are included in full backups.</p>
+<p>Keep copies of your VA paperwork in one place: decision letters, code sheets, lay and buddy statements, your own statements, DD-214, and appeal papers. Files are saved only on this device, in this browser (and in your save folder if you set one up in Tools). They are included in full backups.</p>
 <p class="muted">Add PDFs, photos, or documents. On a phone, use <b>Take photo</b> to snap a letter with your camera. Tap a section to open it.</p>
+<div class="note" id="noMedNote"><b>No medical records here.</b> To protect your privacy, VA to Z does not store medical records (service treatment records, VA or private treatment records, C&amp;P exams, DBQs, nexus letters, test results, or your C-file). Keep those with your doctor, on VA.gov, or in your own files.</div>
 <p id="docTotal" class="muted"></p><div id="docWarn"></div>
 <label class="chk"><input type="checkbox" id="docAI"> <span>Let the AI see the <b>names and notes</b> of documents linked to a claim (never the file contents)</span></label>
 </div>
@@ -375,16 +391,14 @@ header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text
 <div id="saveStatus" class="muted" style="margin-top:8px"></div>
 </div></details>
 
-<details class="card tool tcard" id="tool-cloud"><summary><span class="smct">Cloud Backup (Google Drive)<span class="tsum" id="sum-cloud"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">
-<div id="cloudExtNote" class="note ext-only"><b>Cloud backup is coming to the extension.</b> For now, use <b>Download Backup</b> above, or open the VA to Z website to back up to Google Drive. (Chrome extensions need a different Google sign-in setup.)</div>
+<details class="card tool tcard" id="tool-cloud"><summary><span class="smct">Google Backup<span class="tsum" id="sum-cloud"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">
+<div id="cloudExtNote" class="note ext-only"><b>Google backup is coming to the extension.</b> For now, use <b>Download Backup</b> above, or open the VA to Z website to back up to Google Drive.</div>
 <div class="web-only">
-<p>Keep a copy of your work in <b>your own Google Drive</b>. It goes into a hidden app folder that only VA to Z can see. It does not show up in your Drive file list, and it never goes to us. This is optional.</p>
-<p class="muted">There is one backup file. Each time you click <b>Back up now</b>, it is replaced with your newest work.</p>
-<div id="cloudNotSet" class="warn" hidden><b>Cloud backup is not set up yet.</b> This copy of VA to Z isn't connected to Google yet, so these buttons are turned off. Use <b>Download Backup</b> above to keep your work safe.</div>
-<p id="cloudStatus" class="muted">Not signed in.</p>
-<p class="muted" id="cloudLast">No cloud backup made from this device yet.</p>
-<label class="chk"><input type="checkbox" id="cloudSSN"> Include Social Security numbers in the cloud backup (off = SSNs stay only on this device)</label>
-<div style="margin-top:8px"><button class="b" id="cloudIn">Sign in with Google</button><button class="b" id="cloudUp">⬆ Back up now</button><button class="b alt" id="cloudRestore">Restore from Google Drive</button><button class="b alt sm" id="cloudOut">Sign out</button></div>
+<div id="cloudNotSet" class="note" hidden><b>Google backup is coming soon.</b> Until then, use <b>Download Backup</b> above to keep a copy of your work.</div>
+<p id="cloudStatus"></p><p class="muted" id="cloudLast"></p>
+<p class="muted">You turn this on once at the top of <b>Setup</b>. After that it backs up automatically a few seconds after you make changes and when you leave the page.</p>
+<label class="chk"><input type="checkbox" id="cloudSSN"> Include Social Security numbers in the Google backup (off = SSNs stay only on this device)</label>
+<div style="margin-top:8px"><button class="b alt sm" id="cloudIn">Sign in with Google</button><button class="b alt sm" id="cloudUp">Back up now</button><button class="b alt sm" id="cloudRestore">Restore from Google</button><button class="b alt sm" id="cloudOut">Turn off on this device</button></div>
 <div id="cloudMsg" aria-live="polite" style="margin-top:8px"></div>
 </div>
 </div></details>
@@ -429,6 +443,13 @@ header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text
 
 </section>
 </main>
+<div id="medModal" class="dmodal" role="dialog" aria-modal="true" aria-labelledby="medTitle" hidden><div class="dbox">
+<h2 id="medTitle">VA to Z no longer keeps medical records</h2>
+<p>To better protect your privacy, VA to Z no longer stores medical records. This information you added earlier will be removed from this app:</p>
+<ul id="medList"></ul>
+<p class="muted">Download it first if you want to keep a copy. They are already left out of backups, Google backup, and the AI. Your lay, buddy, and personal statements, DD-214, and VA letters are not affected.</p>
+<div style="margin-top:8px"><button type="button" class="b" id="medDl">⬇ Download first</button><button type="button" class="b alt" id="medRm">Remove from VA to Z</button></div>
+<div id="medMsg" aria-live="polite" style="margin-top:8px"></div></div></div>
 <div id="stepModal" class="dmodal" role="dialog" aria-modal="true" aria-labelledby="stTitle" hidden><div class="dbox stbox">
 <button type="button" class="dclose" id="stClose" aria-label="Close">✕</button><p class="muted" id="stKicker" style="margin:0 0 2px"></p><h2 id="stTitle" style="margin-top:0" tabindex="-1"></h2><div id="stBody"></div>
 <div class="stnav"><button type="button" class="b alt sm" id="stPrev">‹ Previous step</button><button type="button" class="b alt sm" id="stNext">Next step ›</button></div></div></div>
@@ -570,7 +591,7 @@ function saveNow(){clearTimeout(saveT);try{renderWelcome()}catch(e){}if(!BOOTED)
   try{localStorage.setItem(KEY,json);okLS=true}catch(e){}
   if(DB){idbPut('kv','state',json).then(function(){savedOK()},function(e){if(okLS)savedOK('backup copy only');else saveFail(e)})}
   else if(okLS)savedOK('basic storage');else saveFail(new Error(DBERR||'storage blocked'));
-  scheduleMirror();renderRemind()}
+  scheduleMirror();renderRemind();try{cloudOnSave()}catch(e){}}
 function welcomeName(){var p=S.profile&&S.profile.f||{},n=String(p.first||'').trim();if(!n){var v=S.vaData&&S.vaData.profile;n=String(v&&v.first||'').trim()}
   return n.toLowerCase().replace(/(^|[\s\-'’])([a-z])/g,function(m,a,b){return a+b.toUpperCase()})}
 function renderWelcome(){var el=$('welcome');if(!el)return;var n=welcomeName();el.hidden=!n;el.textContent=n?'Welcome, '+n:'';el.title=n?'Welcome, '+n:''}
@@ -580,7 +601,7 @@ async function boot(){DB=await idbOpen();var a=null,b=null;
   try{var l=localStorage.getItem(KEY);if(l)b=JSON.parse(l)}catch(e){}
   var pick=(a&&b)?(((b._savedAt||'')>(a._savedAt||''))?b:a):(a||b);
   if(pick)for(var k in pick)S[k]=pick[k];
-  BOOTED=true;init();if(DB&&!a&&b)saveNow(); // one-time migration from localStorage
+  BOOTED=true;init();try{cloudBoot()}catch(e){}if(DB&&!a&&b)saveNow(); // one-time migration from localStorage
   requestPersist();await dirBoot();renderRemind();document.body.setAttribute('data-ready','1');try{applyIntent()}catch(e){}}
 /* persistent storage */
 async function requestPersist(){var el=$('storageInfo');if(!el)return;var h='';
@@ -733,15 +754,14 @@ var PSCHEMA=[
  {id:'service',t:'Military service',f:[['branch','Branch','select',['']. concat(BRANCHES)],['component','Component','select',['','Active duty','Reserve','National Guard']],['serviceNum','Service number (if different from SSN)'],['rank','Rank / pay grade at separation'],['mos','Job: MOS / rating / AFSC'],['units','Units and duty stations','textarea'],['pow','Were you ever a prisoner of war (POW)?','select',['','No','Yes']],['powDates','If POW: dates and place'],['exposures','Exposures (check all that apply)','checks',['Burn pits / airborne hazards (PACT Act)','Agent Orange / herbicides','Gulf War illness / Southwest Asia','Radiation','Camp Lejeune contaminated water','Military sexual trauma (MST)','Other toxic exposure']],['exposureDetail','Exposure details (where, when)','textarea']],
   l:[{k:'periods',t:'Service periods',add:'+ Add another service period',f:[['branch','Branch','select',['']. concat(BRANCHES)],['component','Component','select',['','Active duty','Reserve','National Guard']],['entry','Entry date','date'],['sep','Separation date','date'],['discharge','Character of discharge','select',['','Honorable','General (under honorable conditions)','Other than honorable','Bad conduct','Dishonorable','Uncharacterized','Still serving']],['sepType','Separation type / reason','select',['','Completion of service (ETS)','Retirement','Medical separation','Medical retirement','Early release','Still serving','Other']]]},
      {k:'deployments',t:'Deployments / combat zones',add:'+ Add a deployment',f:[['place','Location / operation'],['from','From','date'],['to','To','date'],['combat','Combat zone?','select',['','Yes','No']]]}]},
- {id:'vastatus',t:'Current VA status',f:[['rating','Current VA combined rating','select',['','None / not rated','0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','100%','100% (TDIU)']],['claims','Existing claims and claim numbers','textarea'],['retPay','Receiving military retired pay?','select',['','No','Yes']],['sepPay','Received separation, severance, or disability severance pay?','select',['','No','Yes']],['sepPayDetail','If yes: type, amount, date'],['vha','Enrolled in VA health care?','select',['','No','Yes','Applied / pending']],['vaFacility','VA medical center / clinic you use']]},
+ {id:'vastatus',t:'Current VA status',f:[['rating','Current VA combined rating','select',['','None / not rated','0%','10%','20%','30%','40%','50%','60%','70%','80%','90%','100%','100% (TDIU)']],['claims','Existing claims and claim numbers','textarea'],['retPay','Receiving military retired pay?','select',['','No','Yes']],['sepPay','Received separation, severance, or disability severance pay?','select',['','No','Yes']],['sepPayDetail','If yes: type, amount, date']]},
  {id:'dependents',t:'Dependents',f:[['marital','Marital status','select',['','Never married','Married','Separated','Divorced','Widowed']],['spFirst','Spouse first name'],['spLast','Spouse last name'],['spDob','Spouse date of birth','date'],['spSsn','Spouse SSN','secret'],['marDate','Date of marriage','date'],['marPlace','Place of marriage (city, state)'],['spVet','Is your spouse a Veteran?','select',['','No','Yes']],['parents','Dependent parents (names, how you support them)','textarea']],
   l:[{k:'children',t:'Children',add:'+ Add a child',f:[['name','Full name'],['dob','Date of birth','date'],['ssn','SSN','secret'],['status','Status','select',['','Under 18','18–23 and in school','Seriously disabled before 18 (helpless child)','Stepchild','Adopted']],['school','School name (if 18–23)']]}]},
  {id:'employment',t:'Employment',f:[['employer','Current employer'],['jobTitle','Job title'],['hours','Hours per week','number'],['employedSince','Working there since','date'],['missedWork','Work missed because of your conditions (days, reasons, accommodations)','textarea'],['lastWorked','If not working: date you last worked full time','date']]},
- {id:'providers',t:'Medical providers',f:[],l:[{k:'providers',t:'Doctors, clinics, and hospitals (VA and private)',add:'+ Add a provider',f:[['name','Name of doctor or facility'],['address','Address'],['phone','Phone','tel'],['from','Treatment from','date'],['to','Treatment to (leave blank if ongoing)','date'],['conditions','Conditions treated','textarea']]}]},
  {id:'rep',t:'Representative',f:[['repType','Do you have a representative?','select',['','No','Veterans Service Organization (VSO)','Attorney','Claims agent']],['repName','Representative name / organization'],['repPhone','Representative phone','tel'],['poa','Power of attorney filed (VA Form 21-22 or 21-22a)?','select',['','No','Yes','Not sure']],['poaCode','POA code (if known)']]}
 ];
 var BANK_KEYS=['bankName','acctType','routing','acct']; // removed feature: purged from saved data on load
-function ensureProfile(){var p=S.profile||(S.profile={});p.f=p.f||{};p.l=p.l||{};['periods','deployments','children','providers'].forEach(function(k){if(!Array.isArray(p.l[k]))p.l[k]=[]});if(!p.l.periods.length)p.l.periods.push({});BANK_KEYS.forEach(function(k){delete p.f[k]});p.ai=!!p.ai;p.aiSSN=!!p.aiSSN;return p}
+function ensureProfile(){var p=S.profile||(S.profile={});p.f=p.f||{};p.l=p.l||{};['periods','deployments','children'].forEach(function(k){if(!Array.isArray(p.l[k]))p.l[k]=[]});provSplit(p);if(!p.l.periods.length)p.l.periods.push({});BANK_KEYS.forEach(function(k){delete p.f[k]});p.ai=!!p.ai;p.aiSSN=!!p.aiSSN;return p}
 function fieldHTML(f,val,attr,idp){var k=f[0],lab=f[1],ty=f[2]||'text',opts=f[3],id=idp+k,cls=f[4]?' class="'+f[4]+'"':'';
   if(ty==='check')return '<div class="pf full"'+cls+'><label class="chk"><input type="checkbox" '+attr+(val?' checked':'')+'> <span>'+esc(lab)+'</span></label></div>';
   if(ty==='checks'){var arr=Array.isArray(val)?val:[];return '<div class="pf full"><span class="plab">'+esc(lab)+'</span><div class="pchecks">'+opts.map(function(o){return '<label class="chk"><input type="checkbox" '+attr+' data-opt="'+esc(o)+'"'+(arr.indexOf(o)>=0?' checked':'')+'> <span>'+esc(o)+'</span></label>'}).join('')+'</div></div>'}
@@ -780,7 +800,28 @@ function profileForAI(){var p=ensureProfile();if(!p.ai)return '';var out=[];
   return out.length?'\n\n=== Veteran profile (shared by the veteran for this chat; SSN '+(p.aiSSN?'included at the veteran\'s request':'withheld')+') ===\n'+out.join('\n\n'):''}
 
 /* ---------- documents ---------- */
-var CATS=[['decision','Decision Letters'],['codesheet','Rating Code Sheets'],['buddy','Buddy/Lay Statements (21-10210)'],['personal','Personal Statements (21-4138)'],['vamed','Medical Records (VA)'],['privmed','Private Medical Records'],['nexus','Nexus Letters / IMOs'],['dbq','DBQs'],['str','Service Treatment Records'],['dd214','DD-214 & Service Records'],['cfile','C-File'],['appeal','Hearing / Appeal Documents'],['other','Other']];
+var CATS=[['decision','Decision Letters'],['codesheet','Rating Code Sheets'],['buddy','Buddy/Lay Statements (21-10210)'],['personal','Personal Statements (21-4138)'],['dd214','DD-214 & Service Records'],['appeal','Hearing / Appeal Documents'],['other','Other (no medical records)']];
+// 1.0.13: VA to Z no longer stores medical records. These old categories are removed; any docs in them are pulled out of S.docs
+// into S.medPending (never shown, backed up, mirrored, or sent to AI) until the user exports/removes them via the one-time notice.
+var MED_CATS={vamed:'Medical Records (VA)',privmed:'Private Medical Records',nexus:'Nexus Letters / IMOs',dbq:'DBQs',str:'Service Treatment Records',cfile:'C-File'};
+function isMedDoc(d){return !!(d&&MED_CATS[d.cat])}
+function medSplit(){if(!Array.isArray(S.docs))return;var m=S.docs.filter(isMedDoc);if(!m.length)return;S.medPending=(Array.isArray(S.medPending)?S.medPending:[]).concat(m);S.docs=S.docs.filter(function(d){return !isMedDoc(d)})}
+var PROV_KEYS=[['name','Name of doctor or facility'],['address','Address'],['phone','Phone'],['from','Treatment from'],['to','Treatment to'],['conditions','Conditions treated']];
+function provSplit(p){var L=Array.isArray(p.l.providers)?p.l.providers.filter(function(x){return x&&PROV_KEYS.some(function(k){return x[k[0]]})}):[],f={};
+  ['vha','vaFacility'].forEach(function(k){if(p.f[k])f[k]=p.f[k];delete p.f[k]});delete p.l.providers;
+  if(L.length||Object.keys(f).length){var o=S.provPending||{list:[],f:{}};o.list=o.list.concat(L);Object.assign(o.f,f);S.provPending=o}}
+function provText(){var o=S.provPending;if(!o)return '';var t='VA to Z - medical provider info exported '+new Date().toLocaleString()+'\n\n';
+  if(o.f.vha)t+='Enrolled in VA health care: '+o.f.vha+'\n';if(o.f.vaFacility)t+='VA medical center / clinic: '+o.f.vaFacility+'\n';
+  o.list.forEach(function(x,i){t+='\nProvider #'+(i+1)+'\n'+PROV_KEYS.filter(function(k){return x[k[0]]}).map(function(k){return '  '+k[1]+': '+x[k[0]]}).join('\n')+'\n'});return t}
+function hasProvPending(){var o=S.provPending;return !!(o&&((o.list&&o.list.length)||Object.keys(o.f||{}).length))}
+function medNotice(){var L=Array.isArray(S.medPending)?S.medPending:[];var md=$('medModal');if(!md)return;var hp=hasProvPending();if(!L.length&&!hp){md.hidden=true;return}
+  $('medList').innerHTML=L.map(function(d){return '<li>'+esc(d.name)+' <span class="muted">('+esc(MED_CATS[d.cat]||'Medical')+')</span></li>'}).join('')+(hp?'<li>Your Profile <b>medical provider</b> info'+(S.provPending.list.length?' ('+S.provPending.list.length+' provider'+(S.provPending.list.length===1?'':'s')+')':'')+(S.provPending.f.vha||S.provPending.f.vaFacility?' and VA health care answers':'')+' <span class="muted">(Profile)</span></li>':'');$('medMsg').innerHTML='';md.hidden=false}
+async function medDownload(){var L=S.medPending||[],n=0;for(var i=0;i<L.length;i++){try{var r=await readFile(L[i].id),url=URL.createObjectURL(new Blob([r.buf],{type:r.type||L[i].type||'application/octet-stream'}));
+    var a=document.createElement('a');a.href=url;a.download=L[i].name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(u){return function(){URL.revokeObjectURL(u)}}(url),60000);n++;await new Promise(function(r){setTimeout(r,300)})}catch(e){}}
+  if(hasProvPending()){var pu=URL.createObjectURL(new Blob([provText()],{type:'text/plain'})),pa=document.createElement('a');pa.href=pu;pa.download='va-to-z-medical-providers.txt';document.body.appendChild(pa);pa.click();pa.remove();setTimeout(function(){URL.revokeObjectURL(pu)},60000);n++}
+  $('medMsg').innerHTML='<div class="okbox">Started '+n+' download'+(n===1?'':'s')+'. Check your Downloads folder, then tap <b>Remove from VA to Z</b>.</div>';S.medExported=true;save()}
+async function medRemove(){var L=S.medPending||[];for(var i=0;i<L.length;i++){await idbDel('files',L[i].id).catch(function(){});if(L[i].mpath){S.mirrorTrash=S.mirrorTrash||[];S.mirrorTrash.push(L[i].mpath)}}
+  var n=L.length;S.medPending=[];delete S.provPending;S.medRemoved=(S.medRemoved||0)+n;saveNow();medNotice();renderDocs();toolSums()}
 function catName(id){for(var i=0;i<CATS.length;i++)if(CATS[i][0]===id)return CATS[i][1];return 'Other'}
 function catFolder(id){return catName(id).replace(/[\\/:*?"<>|]/g,'-')}
 function ensureDocs(){if(!Array.isArray(S.docs))S.docs=[];if(!Array.isArray(S.mirrorTrash))S.mirrorTrash=[];S.docAI=!!S.docAI}
@@ -814,8 +855,10 @@ $('docList').addEventListener('click',async function(e){var b=e.target.closest('
     else if(act==='del'){if(!confirm('Delete "'+d.name+'"? This removes it from this device'+(DIRSTATE==='ok'?' and your save folder':'')+'. It cannot be undone unless you have a backup.'))return;
       await idbDel('files',d.id).catch(function(){});if(d.mpath)S.mirrorTrash.push(d.mpath);S.docs=S.docs.filter(function(x){return x.id!==d.id});saveNow();renderDocs()}}
   catch(err){alert('Sorry: '+err.message)}});
+$('medDl').onclick=function(){medDownload()};
+$('medRm').onclick=function(){if(!S.medExported&&!confirm('Remove this medical information without downloading it? This cannot be undone unless you have an older backup file.'))return;medRemove()};
 $('docAI').addEventListener('change',function(){S.docAI=this.checked;save()});
-function docsForAI(c){ensureDocs();if(!S.docAI)return '';var L=S.docs.filter(function(d){return d.claim===c.id});if(!L.length)return '';
+function docsForAI(c){ensureDocs();if(!S.docAI)return '';var L=S.docs.filter(function(d){return d.claim===c.id&&!isMedDoc(d)});if(!L.length)return '';
   return '\n\n=== Documents the veteran has for this claim (names and notes only; the AI cannot see file contents) ===\n'+L.map(function(d){return '- ['+catName(d.cat)+'] '+d.name+' (added '+d.added.slice(0,10)+')'+(d.note?' — note: '+d.note:'')}).join('\n')}
 /* reminder banner */
 function renderRemind(){var el=$('remind');if(!el||!BOOTED)return;ensureDocs();var now=Date.now(),lb=S.lastBackup?Date.parse(S.lastBackup):0,has=S.docs.length||S.order.length;
@@ -858,7 +901,7 @@ async function getPath(root,parts,create){var d=root;for(var i=0;i<parts.length-
 async function writeTo(root,path,data){var p=await getPath(root,path.split('/'),true);var fh=await p.dir.getFileHandle(p.name,{create:true});var w=await fh.createWritable();await w.write(data);await w.close()}
 async function removeAt(root,path){try{var p=await getPath(root,path.split('/'),false);await p.dir.removeEntry(p.name)}catch(e){}}
 async function existsAt(root,path){try{var p=await getPath(root,path.split('/'),false);await p.dir.getFileHandle(p.name);return true}catch(e){return false}}
-function mirrorJSON(){var copy=JSON.parse(JSON.stringify(S));delete copy.mirrorTrash;return JSON.stringify({app:'VA to Z',version:2,savedAt:new Date().toISOString(),readme:'VA to Z data (all app data; documents are in the Documents folder next to this file). You can restore it from Tools > Backup and Restore > Restore from save folder.',data:copy},null,2)}
+function mirrorJSON(){var copy=JSON.parse(JSON.stringify(S));delete copy.mirrorTrash;delete copy.medPending;delete copy.provPending;return JSON.stringify({app:'VA to Z',version:2,savedAt:new Date().toISOString(),readme:'VA to Z data (all app data; documents are in the Documents folder next to this file). You can restore it from Tools > Backup and Restore > Restore from save folder.',data:copy},null,2)}
 async function mirrorAll(full){if(DIRSTATE!=='ok'||!DIR)return;if(mirBusy){scheduleMirror();return}mirBusy=true;
   try{ensureDocs();while(S.mirrorTrash.length){await removeAt(DIR,S.mirrorTrash.shift())}
     var used={};S.docs.forEach(function(d){if(d.mpath&&d.mpath.indexOf('Documents/'+catFolder(d.cat)+'/')===0)used[d.mpath.toLowerCase()]=d.id});
@@ -1219,8 +1262,8 @@ function renderClaim(){
   '<div class="row"><div><label for="cStat">Status</label><select id="cStat">'+STAT.map(function(s){return '<option'+(s===c.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div><div><label for="cDen">Denied before?</label><select id="cDen"><option value="0">No / first time</option><option value="1"'+(c.prevDenied?' selected':'')+'>Yes (use 21-0995 Supplemental)</option></select></div></div>'+
   '<details style="margin-top:10px"><summary><b>Official rating text (38 CFR)</b></summary><div class="reg">'+(e?regHTML(e):'')+'</div></details></div>'+
   '<div class="card"><h3>Document checklist</h3><div id="chk">'+c.checklist.map(function(x,i){return '<div class="chk"><input type="checkbox" data-ci="'+i+'"'+(x.d?' checked':'')+' aria-label="done"><textarea rows="2" data-ct="'+i+'">'+esc(x.t)+'</textarea><button class="b alt sm" data-cx="'+i+'" aria-label="remove">✕</button></div>'}).join('')+'</div><button class="b alt sm" id="chkAdd">+ Add item</button></div>'+
-  '<div class="card"><h3>My notes</h3><p class="muted">Timeline, symptoms, how it affects work and daily life, doctors seen.</p><textarea id="cNotes">'+esc(c.notes)+'</textarea>'+
-  '<h3>Evidence log</h3><p class="muted">No uploads here. Write down what you have and where it is (e.g., "MRI 2024 – in VA Blue Button download", "Buddy statement from Sgt. Lee – requested 10/1").</p><textarea id="cEvid">'+esc(c.evidence)+'</textarea></div>'+
+  '<div class="card"><h3>My notes</h3><p class="muted">Timeline, how it affects work and daily life.</p><p class="nomedhint">Don\'t paste medical records or treatment details here.</p><textarea id="cNotes">'+esc(c.notes)+'</textarea>'+
+  '<h3>Evidence log</h3><p class="muted">No uploads here. Write down what you have and where it is (e.g., "DD-214 – in my files", "Buddy statement from Sgt. Lee – requested 10/1").</p><p class="nomedhint">Don\'t paste medical records or treatment details here.</p><textarea id="cEvid">'+esc(c.evidence)+'</textarea></div>'+
   '<div class="card"><h3>AI claim helper</h3><p class="muted">Grok gets this condition\'s 38 CFR text, your notes, evidence log, and checklist. Uses your xAI key (billed by xAI). Double-check everything; AI can make mistakes. Your profile is sent only if you turn on AI access in the Profile tab.</p>'+
   '<div class="chips"><span class="chip" data-p="List the documents and evidence I still need for this claim, based on my notes and checklist.">What docs do I need?</span><span class="chip" data-p="Help me draft my personal statement (VA Form 21-10210) using my notes. Ask me questions about anything missing.">Draft my statement</span><span class="chip" data-p="Draft a buddy statement template a fellow service member or family member could fill in for this condition.">Buddy statement</span><span class="chip" data-p="Draft a polite letter asking my doctor for a nexus opinion, including what the opinion should address and the at least as likely as not standard.">Nexus letter request</span><span class="chip" data-p="Explain in plain language which rating level might fit my symptoms based on the regulation text, and what the examiner will look for.">Which rating level?</span></div>'+
   '<div class="chat" id="chat">'+(c.chat.length?c.chat.map(function(m){return '<div class="msg '+m.role+'">'+esc(m.content)+'</div>'}).join(''):'<p class="muted">No messages yet.</p>')+'</div>'+
@@ -1257,7 +1300,7 @@ function auditCardHTML(c){var on=aiOn(),ready=!!c.auditReady,a=c.audit;
 function auditPanel(a){return '<div class="auditres" role="region" aria-label="AI audit result"><div class="auditbar"><b>Audit result</b><span class="muted"> · '+esc(fmtWhen(a.at))+(a.model?' · '+esc(a.model):'')+'</span><span class="sp"></span><button type="button" class="b alt sm" id="auditCopy">Copy</button><button type="button" class="b alt sm" id="auditToNotes">Save to claim notes</button></div>'+
   '<div class="audittxt">'+esc(a.text)+'</div><p class="muted" style="font-size:.8rem">AI-generated estimate. Not legal advice and not an official VA decision. Free help: an accredited Veterans Service Organization (VSO).</p></div>'}
 var AUDIT_DROP={middle:1,last:1,suffix:1,otherNames:1,dob:1,pob:1,vaFile:1,phone:1,phone2:1,email:1,contactMethod:1,contactTime:1,mStreet:1,mApt:1,mCity:1,mState:1,mZip:1,mCountry:1,sameAddr:1,pStreet:1,pApt:1,pCity:1,pState:1,pZip:1,homelessDetail:1,serviceNum:1,spFirst:1,spLast:1,spDob:1,spSsn:1,marDate:1,marPlace:1,parents:1,claims:1,repName:1,repPhone:1,poaCode:1,first:1};
-var AUDIT_DROP_LIST={children:'*',providers:{address:1,phone:1}};
+var AUDIT_DROP_LIST={children:'*'};
 function scrubIds(t,keepSSN){t=String(t||'');if(!keepSSN)t=t.replace(/\b\d{3}[- ]?\d{2}[- ]?\d{4}\b/g,'[SSN removed]');
   return t.replace(/\b[\w.+-]+@[\w-]+\.[\w.]+\b/g,'[email removed]').replace(/\(?\b\d{3}\)?[-. ]\d{3}[-. ]\d{4}\b/g,'[phone removed]')}
 function auditProfile(){var p=ensureProfile();if(!p.ai)return '(Profile not shared: AI access is off in the Profile tab.)';var out=[],keep=!!p.aiSSN;
@@ -1301,7 +1344,7 @@ $('claimView').addEventListener('keydown',function(e){if(e.target.id==='cMsg'&&e
 function blankState(){return {apiKey:'',model:'grok-4.7',calc:{entries:[],deps:{spouse:0,aa:0,parents:0,kids:0,school:0},smc:{level:'',k:0}},claims:{},order:[],current:null,tab:'setup',docs:[],mirrorTrash:[]}}
 function buildBackup(){return JSON.stringify({app:'VA to Z',version:1,exported:new Date().toISOString(),data:S},null,2)} // settings-only JSON (legacy format)
 async function buildFullBackup(){ensureDocs();var files=[];for(var i=0;i<S.docs.length;i++){var d=S.docs[i],r=await readFile(d.id);files.push({id:d.id,hash:d.hash||await sha(r.buf),type:r.type,b64:await b64(r.buf)})}
-  var dataStr=JSON.stringify(S),payload=JSON.stringify({app:'VA to Z',version:2,exported:new Date().toISOString(),dataHash:await sha(new TextEncoder().encode(dataStr)),data:S,files:files});
+  var dS=JSON.parse(JSON.stringify(S));delete dS.medPending;delete dS.provPending;var dataStr=JSON.stringify(dS),payload=JSON.stringify({app:'VA to Z',version:2,exported:new Date().toISOString(),dataHash:await sha(new TextEncoder().encode(dataStr)),data:dS,files:files});
   if(CAN_GZ){var g=await gzip(new TextEncoder().encode(payload),true);return {blob:new Blob([g],{type:'application/gzip'}),ext:'.vaz',type:'application/gzip',bytes:g.byteLength,raw:payload.length}}
   return {blob:new Blob([payload],{type:'application/json'}),ext:'.json',type:'application/json',bytes:payload.length,raw:payload.length}}
 function showLastBackup(){setTimeout(toolSums,0);$('lastBackup').innerHTML=S.lastBackup?'Last backup saved: <b>'+esc(new Date(S.lastBackup).toLocaleString())+'</b>':'No backup saved yet on this device.'}
@@ -1320,68 +1363,116 @@ $('exp').onclick=async function(){
   if(window.showSaveFilePicker){try{var acc={};acc[bk.type]=[bk.ext];var h=await window.showSaveFilePicker({suggestedName:name,types:[{description:'VA to Z backup',accept:acc}]});var w=await h.createWritable();await w.write(bk.blob);await w.close();backupDone('saved as '+(h.name||name));return}
     catch(e){if(isAbort(e)){$('expMsg').innerHTML='<p class="muted">Backup canceled. Nothing was saved.</p>';return}note='Your browser blocked the "Save As" window on this page ('+(e.name||'error')+'), so the backup was downloaded instead.'}}
   plainDownload(name,bk.blob,note)};
-async function restoreFrom(text,msgId,tabAfter){msgId=msgId||'restoreMsg';var o=JSON.parse(text);var d=o.data||o;if(!d||!d.claims||!d.calc)throw new Error('This file is not a VA to Z backup.');
+async function restoreFrom(text,msgId,tabAfter,opts){opts=opts||{};msgId=msgId||'restoreMsg';var o=JSON.parse(text);var d=o.data||o;if(!d||!d.claims||!d.calc)throw new Error('This file is not a VA to Z backup.');
   var files=Array.isArray(o.files)?o.files:[],docs=Array.isArray(d.docs)?d.docs:[];
-  if(o.version>=2){if(o.dataHash){var dh=await sha(new TextEncoder().encode(JSON.stringify(d)));if(dh&&dh!==o.dataHash)throw new Error('Backup is damaged (data check failed).')}
+  if(o.version>=2){if(o.dataHash){var dh=await sha(new TextEncoder().encode(JSON.stringify(d)));if(dh&&dh!==o.dataHash)throw new Error('Backup is damaged (data check failed).')}var provSkip=false;if(d.profile){var dp=d.profile;if(dp.l&&dp.l.providers){provSkip=dp.l.providers.length>0;delete dp.l.providers}if(dp.f){if(dp.f.vha||dp.f.vaFacility)provSkip=true;delete dp.f.vha;delete dp.f.vaFacility}}delete d.provPending;
     var bufs={};for(var i=0;i<files.length;i++){var fb=unb64(files[i].b64),hh=await sha(fb);if(files[i].hash&&hh&&hh!==files[i].hash)throw new Error('Backup is damaged (file check failed).');bufs[files[i].id]=[fb,files[i].type]}
     docs.forEach(function(x){if(!bufs[x.id])throw new Error('Backup is missing the file for "'+x.name+'".')})}
   else docs=[];
+  var medSkip=docs.filter(isMedDoc).length;docs=docs.filter(function(x){return !isMedDoc(x)});delete d.medPending;delete d.provPending;
   var n=Object.keys(d.claims).length,when=o.exported?new Date(o.exported).toLocaleString():'unknown date';
-  if(!confirm('Restore this backup from '+when+' ('+n+' claim'+(n===1?'':'s')+(docs.length?', '+docs.length+' document'+(docs.length===1?'':'s'):'')+')?\n\nThis REPLACES everything on this device now.'))return false;
+  if(!opts.noConfirm&&!confirm('Restore this backup from '+when+' ('+n+' claim'+(n===1?'':'s')+(docs.length?', '+docs.length+' document'+(docs.length===1?'':'s'):'')+')?\n\nThis REPLACES everything on this device now.'))return false;
   if(DB){await idbClear('files').catch(function(){});for(var j=0;j<docs.length;j++){var x=docs[j],r=await storeFile(x.id,bufs[x.id][0],bufs[x.id][1]||x.type,x.hash);x.stored=r.stored;x.gz=r.gz;x.mpath=''}}
   var lb=S.lastBackup;d.docs=docs;S=Object.assign(blankState(),d);S.tab=tabAfter||'tools';if(!S.lastBackup)S.lastBackup=lb;S.mirrorTrash=[];saveNow();init();if(DIRSTATE==='ok')mirrorAll(true);
-  $('restoreMsg').innerHTML=$('restoreMsg2').innerHTML='';$(msgId).innerHTML='<div class="okbox">✓ Backup restored. '+n+' claim'+(n===1?'':'s')+(docs.length?' and '+docs.length+' document'+(docs.length===1?'':'s'):'')+' loaded (backup from '+esc(when)+'). All integrity checks passed.</div>';return true}
-// ---- Cloud Backup (Google Drive, website only). Uses Google Identity Services token client + Drive appDataFolder. ----
-var CLOUD={token:null,exp:0,fileId:null,gisP:null},CLOUD_FILE='va-to-z-backup.json',CLOUD_SCOPE='https://www.googleapis.com/auth/drive.appdata';
+  $('restoreMsg').innerHTML=$('restoreMsg2').innerHTML='';$(msgId).innerHTML='<div class="okbox">✓ Backup restored. '+n+' claim'+(n===1?'':'s')+(docs.length?' and '+docs.length+' document'+(docs.length===1?'':'s'):'')+' loaded (backup from '+esc(when)+'). All integrity checks passed.'+(provSkip?' Medical provider info in the backup was not imported.':'')+(medSkip?' '+medSkip+' medical-record document'+(medSkip===1?' was':'s were')+' not imported (VA to Z no longer stores medical records; they are still in your backup file).':'')+'</div>';return true}
+// ---- Google backup (website only): GIS token client + Drive appDataFolder. One sign-in, then automatic. ----
+// Opt-in flag + email hint live in localStorage ('vatoz.cloud'); the access token is kept in memory only, never stored.
+var CLOUD={token:null,exp:0,fileId:null,gisP:null,tc:null,pend:null,state:'off',dirty:false,timer:null,busy:false,quiet:false,refreshT:null},CLOUD_FILE='va-to-z-backup.json',
+  CLOUD_SCOPE='https://www.googleapis.com/auth/drive.appdata openid email',CLOUD_DEBOUNCE=15000,CLOUD_KEY='vatoz.cloud';
 function cloudOn(){return !IS_EXT&&!!GOOGLE_CLIENT_ID}
 function cloudSigned(){return !!CLOUD.token&&Date.now()<CLOUD.exp}
-function cloudMsg(h){$('cloudMsg').innerHTML=h}
-function renderCloud(){if(!$('tool-cloud'))return;var c=S.cloud||{};
-  $('cloudNotSet').hidden=IS_EXT||!!GOOGLE_CLIENT_ID;$('cloudSSN').checked=!!c.incSSN;
-  var on=cloudOn(),si=cloudSigned();
-  $('cloudIn').disabled=!on||si;$('cloudUp').disabled=!on||!si;$('cloudRestore').disabled=!on||!si;$('cloudOut').disabled=!on||!si;$('cloudSSN').disabled=!on;
-  $('cloudStatus').innerHTML=!on?'Cloud backup is turned off.':si?'✓ Signed in to Google Drive.':'Not signed in. Click <b>Sign in with Google</b> to start.';
-  $('cloudLast').innerHTML=c.lastBackup?'Last cloud backup: <b>'+esc(new Date(c.lastBackup).toLocaleString())+'</b>':'No cloud backup made from this device yet.';
-  var s=$('sum-cloud');if(s)s.textContent=IS_EXT?'Coming soon':!GOOGLE_CLIENT_ID?'Not set up':c.lastBackup?'Last: '+new Date(c.lastBackup).toLocaleDateString():'Optional'}
+function cloudPref(){try{return JSON.parse(localStorage.getItem(CLOUD_KEY)||'null')||{}}catch(e){return {}}}
+function setCloudPref(p){try{if(p)localStorage.setItem(CLOUD_KEY,JSON.stringify(p));else localStorage.removeItem(CLOUD_KEY)}catch(e){}}
+function cloudMsg(h){['cloudMsg','gsMsg'].forEach(function(id){var e=$(id);if(e)e.innerHTML=h})}
+function agoText(iso){var s=Math.max(0,(Date.now()-Date.parse(iso))/1000);if(s<60)return 'just now';var m=Math.round(s/60);if(m<60)return m+' min ago';var h=Math.round(m/60);if(h<24)return h+' hr ago';return new Date(iso).toLocaleDateString()}
+function renderCloud(){var c=S.cloud||{},on=cloudOn(),si=cloudSigned(),pref=cloudPref(),st=CLOUD.state;
+  ['cloudNotSet','gsNotSet'].forEach(function(id){var e=$(id);if(e)e.hidden=IS_EXT||!!GOOGLE_CLIENT_ID});
+  ['gsLive'].forEach(function(id){var e=$(id);if(e)e.hidden=!on});
+  if($('cloudSSN')){$('cloudSSN').checked=!!c.incSSN;$('cloudSSN').disabled=!on}
+  var status=!on?'Google backup is coming soon.':si?'✓ On. Your work backs up to your Google Drive automatically'+(pref.email?' ('+esc(pref.email)+')':'')+'.':st==='connecting'?'Connecting to Google…':pref.on?'⚠ Google backup is paused. Tap <b>Reconnect</b> to resume. Your work is still saved on this device.':'Off. Sign in once and your work backs up automatically.';
+  ['cloudStatus','gsStatus'].forEach(function(id){var e=$(id);if(e)e.innerHTML=status});
+  var last=c.lastBackup?'Last Google backup: <b>'+esc(new Date(c.lastBackup).toLocaleString())+'</b>':'No Google backup from this device yet.';
+  ['cloudLast','gsLast'].forEach(function(id){var e=$(id);if(e)e.innerHTML=last});
+  if($('gsIn')){$('gsIn').hidden=!on||si;$('gsIn').disabled=!on||st==='connecting';$('gsIn').textContent=pref.on?'Reconnect Google backup':'Sign in with Google'}
+  if($('cloudIn')){$('cloudIn').hidden=!on||si;$('cloudIn').disabled=!on||st==='connecting';$('cloudIn').textContent=pref.on?'Reconnect':'Sign in with Google'}
+  ['cloudUp','cloudRestore','cloudOut'].forEach(function(id){var e=$(id);if(e)e.disabled=!on||!si});
+  // header status
+  var h=$('cloudHdr');if(h){if(!on||!pref.on){h.hidden=true}else{h.hidden=false;
+    if(si){h.className='cloudhdr ok';h.disabled=true;h.innerHTML='<span aria-hidden="true">☁</span> '+(CLOUD.busy?'Backing up…':c.lastBackup?'Backed up '+agoText(c.lastBackup):'Google backup on');h.title='Google Drive backup is on'}
+    else if(st==='connecting'){h.className='cloudhdr';h.disabled=true;h.innerHTML='<span aria-hidden="true">☁</span> Connecting…'}
+    else{h.className='cloudhdr chip';h.disabled=false;h.innerHTML='<span aria-hidden="true">☁</span> Tap to reconnect Google backup';h.title='Your work is still saved on this device'}}}
+  var s=$('sum-cloud');if(s)s.textContent=IS_EXT?'Coming soon':!GOOGLE_CLIENT_ID?'Coming soon':si?(c.lastBackup?'Backed up '+agoText(c.lastBackup):'On'):pref.on?'Paused':'Off'}
 function loadGIS(){if(window.google&&google.accounts&&google.accounts.oauth2)return Promise.resolve();if(CLOUD.gisP)return CLOUD.gisP;
   CLOUD.gisP=new Promise(function(ok,no){var s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=function(){ok()};s.onerror=function(){CLOUD.gisP=null;no(new Error('Could not load Google sign-in. Check your internet connection.'))};document.head.appendChild(s)});return CLOUD.gisP}
-function cloudSignIn(){return loadGIS().then(function(){return new Promise(function(ok,no){
-  var tc=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:CLOUD_SCOPE,callback:function(r){if(!r||r.error||!r.access_token)return no(new Error(r&&r.error?'Google said: '+r.error:'Sign-in did not finish.'));
-      CLOUD.token=r.access_token;CLOUD.exp=Date.now()+((+r.expires_in||3600)-60)*1000;CLOUD.fileId=null;ok()},
-    error_callback:function(e){no(new Error(e&&e.type==='popup_closed'?'The Google window was closed before sign-in finished.':'Google sign-in was blocked or canceled ('+(e&&e.type||'error')+').'))}});
-  tc.requestAccessToken({prompt:''})})})}
+function tokenClient(){if(CLOUD.tc)return CLOUD.tc;
+  CLOUD.tc=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:CLOUD_SCOPE,callback:function(r){var p=CLOUD.pend;CLOUD.pend=null;if(!p)return;
+      if(!r||r.error||!r.access_token)return p.no(new Error(r&&r.error?'Google said: '+r.error:'Sign-in did not finish.'));
+      CLOUD.token=r.access_token;CLOUD.exp=Date.now()+((+r.expires_in||3600)-60)*1000;p.ok()},
+    error_callback:function(e){var p=CLOUD.pend;CLOUD.pend=null;if(p)p.no(new Error(e&&e.type==='popup_closed'?'The Google window was closed before sign-in finished.':e&&e.type==='popup_failed_to_open'?'The browser blocked the Google window.':'Google sign-in was blocked or canceled ('+(e&&e.type||'error')+').'))}});return CLOUD.tc}
+// interactive=false: silent attempt (prompt:'' + login_hint). Browsers may still block it (no user tap) -> caller shows the reconnect chip.
+function getToken(interactive){return loadGIS().then(function(){return new Promise(function(ok,no){var pref=cloudPref(),cfg={prompt:''};if(pref.email)cfg.login_hint=pref.email;
+  CLOUD.pend={ok:ok,no:no};try{tokenClient().requestAccessToken(cfg)}catch(e){CLOUD.pend=null;no(e)}
+  if(!interactive)setTimeout(function(){if(CLOUD.pend&&CLOUD.pend.no===no){CLOUD.pend=null;no(new Error('Silent sign-in timed out.'))}},20000)})})}
 async function gfetch(url,opt){opt=opt||{};opt.headers=Object.assign({Authorization:'Bearer '+CLOUD.token},opt.headers||{});var r=await fetch(url,opt);
-  if(r.status===401){CLOUD.token=null;renderCloud();throw new Error('Your Google sign-in expired. Please sign in again.')}
+  if(r.status===401){CLOUD.token=null;CLOUD.state='paused';renderCloud();throw new Error('Your Google sign-in expired. Tap Reconnect.')}
   if(!r.ok)throw new Error('Google Drive error '+r.status+'.');return r}
 async function cloudFind(){var q=encodeURIComponent("name='"+CLOUD_FILE+"' and trashed=false");
   var r=await gfetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q='+q+'&fields=files(id,name,modifiedTime,size)&orderBy=modifiedTime desc');
-  var j=await r.json(),f=(j.files||[])[0]||null;CLOUD.fileId=f?f.id:null;return f}
+  var j=await r.json(),f=(j.files||[])[0]||null;CLOUD.fileId=f?f.id:'';return f}
 function stripSSN(d){var p=d.profile;if(!p)return d;if(p.f){delete p.f.ssn;delete p.f.spSsn}if(p.l&&Array.isArray(p.l.children))p.l.children.forEach(function(c){delete c.ssn});return d}
 async function buildCloudPayload(){ensureDocs();var files=[];for(var i=0;i<S.docs.length;i++){var d=S.docs[i],r=await readFile(d.id);files.push({id:d.id,hash:d.hash||await sha(r.buf),type:r.type,b64:await b64(r.buf)})}
-  var data=JSON.parse(JSON.stringify(S)),inc=!!(S.cloud&&S.cloud.incSSN);if(!inc)stripSSN(data);delete data.cloud;
+  var data=JSON.parse(JSON.stringify(S)),inc=!!(S.cloud&&S.cloud.incSSN);if(!inc)stripSSN(data);delete data.cloud;delete data.medPending;delete data.provPending;data.docs=(data.docs||[]).filter(function(d){return !isMedDoc(d)});
   return JSON.stringify({app:'VA to Z',version:2,exported:new Date().toISOString(),ssnIncluded:inc,dataHash:await sha(new TextEncoder().encode(JSON.stringify(data))),data:data,files:files})}
-async function cloudUpload(){var body=await buildCloudPayload();if(CLOUD.fileId===null)await cloudFind();
+async function cloudUpload(keepalive){var body=await buildCloudPayload();if(CLOUD.fileId===null)await cloudFind();
   var meta=CLOUD.fileId?{name:CLOUD_FILE,mimeType:'application/json'}:{name:CLOUD_FILE,mimeType:'application/json',parents:['appDataFolder']},b='vaz'+Math.random().toString(36).slice(2);
   var mp='--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(meta)+'\r\n--'+b+'\r\nContent-Type: application/json\r\n\r\n'+body+'\r\n--'+b+'--';
   var url=CLOUD.fileId?'https://www.googleapis.com/upload/drive/v3/files/'+encodeURIComponent(CLOUD.fileId)+'?uploadType=multipart&fields=id,modifiedTime':'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,modifiedTime';
-  var r=await gfetch(url,{method:CLOUD.fileId?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body:mp});var j=await r.json();CLOUD.fileId=j.id||CLOUD.fileId;return j}
+  var opt={method:CLOUD.fileId?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body:mp};if(keepalive&&mp.length<60000)opt.keepalive=true;
+  var r=await gfetch(url,opt);var j=await r.json();CLOUD.fileId=j.id||CLOUD.fileId;return j}
+function cloudMark(when){S.cloud=S.cloud||{};S.cloud.lastBackup=when;CLOUD.quiet=true;try{saveNow()}finally{CLOUD.quiet=false}}
+async function cloudBackupNow(why,keepalive){if(!cloudSigned()||CLOUD.busy)return false;clearTimeout(CLOUD.timer);CLOUD.busy=true;CLOUD.dirty=false;renderCloud();
+  try{var j=await cloudUpload(keepalive);cloudMark(j.modifiedTime||new Date().toISOString());CLOUD.busy=false;renderCloud();return true}
+  catch(e){CLOUD.busy=false;CLOUD.dirty=true;renderCloud();if(why==='manual')throw e;return false}}
+// called from saveNow(): debounce an automatic backup after any change
+function cloudOnSave(){if(CLOUD.quiet||!cloudOn()||!cloudPref().on)return;CLOUD.dirty=true;if(!cloudSigned())return;clearTimeout(CLOUD.timer);CLOUD.timer=setTimeout(function(){cloudBackupNow('auto')},CLOUD_DEBOUNCE)}
+function cloudFlush(){if(CLOUD.dirty&&cloudSigned()&&!CLOUD.busy)cloudBackupNow('hide',true)}
+function localHasData(){var p=S.profile&&S.profile.f||{};var prof=Object.keys(p).some(function(k){var v=p[k];return v!==''&&v!=null&&v!==false&&!(Array.isArray(v)&&!v.length)});
+  return !!(S.order&&S.order.length)||!!(S.docs&&S.docs.length)||!!(S.calc&&S.calc.entries&&S.calc.entries.length)||prof||!!S.vaData}
+async function cloudRestoreFile(f,ask){var r=await gfetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(f.id)+'?alt=media'),text=await r.text(),old=JSON.parse(JSON.stringify(S)),keep=S.cloud;
+  var done=await restoreFrom(text,'cloudMsg',S.tab||'setup',{noConfirm:!ask});if(!done)return false;
+  keepLocalSSN(old);S.cloud=Object.assign({},keep||{},{linked:f.id,lastBackup:f.modifiedTime});CLOUD.quiet=true;try{saveNow()}finally{CLOUD.quiet=false}CLOUD.dirty=false;init();renderCloud();return true}
+// after any successful connect: link this device to the Drive backup (auto-restore on an empty device, ask once if both have data)
+async function cloudLink(){var c=S.cloud=S.cloud||{};var f=await cloudFind();
+  if(!f){c.linked='new';await cloudBackupNow('auto');return}
+  if(c.linked===f.id||c.linked==='new'&&c.lastBackup){if(CLOUD.dirty)cloudBackupNow('auto');return}
+  var when=new Date(f.modifiedTime).toLocaleString();
+  if(!localHasData()){if(await cloudRestoreFile(f,false)){cloudMsg('<div class="okbox">✓ Your Google backup from '+esc(when)+' was restored on this device.</div>');return true}return}
+  if(confirm('Use your Google backup from '+when+'?\n\nOK = replace what is on this device with your Google backup.\nCancel = keep this device\'s data (it will be backed up to Google instead).')){
+    if(await cloudRestoreFile(f,false)){cloudMsg('<div class="okbox">✓ Restored your Google backup from '+esc(when)+'.</div>');return true}}
+  else{c.linked=f.id;CLOUD.quiet=true;try{saveNow()}finally{CLOUD.quiet=false}await cloudBackupNow('auto');cloudMsg('<p class="muted">Kept this device\'s data. It is now your Google backup.</p>');return true}}
+async function cloudConnect(interactive){if(!cloudOn())return false;CLOUD.state='connecting';renderCloud();
+  try{await getToken(interactive)}catch(e){CLOUD.state=cloudPref().on?'paused':'off';renderCloud();if(interactive)cloudMsg('<span class="err">'+esc(e.message)+'</span>');return false}
+  CLOUD.state='on';var pref=cloudPref();pref.on=true;
+  if(!pref.email){try{var u=await (await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+CLOUD.token}})).json();if(u&&u.email)pref.email=String(u.email).slice(0,120)}catch(e){}}
+  setCloudPref(pref);renderCloud();
+  clearTimeout(CLOUD.refreshT);CLOUD.refreshT=setTimeout(function(){if(cloudPref().on)cloudConnect(false)},Math.max(60000,CLOUD.exp-Date.now()-120000));
+  try{var said=await cloudLink();if(interactive&&!said)cloudMsg('<div class="okbox">✓ Google backup is on. From now on your work backs up automatically.</div>')}catch(e){cloudMsg('<span class="err">Google backup: '+esc(e.message)+'</span>')}
+  renderCloud();return true}
+function cloudBoot(){renderCloud();if(cloudOn()&&cloudPref().on)cloudConnect(false);setInterval(renderCloud,30000)}
 function keepLocalSSN(old){var p=S.profile,o=old&&old.profile;if(!p||!o)return;p.f=p.f||{};o.f=o.f||{};['ssn','spSsn'].forEach(function(k){if(!p.f[k]&&o.f[k])p.f[k]=o.f[k]});
   var oc=(o.l&&o.l.children)||[];((p.l&&p.l.children)||[]).forEach(function(c,i){if(c.ssn)return;var m=oc.filter(function(x){return x.name&&x.name===c.name})[0]||(!c.name?oc[i]:null);if(m&&m.ssn)c.ssn=m.ssn})}
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')cloudFlush()});window.addEventListener('pagehide',cloudFlush);
 if($('tool-cloud')){
   $('cloudSSN').onchange=function(){S.cloud=S.cloud||{};S.cloud.incSSN=this.checked;save()};
-  $('cloudIn').onclick=async function(){if(!cloudOn())return;cloudMsg('<p class="muted">Opening Google sign-in…</p>');try{await cloudSignIn();cloudMsg('<div class="okbox">✓ Signed in. You can back up now.</div>')}catch(e){cloudMsg('<span class="err">'+esc(e.message)+'</span>')}renderCloud()};
+  ['gsIn','cloudIn','cloudHdr'].forEach(function(id){var e=$(id);if(e)e.onclick=function(){if(!cloudOn()||cloudSigned())return;cloudMsg('<p class="muted">Opening Google sign-in…</p>');cloudConnect(true)}});
   $('cloudUp').onclick=async function(){if(!cloudSigned())return renderCloud();cloudMsg('<p class="muted">Backing up to Google Drive…</p>');
-    try{var j=await cloudUpload();S.cloud=S.cloud||{};S.cloud.lastBackup=j.modifiedTime||new Date().toISOString();saveNow();renderCloud();
-      cloudMsg('<div class="okbox">✓ Backed up to your Google Drive ('+(S.cloud.incSSN?'SSNs included':'SSNs left out')+').</div>')}catch(e){cloudMsg('<span class="err">Cloud backup failed: '+esc(e.message)+'</span>')}};
+    try{await cloudBackupNow('manual');cloudMsg('<div class="okbox">✓ Backed up to your Google Drive ('+(S.cloud.incSSN?'SSNs included':'SSNs left out')+').</div>')}catch(e){cloudMsg('<span class="err">Backup failed: '+esc(e.message)+'</span>')}};
   $('cloudRestore').onclick=async function(){if(!cloudSigned())return renderCloud();cloudMsg('<p class="muted">Looking for your backup in Google Drive…</p>');
-    try{var f=await cloudFind();if(!f)return cloudMsg('<p>No cloud backup found in this Google account yet. Click <b>Back up now</b> first.</p>');
-      var r=await gfetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(f.id)+'?alt=media'),text=await r.text(),old=JSON.parse(JSON.stringify(S)),keep=S.cloud;
-      cloudMsg('<p class="muted">Found a backup saved '+esc(new Date(f.modifiedTime).toLocaleString())+'.</p>');
-      var done=await restoreFrom(text,'cloudMsg','tools');if(!done)return cloudMsg('<p class="muted">Restore canceled. Nothing changed.</p>');
-      keepLocalSSN(old);S.cloud=keep;saveNow();init();renderCloud();
-      cloudMsg('<div class="okbox">✓ Restored from your Google Drive backup (saved '+esc(new Date(f.modifiedTime).toLocaleString())+').</div>')}
+    try{var f=await cloudFind();if(!f)return cloudMsg('<p>No Google backup found yet.</p>');var ok=await cloudRestoreFile(f,true);
+      cloudMsg(ok?'<div class="okbox">✓ Restored from your Google Drive backup (saved '+esc(new Date(f.modifiedTime).toLocaleString())+').</div>':'<p class="muted">Restore canceled. Nothing changed.</p>')}
     catch(e){cloudMsg('<span class="err">Restore failed: '+esc(e.message)+'</span>')}};
-  $('cloudOut').onclick=function(){var t=CLOUD.token;CLOUD.token=null;CLOUD.fileId=null;try{if(t&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(t,function(){})}catch(e){}renderCloud();cloudMsg('<p class="muted">Signed out of Google. Your cloud backup is still in your Drive.</p>')};
+  $('cloudOut').onclick=function(){var t=CLOUD.token;CLOUD.token=null;CLOUD.fileId=null;CLOUD.state='off';clearTimeout(CLOUD.timer);clearTimeout(CLOUD.refreshT);setCloudPref(null);if(S.cloud){delete S.cloud.linked}
+    try{if(t&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(t,function(){})}catch(e){}renderCloud();cloudMsg('<p class="muted">Google backup is off on this device. Your last backup is still in your Drive.</p>')};
   renderCloud()}
 function wireRestore(inputId,msgId,tabAfter){$(inputId).onchange=function(){var f=this.files[0];if(!f)return;this.value='';$(msgId).innerHTML='<p class="muted">Checking backup…</p>';
   f.arrayBuffer().then(async function(buf){var u=new Uint8Array(buf),text;
@@ -1393,7 +1484,7 @@ $('clr').onclick=async function(){if(!confirm('Erase ALL data from this device: 
   S=blankState();S.tab='tools';init();saveNow();renderDir();alert('All data cleared.')};
 $('about').textContent='Regulation text: '+CFR.length+' diagnostic codes from 38 CFR Part 4 (eCFR, current as of October 19, 2026 (last amended August 27, 2026)), embedded word-for-word. Rating tables in the VA Disability Calculator (Tools): VA '+RATES.year+'. Some codes are rated under a shared formula, which is shown with the code. Hearing loss (6100) shows the § 4.85 text; the audiometric tables are on eCFR.';
 
-function init(){ensureProfile();renderWelcome();ensureDocs();renderProfile();renderDocs();$('apikey').value=S.apiKey||'';$('model').value=S.model||'grok-4.7';migrateCalc();preloadCalc(false);renderCalc();renderVARings();renderSyncLast();doSearch();renderClaims();showLastBackup();tab(S.tab||'setup');if(!storageOK)$('saveStatus').innerHTML='<span class="err">This browser is blocking local storage. Use <a href="#" data-go="tool-backup">Download Backup in Tools</a> to save your work.</span>';$('saveInd').innerHTML='<a href="#" data-go="tool-backup" style="color:#ffc72c">⚠ Not saved · Back up</a>'}
+function init(){ensureProfile();renderWelcome();ensureDocs();medSplit();setTimeout(medNotice,0);renderProfile();renderDocs();$('apikey').value=S.apiKey||'';$('model').value=S.model||'grok-4.7';migrateCalc();preloadCalc(false);renderCalc();renderVARings();renderSyncLast();doSearch();renderClaims();showLastBackup();tab(S.tab||'setup');if(!storageOK)$('saveStatus').innerHTML='<span class="err">This browser is blocking local storage. Use <a href="#" data-go="tool-backup">Download Backup in Tools</a> to save your work.</span>';$('saveInd').innerHTML='<a href="#" data-go="tool-backup" style="color:#ffc72c">⚠ Not saved · Back up</a>'}
 boot();
 </script>
 <script>
