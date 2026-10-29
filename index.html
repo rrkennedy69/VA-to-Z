@@ -73,7 +73,7 @@ html.ispopup main{padding:10px 12px}html.ispopup .card{padding:12px 14px;margin-
 .rpbox{max-width:640px;max-height:86vh;overflow:auto}.rptop{display:flex;gap:14px;align-items:center;margin-bottom:6px}.rpbig{font-size:2.4rem;font-weight:800;color:#162e51}.rpnsc{color:#b22234;font-weight:600}
 html.ispopup nav button{padding:6px 7px;font-size:.78rem}
 @media (max-width:760px){nav{flex-wrap:nowrap!important;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}nav button{white-space:nowrap;flex:0 0 auto}}
-.ext-only{display:none}html.isext .ext-only{display:block}html.isext .web-only{display:none}
+.ext-only{display:none}html.isext .ext-only{display:block}html.isext .web-only{display:none}html.isext.extcloud #setup-google .web-only,html.isext.extcloud #tool-cloud .web-only{display:block}html.isext.extcloud #setup-google .ext-only,html.isext.extcloud #cloudExtNote{display:none}
 .vanote{background:#eef3fa;border:1px solid #c5d3e8;border-radius:10px;padding:8px 12px;font-size:.92rem;margin:8px 0}
 .okbox{background:#e8f5ec;border:1px solid #9fd1ae;border-radius:10px;padding:10px 12px;color:#14532d;font-weight:600}
 .hl{display:flex;align-items:center;flex-wrap:wrap;column-gap:14px}.tag{margin:0;font-size:.85rem;opacity:.92;border-left:3px solid #ffc72c;padding-left:10px;max-width:520px;line-height:1.35}.tag b{color:#ffc72c;letter-spacing:.02em}
@@ -252,7 +252,7 @@ header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text
 
 <section id="setup">
 <div class="card tool gscard" id="setup-google"><h2>Keep your work safe with Google (optional)</h2>
-<div class="ext-only note"><b>Google backup is coming to the extension.</b> For now, use <b>Download Backup</b> in Tools.</div>
+<div class="ext-only note"><b>Google backup works on the <a href="https://rrkennedy69.github.io/VA-to-Z/" target="_blank" rel="noopener">website version</a>.</b> For now, use <b>Download Backup</b> in Tools.</div>
 <div class="web-only">
 <div id="gsNotSet" class="note" hidden><b>Google backup is coming soon.</b> You'll be able to sign in once and have your work backed up automatically. For now, use <b>Download Backup</b> in Tools.</div>
 <div id="gsLive"><p>Sign in once. After that, VA to Z backs up your work to <b>your own Google Drive</b> automatically. No Save or Back up buttons to remember. On a new phone or computer, sign in and your work comes back.</p>
@@ -411,7 +411,7 @@ header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text
 </div></details>
 
 <details class="card tool tcard" id="tool-cloud"><summary><span class="smct">Google Backup<span class="tsum" id="sum-cloud"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">
-<div id="cloudExtNote" class="note ext-only"><b>Google backup is coming to the extension.</b> For now, use <b>Download Backup</b> above, or open the VA to Z website to back up to Google Drive.</div>
+<div id="cloudExtNote" class="note ext-only"><b>Google backup works on the website version.</b> In the extension, use <b>Download Backup</b> above, or open <a href="https://rrkennedy69.github.io/VA-to-Z/" target="_blank" rel="noopener">VA to Z on the web</a> to back up to Google Drive.</div>
 <div class="web-only">
 <div id="cloudNotSet" class="note" hidden><b>Google backup is coming soon.</b> Until then, use <b>Download Backup</b> above to keep a copy of your work.</div>
 <p id="cloudStatus"></p><p class="muted" id="cloudLast"></p>
@@ -489,7 +489,7 @@ header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text
 <script>
 /* Donation link: set DONATE_URL to your donation page (e.g. 'https://...'). Leave '' to show "Donation link coming soon". */
 var DONATE_URL='';
-var GOOGLE_CLIENT_ID=''; // Google OAuth Web client ID for Cloud Backup (Drive appDataFolder). Empty = cloud backup turned off.
+var GOOGLE_CLIENT_ID='403035756867-jlkd0q7l90p4qtcgih0noikn0mc7anb3.apps.googleusercontent.com';var GOOGLE_ORIGIN='https://rrkennedy69.github.io',SITE_URL='https://rrkennedy69.github.io/VA-to-Z/'; // Google OAuth Web client ID for Cloud Backup (Drive appDataFolder). Empty = cloud backup turned off.
 var IS_EXT=!!(window.VATOZ_EXT);if(IS_EXT)document.documentElement.classList.add("isext");var IS_POPUP=IS_EXT&&/[?&]popup=1/.test(location.search);if(IS_POPUP)document.documentElement.classList.add("ispopup");
 /*CALC_START*/
 // OFFICIAL method = 38 CFR 4.25 Table I: arrange in order of severity; combine two at a time; each result is
@@ -1633,17 +1633,24 @@ async function restoreFrom(text,msgId,tabAfter,opts){opts=opts||{};msgId=msgId||
 // Opt-in flag + email hint live in localStorage ('vatoz.cloud'); the access token is kept in memory only, never stored.
 var CLOUD={token:null,exp:0,fileId:null,gisP:null,tc:null,pend:null,state:'off',dirty:false,timer:null,busy:false,quiet:false,refreshT:null},CLOUD_FILE='va-to-z-backup.json',
   CLOUD_SCOPE='https://www.googleapis.com/auth/drive.appdata openid email',CLOUD_DEBOUNCE=15000,CLOUD_KEY='vatoz.cloud';
-function cloudOn(){return !IS_EXT&&!!GOOGLE_CLIENT_ID}
+function cloudOrigin(){try{return location.origin===GOOGLE_ORIGIN}catch(e){return false}}
+// Extension: Google backup uses chrome.identity with the manifest oauth2 client (a "Chrome Extension" OAuth client). Placeholder EXT_CLIENT_ID = not configured yet.
+function extOAuth(){try{var m=chrome.runtime.getManifest(),o=m&&m.oauth2;return !!(o&&o.client_id&&o.client_id!=='EXT_CLIENT_ID'&&chrome.identity&&chrome.identity.getAuthToken)}catch(e){return false}}
+var EXT_CLOUD=IS_EXT&&extOAuth();if(EXT_CLOUD)document.documentElement.classList.add('extcloud');
+function cloudOn(){return EXT_CLOUD||(!IS_EXT&&!!GOOGLE_CLIENT_ID&&cloudOrigin())}
+function extToken(interactive){return new Promise(function(ok,no){try{chrome.identity.getAuthToken({interactive:!!interactive},function(t){var le=chrome.runtime.lastError;var tok=t&&typeof t==='object'?t.token:t;
+  if(le||!tok)return no(new Error(interactive?'Google sign-in did not finish'+(le&&le.message?' ('+le.message+')':'')+'.':'Silent sign-in not available.'));CLOUD.token=tok;CLOUD.exp=Date.now()+50*60*1000;ok()})}catch(e){no(e)}})}
+var CLOUD_SITE_NOTE='<b>Google backup works on the website version.</b> Open <a href="'+SITE_URL+'" target="_blank" rel="noopener">VA to Z on the web</a> to sign in and back up to Google Drive. Here, use <b>Download Backup</b> in Tools to keep a copy.';
 function cloudSigned(){return !!CLOUD.token&&Date.now()<CLOUD.exp}
 function cloudPref(){try{return JSON.parse(localStorage.getItem(CLOUD_KEY)||'null')||{}}catch(e){return {}}}
 function setCloudPref(p){try{if(p)localStorage.setItem(CLOUD_KEY,JSON.stringify(p));else localStorage.removeItem(CLOUD_KEY)}catch(e){}}
 function cloudMsg(h){['cloudMsg','gsMsg'].forEach(function(id){var e=$(id);if(e)e.innerHTML=h})}
 function agoText(iso){var s=Math.max(0,(Date.now()-Date.parse(iso))/1000);if(s<60)return 'just now';var m=Math.round(s/60);if(m<60)return m+' min ago';var h=Math.round(m/60);if(h<24)return h+' hr ago';return new Date(iso).toLocaleDateString()}
 function renderCloud(){var c=S.cloud||{},on=cloudOn(),si=cloudSigned(),pref=cloudPref(),st=CLOUD.state;
-  ['cloudNotSet','gsNotSet'].forEach(function(id){var e=$(id);if(e)e.hidden=IS_EXT||!!GOOGLE_CLIENT_ID});
+  ['cloudNotSet','gsNotSet'].forEach(function(id){var e=$(id);if(!e)return;e.hidden=IS_EXT||on;if(!on&&GOOGLE_CLIENT_ID&&!e.dataset.site){e.dataset.site=1;e.innerHTML=CLOUD_SITE_NOTE}});
   ['gsLive'].forEach(function(id){var e=$(id);if(e)e.hidden=!on});
   if($('cloudSSN')){$('cloudSSN').checked=!!c.incSSN;$('cloudSSN').disabled=!on}
-  var status=!on?'Google backup is coming soon.':si?'✓ On. Your work backs up to your Google Drive automatically'+(pref.email?' ('+esc(pref.email)+')':'')+'.':st==='connecting'?'Connecting to Google…':pref.on?'⚠ Google backup is paused. Tap <b>Reconnect</b> to resume. Your work is still saved on this device.':'Off. Sign in once and your work backs up automatically.';
+  var status=!on?(GOOGLE_CLIENT_ID?'Google backup works on the <a href="'+SITE_URL+'" target="_blank" rel="noopener">website version</a>.':'Google backup is coming soon.'):si?'✓ On. Your work backs up to your Google Drive automatically'+(pref.email?' ('+esc(pref.email)+')':'')+'.':st==='connecting'?'Connecting to Google…':pref.on?'⚠ Google backup is paused. Tap <b>Reconnect</b> to resume. Your work is still saved on this device.':'Off. Sign in once and your work backs up automatically.';
   ['cloudStatus','gsStatus'].forEach(function(id){var e=$(id);if(e)e.innerHTML=status});
   var last=c.lastBackup?'Last Google backup: <b>'+esc(new Date(c.lastBackup).toLocaleString())+'</b>':'No Google backup from this device yet.';
   ['cloudLast','gsLast'].forEach(function(id){var e=$(id);if(e)e.innerHTML=last});
@@ -1655,7 +1662,7 @@ function renderCloud(){var c=S.cloud||{},on=cloudOn(),si=cloudSigned(),pref=clou
     if(si){h.className='cloudhdr ok';h.disabled=true;h.innerHTML='<span aria-hidden="true">☁</span> '+(CLOUD.busy?'Backing up…':c.lastBackup?'Backed up '+agoText(c.lastBackup):'Google backup on');h.title='Google Drive backup is on'}
     else if(st==='connecting'){h.className='cloudhdr';h.disabled=true;h.innerHTML='<span aria-hidden="true">☁</span> Connecting…'}
     else{h.className='cloudhdr chip';h.disabled=false;h.innerHTML='<span aria-hidden="true">☁</span> Tap to reconnect Google backup';h.title='Your work is still saved on this device'}}}
-  var s=$('sum-cloud');if(s)s.textContent=IS_EXT?'Coming soon':!GOOGLE_CLIENT_ID?'Coming soon':si?(c.lastBackup?'Backed up '+agoText(c.lastBackup):'On'):pref.on?'Paused':'Off'}
+  var s=$('sum-cloud');if(s)s.textContent=!GOOGLE_CLIENT_ID?'Coming soon':!on?'On the website':si?(c.lastBackup?'Backed up '+agoText(c.lastBackup):'On'):pref.on?'Paused':'Off'}
 function loadGIS(){if(window.google&&google.accounts&&google.accounts.oauth2)return Promise.resolve();if(CLOUD.gisP)return CLOUD.gisP;
   CLOUD.gisP=new Promise(function(ok,no){var s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=function(){ok()};s.onerror=function(){CLOUD.gisP=null;no(new Error('Could not load Google sign-in. Check your internet connection.'))};document.head.appendChild(s)});return CLOUD.gisP}
 function tokenClient(){if(CLOUD.tc)return CLOUD.tc;
@@ -1664,7 +1671,7 @@ function tokenClient(){if(CLOUD.tc)return CLOUD.tc;
       CLOUD.token=r.access_token;CLOUD.exp=Date.now()+((+r.expires_in||3600)-60)*1000;p.ok()},
     error_callback:function(e){var p=CLOUD.pend;CLOUD.pend=null;if(p)p.no(new Error(e&&e.type==='popup_closed'?'The Google window was closed before sign-in finished.':e&&e.type==='popup_failed_to_open'?'The browser blocked the Google window.':'Google sign-in was blocked or canceled ('+(e&&e.type||'error')+').'))}});return CLOUD.tc}
 // interactive=false: silent attempt (prompt:'' + login_hint). Browsers may still block it (no user tap) -> caller shows the reconnect chip.
-function getToken(interactive){return loadGIS().then(function(){return new Promise(function(ok,no){var pref=cloudPref(),cfg={prompt:''};if(pref.email)cfg.login_hint=pref.email;
+function getToken(interactive){if(EXT_CLOUD)return extToken(interactive);return loadGIS().then(function(){return new Promise(function(ok,no){var pref=cloudPref(),cfg={prompt:''};if(pref.email)cfg.login_hint=pref.email;
   CLOUD.pend={ok:ok,no:no};try{tokenClient().requestAccessToken(cfg)}catch(e){CLOUD.pend=null;no(e)}
   if(!interactive)setTimeout(function(){if(CLOUD.pend&&CLOUD.pend.no===no){CLOUD.pend=null;no(new Error('Silent sign-in timed out.'))}},20000)})})}
 async function gfetch(url,opt){opt=opt||{};opt.headers=Object.assign({Authorization:'Bearer '+CLOUD.token},opt.headers||{});var r=await fetch(url,opt);
@@ -1718,7 +1725,7 @@ function keepLocalSSN(old){var p=S.profile,o=old&&old.profile;if(!p||!o)return;p
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')cloudFlush()});window.addEventListener('pagehide',cloudFlush);
 if($('tool-cloud')){
   $('cloudSSN').onchange=function(){S.cloud=S.cloud||{};S.cloud.incSSN=this.checked;save()};
-  ['gsIn','cloudIn','cloudHdr'].forEach(function(id){var e=$(id);if(e)e.onclick=function(){if(!cloudOn()||cloudSigned())return;cloudMsg('<p class="muted">Opening Google sign-in…</p>');cloudConnect(true)}});
+  ['gsIn','cloudIn','cloudHdr'].forEach(function(id){var e=$(id);if(e)e.onclick=function(){if(!cloudOn()||cloudSigned())return;if(IS_POPUP){openWindow({tab:'tools',label:'Sign in with Google'});return}cloudMsg('<p class="muted">Opening Google sign-in…</p>');cloudConnect(true)}});
   $('cloudUp').onclick=async function(){if(!cloudSigned())return renderCloud();cloudMsg('<p class="muted">Backing up to Google Drive…</p>');
     try{await cloudBackupNow('manual');cloudMsg('<div class="okbox">✓ Backed up to your Google Drive ('+(S.cloud.incSSN?'SSNs included':'SSNs left out')+').</div>')}catch(e){cloudMsg('<span class="err">Backup failed: '+esc(e.message)+'</span>')}};
   $('cloudRestore').onclick=async function(){if(!cloudSigned())return renderCloud();cloudMsg('<p class="muted">Looking for your backup in Google Drive…</p>');
@@ -1726,7 +1733,7 @@ if($('tool-cloud')){
       cloudMsg(ok?'<div class="okbox">✓ Restored from your Google Drive backup (saved '+esc(new Date(f.modifiedTime).toLocaleString())+').</div>':'<p class="muted">Restore canceled. Nothing changed.</p>')}
     catch(e){cloudMsg('<span class="err">Restore failed: '+esc(e.message)+'</span>')}};
   $('cloudOut').onclick=function(){var t=CLOUD.token;CLOUD.token=null;CLOUD.fileId=null;CLOUD.state='off';clearTimeout(CLOUD.timer);clearTimeout(CLOUD.refreshT);setCloudPref(null);if(S.cloud){delete S.cloud.linked}
-    try{if(t&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(t,function(){})}catch(e){}renderCloud();cloudMsg('<p class="muted">Google backup is off on this device. Your last backup is still in your Drive.</p>')};
+    try{if(EXT_CLOUD&&t){chrome.identity.removeCachedAuthToken({token:t},function(){});fetch('https://oauth2.googleapis.com/revoke?token='+encodeURIComponent(t),{method:'POST'}).catch(function(){})}else if(t&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(t,function(){})}catch(e){}renderCloud();cloudMsg('<p class="muted">Google backup is off on this device. Your last backup is still in your Drive.</p>')};
   renderCloud()}
 function wireRestore(inputId,msgId,tabAfter){$(inputId).onchange=function(){var f=this.files[0];if(!f)return;this.value='';$(msgId).innerHTML='<p class="muted">Checking backup…</p>';
   f.arrayBuffer().then(async function(buf){var u=new Uint8Array(buf),text;

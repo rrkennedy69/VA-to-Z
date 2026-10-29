@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "VA to Z",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "VA disability claim helper with built-in VA.gov sync. Your data stays on this computer.",
   "icons": {
     "16": "icons/icon16.png",
@@ -26,11 +26,23 @@
     "storage",
     "unlimitedStorage",
     "scripting",
-    "tabs"
+    "tabs",
+    "identity"
   ],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqMoD/lcJrLChkyYmktjoaS1jiC5IAUGsH/HF3n+I4riviVAAX4NTsWh29BMBifQxN64dmlDD2dQd0ZPHiRI9D9kTuwFksUDKDgeAW0OEvdz7NfuNiDV62FWgqt737eGlt43gRLkkPLMQ36gzRhn/HW5N/KOVRvoGhNgyI3fWi95lxEXi6uO2esHtXvAqM1oTvBt3BR3i7vJwKnnAg6cMXKCufpPht+ZgkJiD6Ri9QNnDQ+8kcMGb3D/tCDAtewPQMnj5muw6/KQg8DpQli5aZ5uAX9quOW2hSEvSbtsNMis1d2X3TtatHqFHiwJnpsdPesLfBfFuXOHaz0dLakMt0wIDAQAB",
+  "oauth2": {
+    "client_id": "403035756867-b7phk8k7u97658csmcmudm32hbnrjfbk.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.appdata",
+      "openid",
+      "email"
+    ]
+  },
   "host_permissions": [
     "https://www.va.gov/*",
     "https://api.va.gov/*",
-    "https://api.x.ai/*"
+    "https://api.x.ai/*",
+    "https://www.googleapis.com/*",
+    "https://oauth2.googleapis.com/*"
   ]
 }
