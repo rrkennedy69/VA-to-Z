@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<div class="top"><header><div class="hl"><div class="brandcol"><h1 class="brand"><svg class="logo" role="img" aria-label="VA to Z" xmlns="http://www.w3.org/2000/svg" viewBox="18 18 384 164"><title>VA to Z</title><circle cx="100" cy="100" r="78" fill="#fff"/><text x="100" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#162e51" text-anchor="middle" letter-spacing="-3">VA</text><text x="200" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#fff">to Z</text></svg></h1><div id="welcome" class="welcome" aria-live="polite" hidden></div></div></div><div class="hr"><button type="button" id="hdrRing" class="hdrring" aria-haspopup="dialog"></button><button id="openWin" class="popwin" type="button" title="Open in window" aria-label="Open VA to Z in its own window"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg><span> Open in window</span></button><button type="button" id="donateBtn" class="donbtn" aria-haspopup="dialog" aria-label="Donate" title="Donate"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-10-9.3C.4 8.5 2.2 4.5 6 4.5c2.1 0 3.4 1.1 4 2.2.6-1.1 1.9-2.2 4-2.2 3.8 0 5.6 4 4 7.2C19.5 16.4 12 21 12 21z"/></svg><span class="dontxt">Donate</span></button><div class="hrsave"><div id="saveInd" class="saveind" aria-live="polite">All changes saved</div></div><p class="tag">Made by a Marine Veteran who strives to help fellow veterans get the benefits they've earned. <b>Semper Fi.</b></p></div></header>
+<div class="top"><header><div class="hl"><div class="brandcol"><h1 class="brand"><svg class="logo" role="img" aria-label="VA to Z" xmlns="http://www.w3.org/2000/svg" viewBox="18 18 384 164"><title>VA to Z</title><circle cx="100" cy="100" r="78" fill="#fff"/><text x="100" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#162e51" text-anchor="middle" letter-spacing="-3">VA</text><text x="200" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#fff">to Z</text></svg></h1><div id="welcome" class="welcome" aria-live="polite" hidden></div></div></div><div class="hr"><button type="button" id="hdrRing" class="hdrring" aria-haspopup="dialog"></button><button id="openWin" class="popwin" type="button" title="Open in window" aria-label="Open VA to Z in its own window"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg><span> Open in window</span></button><button type="button" id="donateBtn" class="donbtn" aria-haspopup="dialog" aria-label="Donate" title="Donate"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-10-9.3C.4 8.5 2.2 4.5 6 4.5c2.1 0 3.4 1.1 4 2.2.6-1.1 1.9-2.2 4-2.2 3.8 0 5.6 4 4 7.2C19.5 16.4 12 21 12 21z"/></svg><span class="dontxt">Donate</span></button><div class="hrsave"><div id="saveInd" class="saveind" aria-live="polite">All changes saved</div><button type="button" id="cloudHdr" class="cloudhdr" hidden aria-live="polite"></button></div><p class="tag">Made by a Marine Veteran who strives to help fellow veterans get the benefits they've earned. <b>Semper Fi.</b></p></div></header>
 <nav id="nav">
 <button data-t="setup">1. Setup</button><button data-t="profile">2. Profile</button><button data-t="lookup">3. Conditions</button><button data-t="claims">4. My Claims</button><button data-t="status">5. Claims Status</button><button data-t="docs">6. Documents</button><button data-t="tools">Tools</button>
 </nav><div id="dirBanner"></div></div>
@@ -19,6 +19,16 @@
 <div class="warn" style="margin-bottom:14px"><b>Important:</b> This tool is not legal or medical advice. It is not made by, affiliated with, or endorsed by the U.S. Department of Veterans Affairs (VA). Only VA decides ratings and payments. For free help, contact an accredited Veterans Service Officer (VSO).</div>
 
 <section id="setup">
+<div class="card tool gscard" id="setup-google"><h2>Keep your work safe with Google (optional)</h2>
+<div class="ext-only note"><b>Google backup is coming to the extension.</b> For now, use <b>Download Backup</b> in Tools.</div>
+<div class="web-only">
+<div id="gsNotSet" class="note" hidden><b>Google backup is coming soon.</b> You'll be able to sign in once and have your work backed up automatically. For now, use <b>Download Backup</b> in Tools.</div>
+<div id="gsLive"><p>Sign in once. After that, VA to Z backs up your work to <b>your own Google Drive</b> automatically. No Save or Back up buttons to remember. On a new phone or computer, sign in and your work comes back.</p>
+<p class="muted" style="font-size:.85rem">It goes to a hidden app folder only VA to Z can use. It never goes to us. Social Security numbers stay on this device unless you choose otherwise in Tools.</p>
+<p id="gsStatus" class="gsstatus"></p><p class="muted" id="gsLast" style="font-size:.85rem"></p>
+<button type="button" class="b bigbtn gsbtn" id="gsIn"><span class="gmark" aria-hidden="true">G</span> Sign in with Google</button>
+<div id="gsMsg" aria-live="polite" style="margin-top:8px"></div></div>
+</div></div>
 <div class="card tool" id="setup-restore" style="border-top-color:var(--ok)"><h2>Already have a backup? Restore your data</h2>
 <p>New phone or computer? Coming back after clearing your browser? If you saved a VA to Z backup file before, you can bring back your claims, notes, chats, and settings in one step.</p>
 <p class="muted">New here? Skip this and start below.</p>
@@ -99,8 +109,9 @@
 
 <section id="docs">
 <div class="card"><h2>My Documents</h2>
-<p>Keep copies of your VA paperwork in one place. Files are saved only on this device, in this browser (and in your save folder if you set one up in Tools). They are included in full backups.</p>
+<p>Keep copies of your VA paperwork in one place: decision letters, code sheets, lay and buddy statements, your own statements, DD-214, and appeal papers. Files are saved only on this device, in this browser (and in your save folder if you set one up in Tools). They are included in full backups.</p>
 <p class="muted">Add PDFs, photos, or documents. On a phone, use <b>Take photo</b> to snap a letter with your camera. Tap a section to open it.</p>
+<div class="note" id="noMedNote"><b>No medical records here.</b> To protect your privacy, VA to Z does not store medical records (service treatment records, VA or private treatment records, C&amp;P exams, DBQs, nexus letters, test results, or your C-file). Keep those with your doctor, on VA.gov, or in your own files.</div>
 <p id="docTotal" class="muted"></p><div id="docWarn"></div>
 <label class="chk"><input type="checkbox" id="docAI"> <span>Let the AI see the <b>names and notes</b> of documents linked to a claim (never the file contents)</span></label>
 </div>
@@ -167,16 +178,14 @@
 <div id="saveStatus" class="muted" style="margin-top:8px"></div>
 </div></details>
 
-<details class="card tool tcard" id="tool-cloud"><summary><span class="smct">Cloud Backup (Google Drive)<span class="tsum" id="sum-cloud"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">
-<div id="cloudExtNote" class="note ext-only"><b>Cloud backup is coming to the extension.</b> For now, use <b>Download Backup</b> above, or open the VA to Z website to back up to Google Drive. (Chrome extensions need a different Google sign-in setup.)</div>
+<details class="card tool tcard" id="tool-cloud"><summary><span class="smct">Google Backup<span class="tsum" id="sum-cloud"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">
+<div id="cloudExtNote" class="note ext-only"><b>Google backup is coming to the extension.</b> For now, use <b>Download Backup</b> above, or open the VA to Z website to back up to Google Drive.</div>
 <div class="web-only">
-<p>Keep a copy of your work in <b>your own Google Drive</b>. It goes into a hidden app folder that only VA to Z can see. It does not show up in your Drive file list, and it never goes to us. This is optional.</p>
-<p class="muted">There is one backup file. Each time you click <b>Back up now</b>, it is replaced with your newest work.</p>
-<div id="cloudNotSet" class="warn" hidden><b>Cloud backup is not set up yet.</b> This copy of VA to Z isn't connected to Google yet, so these buttons are turned off. Use <b>Download Backup</b> above to keep your work safe.</div>
-<p id="cloudStatus" class="muted">Not signed in.</p>
-<p class="muted" id="cloudLast">No cloud backup made from this device yet.</p>
-<label class="chk"><input type="checkbox" id="cloudSSN"> Include Social Security numbers in the cloud backup (off = SSNs stay only on this device)</label>
-<div style="margin-top:8px"><button class="b" id="cloudIn">Sign in with Google</button><button class="b" id="cloudUp">⬆ Back up now</button><button class="b alt" id="cloudRestore">Restore from Google Drive</button><button class="b alt sm" id="cloudOut">Sign out</button></div>
+<div id="cloudNotSet" class="note" hidden><b>Google backup is coming soon.</b> Until then, use <b>Download Backup</b> above to keep a copy of your work.</div>
+<p id="cloudStatus"></p><p class="muted" id="cloudLast"></p>
+<p class="muted">You turn this on once at the top of <b>Setup</b>. After that it backs up automatically a few seconds after you make changes and when you leave the page.</p>
+<label class="chk"><input type="checkbox" id="cloudSSN"> Include Social Security numbers in the Google backup (off = SSNs stay only on this device)</label>
+<div style="margin-top:8px"><button class="b alt sm" id="cloudIn">Sign in with Google</button><button class="b alt sm" id="cloudUp">Back up now</button><button class="b alt sm" id="cloudRestore">Restore from Google</button><button class="b alt sm" id="cloudOut">Turn off on this device</button></div>
 <div id="cloudMsg" aria-live="polite" style="margin-top:8px"></div>
 </div>
 </div></details>
@@ -221,6 +230,13 @@
 
 </section>
 </main>
+<div id="medModal" class="dmodal" role="dialog" aria-modal="true" aria-labelledby="medTitle" hidden><div class="dbox">
+<h2 id="medTitle">VA to Z no longer keeps medical records</h2>
+<p>To better protect your privacy, VA to Z no longer stores medical records. This information you added earlier will be removed from this app:</p>
+<ul id="medList"></ul>
+<p class="muted">Download it first if you want to keep a copy. They are already left out of backups, Google backup, and the AI. Your lay, buddy, and personal statements, DD-214, and VA letters are not affected.</p>
+<div style="margin-top:8px"><button type="button" class="b" id="medDl">⬇ Download first</button><button type="button" class="b alt" id="medRm">Remove from VA to Z</button></div>
+<div id="medMsg" aria-live="polite" style="margin-top:8px"></div></div></div>
 <div id="stepModal" class="dmodal" role="dialog" aria-modal="true" aria-labelledby="stTitle" hidden><div class="dbox stbox">
 <button type="button" class="dclose" id="stClose" aria-label="Close">✕</button><p class="muted" id="stKicker" style="margin:0 0 2px"></p><h2 id="stTitle" style="margin-top:0" tabindex="-1"></h2><div id="stBody"></div>
 <div class="stnav"><button type="button" class="b alt sm" id="stPrev">‹ Previous step</button><button type="button" class="b alt sm" id="stNext">Next step ›</button></div></div></div>
