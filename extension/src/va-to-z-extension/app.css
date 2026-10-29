@@ -206,4 +206,10 @@ header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text
 .nomedhint{font-size:.85rem;color:#8a4b00;font-weight:600;margin:2px 0 6px}
 .cdconfirm{border:2px solid #0b3d91;border-radius:8px;padding:10px;margin:8px 0;background:#eef4ff}.cdconfirm p{margin:0 0 8px}
 .cdlist{list-style:none;padding:0;margin:8px 0 0}.cdlist li{display:flex;gap:8px;align-items:center;justify-content:space-between;border-top:1px solid #ddd;padding:8px 0}.cdname{min-width:0;overflow-wrap:anywhere}
-#cdSel{width:100%;max-width:100%}.cdph{border-left:4px solid #ffc72c}
+#cdSel{width:100%;max-width:100%}.cddesc{background:#f1f6fb;border:1px solid #c9d8e8;border-radius:10px;padding:10px 12px;margin:6px 0 10px;font-size:.95em}.cddesc p{margin:4px 0}.cddt{margin:0 0 4px}.cdlvl{font-size:.75em;padding:2px 8px;border-radius:10px;vertical-align:middle}.cdlvl.required{background:#b50909;color:#fff}.cdlvl.recommended{background:#1a5f9e;color:#fff}
+.cditem{display:block!important;padding:10px 0;border-bottom:1px solid #e3e3e3}.cdtop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.cdopen{background:none;border:0;padding:0;font:inherit;font-weight:700;color:#1a5f9e;text-decoration:underline;cursor:pointer;text-align:left;min-height:32px}
+.cdacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.cdform{margin-top:6px}.cdblank{display:block;font-size:.92em}.cdget{margin-top:6px}.cdup{cursor:pointer}.cdnl{display:block;margin-top:6px;font-size:.9em}
+.edmodal{align-items:stretch}.edbox{max-width:860px;display:flex;flex-direction:column;max-height:calc(100vh - 32px);padding:14px 16px}.edhead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.edhead h2{font-size:1.1em;margin:0}
+.edbody{overflow:auto;flex:1;min-height:0;padding-right:4px}.edfoot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-top:1px solid #ddd;padding-top:8px}.edf{margin:8px 0}.edf label{display:block;font-size:.9em}.edf input[type=text],.edf textarea,.edf select{width:100%;max-width:100%;box-sizing:border-box}.edck{display:flex;gap:8px;align-items:flex-start}.edck label{display:inline}
+.howbox{max-width:640px;max-height:calc(100vh - 32px);overflow:auto}.howsteps li{margin:6px 0}
+@media(max-width:480px){.dmodal.edmodal{padding:0}.edbox{max-height:100vh;border-radius:0}}.cdph{border-left:4px solid #ffc72c}

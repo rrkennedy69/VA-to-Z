@@ -214,7 +214,13 @@ header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text
 .nomedhint{font-size:.85rem;color:#8a4b00;font-weight:600;margin:2px 0 6px}
 .cdconfirm{border:2px solid #0b3d91;border-radius:8px;padding:10px;margin:8px 0;background:#eef4ff}.cdconfirm p{margin:0 0 8px}
 .cdlist{list-style:none;padding:0;margin:8px 0 0}.cdlist li{display:flex;gap:8px;align-items:center;justify-content:space-between;border-top:1px solid #ddd;padding:8px 0}.cdname{min-width:0;overflow-wrap:anywhere}
-#cdSel{width:100%;max-width:100%}.cdph{border-left:4px solid #ffc72c}
+#cdSel{width:100%;max-width:100%}.cddesc{background:#f1f6fb;border:1px solid #c9d8e8;border-radius:10px;padding:10px 12px;margin:6px 0 10px;font-size:.95em}.cddesc p{margin:4px 0}.cddt{margin:0 0 4px}.cdlvl{font-size:.75em;padding:2px 8px;border-radius:10px;vertical-align:middle}.cdlvl.required{background:#b50909;color:#fff}.cdlvl.recommended{background:#1a5f9e;color:#fff}
+.cditem{display:block!important;padding:10px 0;border-bottom:1px solid #e3e3e3}.cdtop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.cdopen{background:none;border:0;padding:0;font:inherit;font-weight:700;color:#1a5f9e;text-decoration:underline;cursor:pointer;text-align:left;min-height:32px}
+.cdacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.cdform{margin-top:6px}.cdblank{display:block;font-size:.92em}.cdget{margin-top:6px}.cdup{cursor:pointer}.cdnl{display:block;margin-top:6px;font-size:.9em}
+.edmodal{align-items:stretch}.edbox{max-width:860px;display:flex;flex-direction:column;max-height:calc(100vh - 32px);padding:14px 16px}.edhead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.edhead h2{font-size:1.1em;margin:0}
+.edbody{overflow:auto;flex:1;min-height:0;padding-right:4px}.edfoot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-top:1px solid #ddd;padding-top:8px}.edf{margin:8px 0}.edf label{display:block;font-size:.9em}.edf input[type=text],.edf textarea,.edf select{width:100%;max-width:100%;box-sizing:border-box}.edck{display:flex;gap:8px;align-items:flex-start}.edck label{display:inline}
+.howbox{max-width:640px;max-height:calc(100vh - 32px);overflow:auto}.howsteps li{margin:6px 0}
+@media(max-width:480px){.dmodal.edmodal{padding:0}.edbox{max-height:100vh;border-radius:0}}.cdph{border-left:4px solid #ffc72c}
 </style>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#162e51">
@@ -458,6 +464,8 @@ header .hr{flex-wrap:wrap;row-gap:6px}header .hr .tag{flex:1 0 100%;order:9;text
 <div class="stnav"><button type="button" class="b alt sm" id="stPrev">‹ Previous step</button><button type="button" class="b alt sm" id="stNext">Next step ›</button></div></div></div>
 <div id="ratingModal" class="dmodal" role="dialog" aria-modal="true" aria-labelledby="rpTitle" hidden><div class="dbox rpbox">
 <button type="button" class="dclose" id="rpClose" aria-label="Close">✕</button><h2 id="rpTitle" style="margin-top:0">Your VA ratings</h2><div id="rpBody"></div></div></div>
+<div id="edModal" class="dmodal edmodal" role="dialog" aria-modal="true" aria-labelledby="edTitle" hidden><div class="dbox edbox"><div class="edhead"><h2 id="edTitle">Fill out form</h2><button class="b alt sm" id="edClose" aria-label="Close the form editor">Close</button></div><div id="edBody" class="edbody"></div><div class="edfoot"><button class="b" id="edSave">Save</button><button class="b alt" id="edDl" disabled>Download filled PDF</button><button class="b alt" id="edPrint" disabled>Print</button><div id="edMsg" class="muted" aria-live="polite"></div></div></div></div>
+<div id="howModal" class="dmodal" role="dialog" aria-modal="true" aria-labelledby="howTitle" hidden style="z-index:120"><div class="dbox howbox"><h2 id="howTitle">How to fill it out</h2><div id="howBody"></div><button class="b" id="howClose">Close</button></div></div>
 <div id="donateModal" class="dmodal" role="dialog" aria-modal="true" aria-labelledby="donTitle" hidden><div class="dbox">
 <button type="button" class="dclose" id="donClose" aria-label="Close">✕</button>
 <h2 id="donTitle" style="margin-top:0">Support VA to Z</h2>
@@ -810,6 +818,193 @@ var VADOC=[['L015','Buddy/Lay Statement','buddy'],['L029','Copy of a DD214','dd2
  ['L418','Court papers / documents','legal'],['L018','Civilian Police Reports','legal'],['L070','Photographs','photos']];
 var VADOC_X=[['X10210','VA Form 21-10210 - Lay/Witness Statement','buddy'],['X4138','VA Form 21-4138 - Statement in Support of Claim','personal'],['XDEC','VA Decision Letter','decision'],['XCODE','VA Rating Code Sheet','codesheet']];
 function vaDocBy(code){var A=VADOC.concat(VADOC_X);for(var i=0;i<A.length;i++)if(A[i][0]===code)return A[i];return null}
+/* ---------- 1.0.15 claim document info, blank VA forms, how-to, editor (sources: research/doc-types.md) ---------- */
+var VAPDF='https://www.vba.va.gov/pubs/forms/';
+// Official fillable PDFs bundled in forms/ (downloaded from VAPDF, checked live Oct 28 2026). rev = revision date printed on the PDF.
+var VAFORM={'21-4192':{f:'VBA-21-4192-ARE.pdf',rev:'AUG 2024',t:'Request for Employment Information in Connection with Claim for Disability Benefits'},
+ '21-674':{f:'VBA-21-674-ARE.pdf',rev:'NOV 2024',t:'Request for Approval of School Attendance'},
+ '21-686c':{f:'VBA-21-686c-ARE.pdf',rev:'AUG 2025',t:'Application Request to Add and/or Remove Dependents'},
+ '21-4502':{f:'VBA-21-4502-ARE.pdf',rev:'AUG 2024',t:'Application for Automobile or Other Conveyance and Adaptive Equipment'},
+ '26-4555':{f:'VBA-26-4555-ARE.pdf',rev:'AUG 2026',t:'Application in Acquiring Specially Adapted Housing or Special Home Adaptation Grant'},
+ '21-10210':{f:'VBA-21-10210-ARE.pdf',rev:'JUL 2024',t:'Lay/Witness Statement'},
+ '21-4138':{f:'VBA-21-4138-ARE.pdf',rev:'JUL 2024',t:'Statement in Support of Claim'}};
+var CODEFORM={L115:'21-4192',L133:'21-674',L139:'21-686c',L117:'21-4502',L159:'26-4555',X10210:'21-10210',X4138:'21-4138',L015:'21-10210'};
+function aboutURL(n){return 'https://www.va.gov/find-forms/about-form-'+n.toLowerCase()+'/'}
+// [what it is, how it's used in a claim, when to include it]
+var DOCDESC={
+ L015:['A written statement from someone who knows about your condition or about something that happened during your service, like a fellow service member, spouse, family member, friend, or coworker. You can write your own, too.','VA calls this "lay evidence." It tells VA what the writer saw or knows firsthand, such as an event in service, your symptoms, or how your condition affects your work and daily life.','Include one when someone can describe, from their own knowledge, the event, your symptoms, or the changes they noticed. It can be written on plain paper or on VA Form 21-10210 (Lay/Witness Statement).'],
+ L029:['Your Certificate of Release or Discharge from Active Duty (DD Form 214). It lists your dates of service, branch, job, awards, and character of discharge.','It shows VA you served and the character of your discharge, which VA uses to confirm you are eligible.','VA says it requires your DD214 or other separation documents for all disability claims. You can upload a copy or give VA permission to get it.'],
+ L034:['Records from your official military personnel file, such as orders, evaluations, assignments, awards, and duty-station history.','They can show where you were and what you did, which helps prove an event, exposure, or duty that your claim depends on.','Include them when your DD214 does not show the deployment, location, unit, or job that connects your condition to service.'],
+ L023:['Letters or other paperwork to or from VA, or others, that do not fit another document type.','Gives VA general information or a reply to a VA letter.','Use it only when no other type fits.'],
+ L014:['A certified copy of a birth certificate, usually for your child.','Shows a child\'s relationship to you when you add or keep a child as a dependent.','Include it if you are adding a child and VA asks for proof, or if you want it on file.'],
+ L051:['A copy of your marriage certificate.','Shows you are married when you add your spouse as a dependent.','Include it if you are adding a spouse and VA asks for proof, or if you want it on file.'],
+ L037:['A court decree that ended a marriage.','Shows a past marriage ended, for you or your spouse, or reports a divorce so VA can remove a spouse.','Include it when VA needs to know a prior marriage ended or when you report a divorce.'],
+ L033:['An official certificate of death.','Shows that a dependent (or a former spouse) died so VA can update your dependents.','Include it when you report the death of a dependent or when VA asks for it.'],
+ L115:['VA Form 21-4192. Your most recent employer fills it out with your job dates, hours, earnings, time lost, and why the job ended.','VA uses it for Individual Unemployability (TDIU), to see whether your service-connected conditions keep you from working.','VA says you need it, along with VA Form 21-8940, when you ask for Individual Unemployability. Give the form to your last employer to complete.'],
+ L133:['VA Form 21-674, Request for Approval of School Attendance.','Lets VA keep paying for a child age 18 to 23 who is in school full time.','VA says you need it for each child between 18 and 23 who attends school full time.'],
+ L139:['VA Form 21-686c, the application to add or remove dependents (spouse, children, parents).','Adds dependents so VA can pay you more, or removes them when your family changes.','Use it if you have a combined rating of 30% or more and want to add a dependent, or to report a change like a divorce or a child leaving school.'],
+ L117:['VA Form 21-4502, for a one-time payment toward a vehicle and for adaptive equipment.','Asks VA for help buying a car or adaptive equipment because of a qualifying service-connected disability, such as loss of use of hands or feet.','Include it only if you have, or are claiming, a disability that qualifies for an automobile allowance.'],
+ L159:['VA Form 26-4555, for Specially Adapted Housing (SAH) or Special Home Adaptation (SHA) grants.','Asks VA for a grant to build, buy, or change a home because of a qualifying service-connected disability.','Include it only if you have, or are claiming, a disability that qualifies for a housing grant.'],
+ L418:['Court papers such as a name change, custody order, adoption decree, or other legal document.','Shows a legal fact VA needs, like your legal name or a child\'s custody or adoption.','Include it when your claim or dependent status depends on a court decision.'],
+ L018:['A report from a civilian police department, like an accident or assault report.','Gives an official record that an event happened, with its date and place.','Include it if your claim involves an event that police reported.'],
+ L070:['Photos related to your claim, like an injury, a scar, or a place or event.','Shows VA something words cannot. Label each with the date, place, and what it shows.','Include them when a picture helps show an event, a visible condition, or where something happened.'],
+ X10210:['VA Form 21-10210, Lay/Witness Statement. VA\'s official form for a statement from you or someone who knows about your claim.','Gives VA a signed account of what the writer knows or saw firsthand.','Include one for each person giving a statement. Each witness uses their own form.'],
+ X4138:['VA Form 21-4138, Statement in Support of Claim.','Lets you give VA more information about your claim in your own words, like details that did not fit on another form.','Include it when you want to explain something more or when VA asks for more information.'],
+ XDEC:['The letter VA sends when it decides a claim. It explains what VA decided, the effective date, and the reasons.','Shows what was decided and why. You need its date and details to choose a review or appeal option.','Include it if you are asking for a review or appeal, or filing again after a decision.'],
+ XCODE:['The VA rating code sheet, which lists your service-connected conditions, diagnostic codes, and percentages.','Shows exactly how VA rated each condition.','Include it when you are asking for an increase or a review, so you can point to the rating VA gave.']};
+// how to get non-VA documents
+var HOWGET={
+ L029:'If you separated in recent years, sign in to <a href="https://milconnect.dmdc.osd.mil/" target="_blank" rel="noopener">milConnect</a> and download it. Otherwise, request it from the National Archives (NPRC) through <a href="https://www.va.gov/records/get-military-service-records/" target="_blank" rel="noopener">VA.gov: Request your military records (DD214)</a>. Upload a clear scan or photo of every page.',
+ L034:'Request your Official Military Personnel File from the National Archives (NPRC): see <a href="https://www.va.gov/records/get-military-service-records/" target="_blank" rel="noopener">VA.gov: Request your military records</a>. Some records are also in milConnect.',
+ L015:'Ask the person to write what they saw or know firsthand, then sign and date it. They can use VA Form 21-10210 (below) or plain paper. Upload the signed copy.',
+ L023:'Use letters you already have. Upload a clear scan or photo.',
+ L014:'Order a certified copy from the vital records office in the state where the child was born. The CDC lists every office: <a href="https://www.cdc.gov/nchs/w2w/index.htm" target="_blank" rel="noopener">Where to Write for Vital Records</a>.',
+ L051:'Order a copy from the vital records office or county clerk where you married. See <a href="https://www.cdc.gov/nchs/w2w/index.htm" target="_blank" rel="noopener">Where to Write for Vital Records</a>.',
+ L037:'Order a copy from the clerk of the court in the county where the divorce was granted. See <a href="https://www.cdc.gov/nchs/w2w/index.htm" target="_blank" rel="noopener">Where to Write for Vital Records</a>.',
+ L033:'Order a copy from the vital records office in the state where the death happened. See <a href="https://www.cdc.gov/nchs/w2w/index.htm" target="_blank" rel="noopener">Where to Write for Vital Records</a>.',
+ L418:'Ask the clerk of the court that issued the order for a copy.',
+ L018:'Ask the records unit of the police department that made the report for a copy.',
+ L070:'Use photos you have. Note the date, place, and what each shows (for example in the Notes box).',
+ XDEC:'Find it in your mail or on VA.gov: <a href="https://www.va.gov/track-claims/your-claim-letters" target="_blank" rel="noopener">Your VA claim letters</a>.',
+ XCODE:'It usually comes with your decision letter. If you do not have it, ask VA at 800-827-1000 or ask your representative.'};
+// step-by-step how-to per form (from each form's own instructions)
+var HOWTO={
+ '21-10210':{s:[['Section I: Veteran\'s information','Fill in the Veteran\'s name, SSN or VA file number, date of birth, and contact details.'],['Section II: Claimant\'s information','Fill this in only if the claimant is not the Veteran (for example, a surviving spouse). Otherwise skip it.'],['Section III: Statement','Describe what you yourself know or have observed. Use dates, places, and specific details. Write only what you saw or heard firsthand.'],['Section IV: Witness\'s contact information','The person giving the statement fills in their name, relationship to the Veteran, phone, email, and address.'],['Section V: Certification and signature','The witness signs and dates it (items 22A and 22B). An unsigned statement can\'t be used.']],
+  t:['One form per witness. Each person fills out their own form.','Do: be specific (when, where, what you saw, how the Veteran changed). Don\'t: guess, give medical opinions, or repeat what others told you.','Sign and date in ink after printing, or sign electronically if you submit online.']},
+ '21-4138':{s:[['Section I: Identification','Items 1 to 8: your name, SSN or VA file number, date of birth, service number if any, phone, email, and mailing address.'],['Section II: Remarks','Write your statement. Name the claim or condition it is about. Use dates and specific details. Add pages if you need more room (put your name and file number on each).'],['Section III: Certification and signature','Sign (item 9) and date (item 10).']],
+  t:['Keep it focused: one topic per paragraph.','Read the warning about false statements before you sign.','Sign and date after printing, or sign electronically if you submit online.']},
+ '21-4192':{s:[['Items 1 to 2: Employer','Write the name and address of your most recent employer.'],['Section I: Veteran\'s identification','Fill in your name, SSN or VA file number, and date of birth. This is the only part the Veteran fills in.'],['Sections II to IV: Employer completes','Give the form to your last employer. They fill in your employment dates, hours, pay, time lost, why the job ended, Reserve or Guard duty status, and benefits.'],['Employer signature','The employer\'s authorized person signs and dates it (items 23A and 23B) and sends it back to VA or to you.']],
+  t:['This form is completed by your employer, not by you. Fill in Section I, then give it to your employer.','Use it together with VA Form 21-8940 for Individual Unemployability.','Keep a copy of what you hand to your employer and note the date.']},
+ '21-674':{s:[['Section I: Veteran or claimant','Your name, SSN or VA file number, date of birth, and contact information.'],['Section II: Student','The student\'s name, SSN, and date of birth.'],['Sections III and IV: School and student information','The school, the start and expected graduation dates, whether the student attends full time, the last term, and the student\'s income and estate, as the form asks.'],['Section V: Remarks','Anything else VA should know.'],['Section VI: Certification and signature','The Veteran, claimant, or student signs and dates it, with relationship and phone (items 16A to 16D).']],
+  t:['Use one form per student.','Check the school dates carefully: VA pays based on them.']},
+ '21-686c':{s:[['Section I: Veteran or claimant','Your name, SSN, VA file number, date of birth, and contact details.'],['Section II: Add a spouse','Your spouse\'s information, the date and place of your marriage, and prior marriages for both of you.'],['Section III: Add children','Each child\'s information. Section XI is an addendum for more children.'],['Sections IV to VIII: Report changes','A divorce, a stepchild who left your household, a dependent\'s death, a child\'s marriage, or a child over 18 who stopped school.'],['Sections IX and X: Remarks and signature','Add remarks, then sign and date it.']],
+  t:['You need a combined rating of 30% or more to get extra pay for dependents.','Skip the sections that do not apply to you.','For a child 18 to 23 in school, also send VA Form 21-674.']},
+ '21-4502':{s:[['Section I: Veteran or service member','Your name, SSN or VA file number, date of birth, contact details, and service dates.'],['Section II: Application information','Whether you applied for disability compensation, the type of conveyance you are applying for, and any earlier application.'],['Signature','Sign and date it (items 16 and 17).'],['Section III','Completed by VA (certificate of eligibility).'],['Section IV: Receipt','Completed by you after you receive the vehicle or equipment (items 33A and 33B).']],
+  t:['Read the form\'s instructions page before you start; it explains who qualifies.']},
+ '26-4555':{s:[['Items 1 to 7','Your name, SSN, VA file or claim number, date of birth, email, address, and phone.'],['Items 8 to 10','Answer whether you applied before for Specially Adapted Housing or a home improvement grant, and whether you live in a nursing home or care facility.'],['Item 11: Remarks','Anything else VA should know.'],['Item 12: Signature','Sign your full name in ink and date it (12A and 12B).']],
+  t:['VA follows up with you about the home and the adaptations you need.']}};
+var HOWSRC='From the instructions printed on the official VA form and its VA.gov "About VA Form" page.';
+// per-claim required/recommended (rules cited in research/doc-types.md). Only VA-stated requirements are "Required".
+function cdReco(c){var P=(S.profile&&S.profile.f)||{},L=(S.profile&&S.profile.l)||{},out=[],seen={};
+  var add=function(code,lvl,why){if(seen[code])return;seen[code]=1;out.push({code:code,lvl:lvl,why:why})};
+  var nm=(c.name||'')+' '+(c.dc||''),ptsd=/PTSD|post-?traumatic|\b9411\b/i.test(nm),tdiu=/unemploy|TDIU/i.test(nm);
+  add('L029','Required','VA requires your DD214 or other separation papers for every disability claim (upload it or let VA get it).');
+  if(tdiu)add('L115','Required','VA requires Form 21-4192 from your last employer, along with Form 21-8940, for Individual Unemployability.');
+  add('L015','Recommended',ptsd?'People who knew you then can back up your stressor and describe changes they saw.':'People who know you can describe the event and how your condition affects you.');
+  add('X4138','Recommended','Your own statement can explain when it started and how it affects your life.');
+  var kids=(L.children||[]).filter(function(k){return k&&(k.name||k.dob||k.status)}),school=kids.some(function(k){return /in school/.test(k.status||'')});
+  if(school)add('L133','Required','VA requires Form 21-674 for each child 18 to 23 in school full time.');
+  if(P.marital==='Married'||kids.length){add('L139','Recommended','Adds your dependents for extra pay if your combined rating is 30% or more.')}
+  if(P.marital==='Married')add('L051','Recommended','Proof of your marriage if VA asks for it when you add your spouse.');
+  if(kids.length)add('L014','Recommended','Proof of your child\'s relationship to you if VA asks for it.');
+  if(ptsd||(L.deployments||[]).some(function(d){return d&&d.place})||(P.exposures&&P.exposures.length))add('L034','Recommended','Personnel records can show where you served and what you did.');
+  if(c.prevDenied||/decision|denied|appeal|review/i.test(c.status||''))add('XDEC','Recommended','Shows what VA decided and why, which you need for a review or appeal.');
+  if(/amputat|loss of use|paraly|amyotrophic|\bALS\b|blind/i.test(nm)){add('L117','Recommended','You may qualify for an automobile allowance.');add('L159','Recommended','You may qualify for a housing adaptation grant.')}
+  return out}
+function cdSelHTML(c){var reco=cdReco(c),has={};(c.cdocs||[]).forEach(function(x){has[x.code]=1});var inR={};reco.forEach(function(r){inR[r.code]=1});
+  var o=function(d,pre,suf){return '<option value="'+d[0]+'" data-name="'+esc(d[1])+'">'+(has[d[0]]?'✓ ':'')+esc(pre+d[1]+suf)+(has[d[0]]?' (added)':'')+'</option>'};
+  return '<option value="">Choose a document type…</option><optgroup label="Required or recommended for this claim">'+reco.map(function(r){return o(vaDocBy(r.code),r.lvl+': ',' — '+r.why)}).join('')+'</optgroup>'+
+   '<optgroup label="All other documents: VA.gov upload types">'+VADOC.filter(function(d){return !inR[d[0]]}).map(function(d){return o(d,'','')}).join('')+'</optgroup>'+
+   '<optgroup label="All other documents: other VA documents">'+VADOC_X.filter(function(d){return !inR[d[0]]}).map(function(d){return o(d,'','')}).join('')+'</optgroup>'}
+function cdDescHTML(code,c){var g=vaDocBy(code),d=DOCDESC[code];if(!g||!d)return '<p class="muted">Pick a document type below to see what it is, how VA uses it, and when to include it.</p>';
+  var r=c?cdReco(c).filter(function(x){return x.code===code})[0]:null,fn=CODEFORM[code];
+  return '<h4 class="cddt">'+esc(g[1])+(r?' <span class="cdlvl '+r.lvl.toLowerCase()+'">'+r.lvl+'</span>':'')+'</h4>'+(r?'<p class="cdwhy"><b>'+r.lvl+' for this claim:</b> '+esc(r.why)+'</p>':'')+
+   '<p><b>What it is:</b> '+esc(d[0])+'</p><p><b>How VA uses it:</b> '+esc(d[1])+'</p><p><b>When to include it:</b> '+esc(d[2])+'</p>'+
+   (fn?'<p class="muted">Official form: <a href="'+aboutURL(fn)+'" target="_blank" rel="noopener">About VA Form '+fn+' on VA.gov</a> (rev. '+VAFORM[fn].rev+').</p>':'')}
+function loadPdfLib(){if(window.PDFLib)return Promise.resolve(window.PDFLib);return new Promise(function(res,rej){var s=document.createElement('script');s.src='vendor/pdf-lib.min.js';s.onload=function(){window.PDFLib?res(window.PDFLib):rej(new Error('PDF tool did not load'))};s.onerror=function(){rej(new Error('PDF tool could not be loaded'))};document.head.appendChild(s)})}
+function getBlank(fn){var u=FORMDIR+VAFORM[fn].f;var chk=function(b){if(!b||b.byteLength<1000||new TextDecoder().decode(new Uint8Array(b,0,5))!=='%PDF-')throw new Error('not a PDF');return b};
+  var xhr=function(){return new Promise(function(res,rej){var x=new XMLHttpRequest();x.open('GET',u);x.responseType='arraybuffer';x.onload=function(){(x.status===200||x.status===0)&&x.response?res(x.response):rej(new Error('HTTP '+x.status))};x.onerror=function(){rej(new Error('blocked'))};x.send()})};
+  return fetch(u).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.arrayBuffer()}).catch(xhr).then(chk).catch(function(){throw new Error('The bundled blank form could not be opened here. Get it from VA instead: '+VAPDF+VAFORM[fn].f)})}
+var FORMDIR='forms/';
+function dlBlob(buf,name,type){var url=URL.createObjectURL(new Blob([buf],{type:type||'application/pdf'})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},60000)}
+function openBlob(buf,type){var url=URL.createObjectURL(new Blob([buf],{type:type||'application/pdf'}));var w=window.open(url,'_blank');if(!w){var a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}setTimeout(function(){URL.revokeObjectURL(url)},120000);return w}
+function cdFind(cid,did){var c=S.claims[cid];if(!c)return null;for(var i=0;i<(c.cdocs||[]).length;i++)if(c.cdocs[i].id===did)return {c:c,d:c.cdocs[i]};return null}
+function cdFile(x){return x.docId?docById(x.docId):null}
+function cdItemHTML(c,x){var fn=CODEFORM[x.code],f=cdFile(x),id=x.id,nm=esc(x.type);
+  var h='<li class="cditem" data-cdi="'+id+'"><div class="cdtop"><button class="cdopen" data-cdopen="'+id+'" aria-label="Open '+nm+'">'+nm+'</button><button class="b red sm" data-cdrm="'+id+'" aria-label="Remove '+nm+' from this claim">Remove</button></div>'+
+   '<small class="muted">In Documents → '+esc(catName(x.cat))+(f?' · file: '+esc(f.name)+(x.filled?' (filled '+esc(new Date(x.filled).toLocaleString())+')':''):' · no file yet')+'</small>';
+  if(fn){var F=VAFORM[fn];h+='<div class="cdform"><span class="cdblank">📄 Blank official VA Form '+fn+' (rev. '+F.rev+') attached</span><div class="cdacts">'+
+    '<button class="b sm" data-cdfill="'+id+'">'+(f&&f.form?'Edit filled form':'Fill out in app')+'</button><button class="b alt sm" data-cdhow="'+fn+'">How to fill it out</button><button class="b alt sm" data-cdblank="'+fn+'">Blank form (PDF)</button>'+
+    (f&&f.form?'<button class="b alt sm" data-cddl="'+id+'">Download filled</button><button class="b alt sm" data-cdprint="'+id+'">Print</button>':'')+'</div></div>'}
+  if(HOWGET[x.code]&&!(fn&&x.code!=='L015'))h+='<details class="cdget"'+(f?'':' open')+'><summary>How to get it</summary><p>'+HOWGET[x.code]+'</p></details>';
+  if(!fn||x.code==='L015'||(f&&!f.form)){h+='<div class="cdacts"><label class="b alt sm cdup">'+(f?'Replace file':'Upload file')+'<input type="file" class="hidefile" data-cdup="'+id+'" accept="application/pdf,image/*,.pdf,.heic,.heif,.doc,.docx,.txt"></label>'+
+    (f?'<button class="b alt sm" data-cdview="'+id+'">Open</button><button class="b alt sm" data-cdren="'+id+'">Rename</button>':'')+'</div>'}
+  if(f)h+='<label class="cdnl" for="cdn_'+id+'">Notes</label><input type="text" id="cdn_'+id+'" data-cdnote="'+id+'" value="'+esc(f.note||'')+'" placeholder="Optional note (no medical details)">';
+  return h+'<div class="muted" data-cdm="'+id+'" aria-live="polite"></div></li>'}
+function openHowTo(fn){var H=HOWTO[fn],F=VAFORM[fn];if(!H)return;var m=$('howModal');
+  $('howTitle').textContent='How to fill out VA Form '+fn;
+  $('howBody').innerHTML='<p class="muted">'+esc(F.t)+' (rev. '+F.rev+')</p><ol class="howsteps">'+H.s.map(function(s){return '<li><b>'+esc(s[0])+'.</b> '+esc(s[1])+'</li>'}).join('')+'</ol><h4>Tips</h4><ul>'+H.t.map(function(t){return '<li>'+esc(t)+'</li>'}).join('')+
+   '<li>Never guess. If something does not apply, leave it blank or follow the form\'s note.</li><li>Keep a copy of everything you send.</li></ul><p class="muted">'+HOWSRC+' <a href="'+aboutURL(fn)+'" target="_blank" rel="noopener">About VA Form '+fn+'</a> · <a href="'+VAPDF+F.f+'" target="_blank" rel="noopener">Official PDF</a></p>';
+  m.hidden=false;HOWRET=document.activeElement;setTimeout(function(){$('howClose').focus()},0)}
+var HOWRET=null;
+/* ---- PDF form editor ---- */
+var ED=null;
+function fieldTU(P,f){try{var d=f.acroField.dict,t=d.lookup(P.PDFName.of('TU'));if(!t){var par=d.lookup(P.PDFName.of('Parent'));if(par&&par.lookup)t=par.lookup(P.PDFName.of('TU'))}if(t&&t.decodeText)return t.decodeText().replace(/\s+/g,' ').trim()}catch(e){}return ''}
+function isSSNField(lab,name){return /social security|\bSSN\b|SocialSecurity|SSN/i.test(lab+' '+name)}
+function edPrefill(items){var P=(S.profile&&S.profile.f)||{},used={},n=0,dig=String(P.phone||'').replace(/\D/g,'').replace(/^1(?=\d{10}$)/,''),dob=/^(\d{4})-(\d{2})-(\d{2})$/.exec(P.dob||''),zip=String(P.mZip||'').replace(/[^\d]/g,'');
+  var cty=/^(us|usa|united states( of america)?)$/i.test((P.mCountry||'').trim())||(!P.mCountry&&P.mStreet)?'US':(P.mCountry||'');
+  var full=[P.first,(P.middle||'').slice(0,1),P.last].filter(Boolean).join(' '),ph=dig.length===10?'('+dig.slice(0,3)+') '+dig.slice(3,6)+'-'+dig.slice(6):P.phone,
+   addr=[[P.mStreet,P.mApt].filter(Boolean).join(' '),P.mCity,[P.mState,P.mZip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  var R=[[/first name.*last name/i,'fullname',P.first&&P.last?full:''],[/first name/i,'first',P.first],[/middle initial/i,'mi',(P.middle||'').slice(0,1)],[/last name/i,'last',P.last],
+   [/file ?\/? ?(claim )?(number|no)/i,'file',P.vaFile],[/service number/i,'svc',P.serviceNum],
+   [/(date of birth|birth date).*month.*day.*year/i,'dob',dob&&dob[2]+'/'+dob[3]+'/'+dob[1]],[/(date of birth|birth date).*month/i,'dobm',dob&&dob[2]],[/(date of birth|birth date).*day/i,'dobd',dob&&dob[3]],[/(date of birth|birth date).*year/i,'doby',dob&&dob[1]],
+   [/(telephone|phone).*(middle|second) (3|three)/i,'ph2',dig.slice(3,6)],[/(telephone|phone).*last (4|four)/i,'ph3',dig.slice(6,10)],[/(telephone|phone).*(area code|first three)/i,'ph1',dig.slice(0,3),function(it){return it.max>0&&it.max<=3}],
+   [/(telephone|phone)/i,'phf',ph,function(it){return !it.max||it.max>=10}],
+   [/address.*zip/i,'addr',addr,function(it){return !it.max&&!/\.\s*(number and street|city|state|zip|country|apartment)/i.test(it.label.replace(/^.*?\)/,''))}],
+   [/number and street|street address/i,'street',P.mStreet],[/apartment|unit number/i,'apt',P.mApt],[/\bcity\b/i,'city',P.mCity],[/state or province|address.*\bstate\b|enter state/i,'state',P.mState],[/country/i,'country',cty],
+   [/zip.*last (4|four)/i,'zip4',zip.slice(5,9)],[/zip/i,'zip5',zip.slice(0,5)]];
+  var skip=/marriage|spouse|student|child|witness|employer|seller|insurance|former|parent|school|previous|preparer|representative|alternate|international|foreign|signed|evening|cell/i;
+  items.forEach(function(it){if(it.kind!=='text'||it.ssn||it.ro||it.val)return;var lab=it.label||'';if(skip.test(lab)||(/claimant/i.test(lab)&&!/veteran/i.test(lab)))return;
+    if(/e-?mail/i.test(lab)){var em=String(P.email||'');if(!em)return;if(!used.email){used.email=1;it.val=it.max?em.slice(0,it.max):em;used.emailRest=it.max?em.slice(it.max):'';n++}else if(used.emailRest){it.val=used.emailRest.slice(0,it.max||200);used.emailRest='';n++}return}
+    for(var i=0;i<R.length;i++){var r=R[i];if(!r[0].test(lab)||(r[3]&&!r[3](it)))continue;if(used[r[1]]||!r[2])break;var v=String(r[2]);if(it.max&&v.length>it.max)v=v.slice(0,it.max);it.val=v;it.pk=r[1];used[r[1]]=1;n++;break}});
+  if(!(used.ph1&&used.ph2&&used.ph3))items.forEach(function(it){if(/^ph[123]$/.test(it.pk||'')){it.val='';n--}});
+  return n}
+async function openEditor(cid,did){var hit=cdFind(cid,did);if(!hit)return;var fn=CODEFORM[hit.d.code];if(!fn)return;
+  if(IS_POPUP){openWindow({tab:'claims',label:'Fill out in app',cdedit:[cid,did]});return}
+  var m=$('edModal');m.hidden=false;ED={cid:cid,did:did,fn:fn};EDRET=document.activeElement;$('edTitle').textContent='VA Form '+fn+': '+VAFORM[fn].t;$('edBody').innerHTML='<p>Loading the form…</p>';$('edMsg').textContent='';$('edSave').disabled=true;
+  setTimeout(function(){$('edClose').focus()},0);
+  try{var P=await loadPdfLib(),f=cdFile(hit.d),saved=!!(f&&f.form),bytes=saved?(await readFile(f.id)).buf:await getBlank(fn);
+    var pdf=await P.PDFDocument.load(bytes,{ignoreEncryption:true}),form=pdf.getForm(),pages=pdf.getPages(),pmap=new Map();
+    pages.forEach(function(pg,i){var an=pg.node.Annots();if(!an)return;for(var k=0;k<an.size();k++){var o=pdf.context.lookup(an.get(k));if(o)pmap.set(o,i)}});
+    var items=[];form.getFields().forEach(function(fl,ix){var w=fl.acroField.getWidgets(),pg=w.length&&pmap.has(w[0].dict)?pmap.get(w[0].dict):0,name=fl.getName(),lab=fieldTU(P,fl)||name.replace(/^.*\./,'').replace(/\[\d+\]$/,''),it={i:ix,name:name,label:lab,page:pg,ro:fl.isReadOnly&&fl.isReadOnly(),ssn:isSSNField(lab,name)};
+      if(fl instanceof P.PDFTextField){it.kind='text';it.max=fl.getMaxLength()||0;it.multi=fl.isMultiline();it.val=fl.getText()||''}
+      else if(fl instanceof P.PDFCheckBox){it.kind='check';it.val=fl.isChecked()}
+      else if(fl instanceof P.PDFRadioGroup){it.kind='radio';it.opts=fl.getOptions();it.val=fl.getSelected()||''}
+      else if(fl instanceof P.PDFDropdown||fl instanceof P.PDFOptionList){it.kind='drop';it.opts=fl.getOptions();it.val=(fl.getSelected()||[])[0]||''}
+      else if(fl instanceof P.PDFSignature){it.kind='sig'}else return;if(it.ro&&it.kind!=='sig')return;items.push(it)});
+    var pre=saved?0:edPrefill(items);ED.pdf=pdf;ED.form=form;ED.items=items;ED.P=P;ED.saved=saved;
+    var byPg={};items.forEach(function(it){(byPg[it.page]=byPg[it.page]||[]).push(it)});
+    $('edBody').innerHTML='<p class="muted">'+(saved?'Your saved copy is loaded.':'A brand-new blank official form (rev. '+VAFORM[fn].rev+').'+(pre?' '+pre+' boxes were filled in from your Profile. Check them.':''))+' Your SSN is never filled in for you. If you type it, it is saved in this PDF on this device and in your backups.</p>'+
+     '<p><button class="b alt sm" data-cdhow="'+fn+'">How to fill it out</button></p>'+
+     Object.keys(byPg).map(function(pg,j){return '<details class="edpg"'+(j===0?' open':'')+'><summary>Page '+(+pg+1)+' ('+byPg[pg].length+' boxes)</summary>'+byPg[pg].map(edFieldHTML).join('')+'</details>'}).join('');
+    $('edSave').disabled=false}
+  catch(err){$('edBody').innerHTML='<p class="err">Sorry: '+esc(err.message)+'</p><p><a href="'+VAPDF+VAFORM[fn].f+'" target="_blank" rel="noopener">Open the official blank PDF on VA.gov</a></p>'}}
+var EDRET=null;
+function edFieldHTML(it){var id='edf'+it.i,lab=esc(it.label.length>160?it.label.slice(0,157)+'…':it.label),t=' title="'+esc(it.label)+'"';
+  if(it.kind==='sig')return '<div class="edf"><span class="muted">✍ '+lab+': sign by hand after printing.</span></div>';
+  if(it.kind==='check')return '<div class="edf edck"><input type="checkbox" id="'+id+'" data-edi="'+it.i+'"'+(it.val?' checked':'')+'><label for="'+id+'"'+t+'>'+lab+'</label></div>';
+  var L='<label for="'+id+'"'+t+'>'+lab+(it.ssn?' <span class="muted">(only if you choose to type it)</span>':'')+'</label>';
+  if(it.kind==='radio'||it.kind==='drop')return '<div class="edf">'+L+'<select id="'+id+'" data-edi="'+it.i+'"><option value="">—</option>'+it.opts.map(function(o){return '<option'+(o===it.val?' selected':'')+'>'+esc(o)+'</option>'}).join('')+'</select></div>';
+  var ml=it.max?' maxlength="'+it.max+'"':'';
+  return '<div class="edf">'+L+(it.multi?'<textarea id="'+id+'" data-edi="'+it.i+'"'+ml+'>'+esc(it.val)+'</textarea>':'<input type="text" id="'+id+'" data-edi="'+it.i+'"'+ml+' value="'+esc(it.val)+'"'+(it.ssn?' autocomplete="off"':'')+'>')+'</div>'}
+function edClean(v){return String(v).replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').replace(/[\u2013\u2014]/g,'-').replace(/[^\x0A\x20-\x7E\xA0-\xFF]/g,'')}
+async function edSave(){if(!ED||!ED.pdf)return;var P=ED.P,form=ED.form,fields=form.getFields(),bad=0;$('edSave').disabled=true;$('edMsg').textContent='Saving…';
+  try{ED.items.forEach(function(it){var el=document.querySelector('[data-edi="'+it.i+'"]');if(!el)return;var fl=fields[it.i];try{
+      if(it.kind==='text'){var v=edClean(el.value);if(it.max&&v.length>it.max)v=v.slice(0,it.max);fl.setText(v||undefined);it.val=v}
+      else if(it.kind==='check'){el.checked?fl.check():fl.uncheck();it.val=el.checked}
+      else if(it.kind==='radio'){if(el.value)fl.select(el.value);else fl.clear();it.val=el.value}
+      else if(it.kind==='drop'){if(el.value)fl.select(el.value);else fl.clear();it.val=el.value}}catch(e){bad++}});
+    try{form.deleteXFA()}catch(e){}
+    var out=(await ED.pdf.save({updateFieldAppearances:true})).buffer;
+    var hit=cdFind(ED.cid,ED.did);if(!hit)throw new Error('This claim document was removed');var x=hit.d,c=hit.c,d=cdFile(x),id=d&&d.form?d.id:uid(),r=await storeFile(id,out,'application/pdf');
+    var name='VA Form '+ED.fn+' (filled) - '+(c.name||'').replace(/[^\w ()-]/g,'').trim().slice(0,40)+'.pdf';
+    if(d&&d.form){d.orig=out.byteLength;d.stored=r.stored;d.gz=r.gz;d.hash=r.hash;d.saved=new Date().toISOString()}
+    else S.docs.push({id:id,cat:x.cat,name:name,type:'application/pdf',added:new Date().toISOString(),orig:out.byteLength,stored:r.stored,gz:r.gz,hash:r.hash,note:'',claim:ED.cid,form:ED.fn});
+    x.docId=id;x.filled=new Date().toISOString();ED.saved=true;ED.out=out;saveNow();renderClaims();renderDocs();
+    $('edMsg').innerHTML='<span class="ok">✓ Saved to this claim and to Documents.</span>'+(bad?' '+bad+' boxes could not be set.':'');$('edDl').disabled=false;$('edPrint').disabled=false}
+  catch(err){$('edMsg').innerHTML='<span class="err">Could not save: '+esc(err.message)+'</span>'}$('edSave').disabled=false}
+async function cdFilledBuf(x){var d=cdFile(x);if(!d)throw new Error('No saved copy yet. Press Save first.');return {buf:(await readFile(d.id)).buf,d:d}}
+function closeEditor(){$('edModal').hidden=true;ED=null;$('edDl').disabled=true;$('edPrint').disabled=true;if(EDRET&&EDRET.focus&&document.contains(EDRET))EDRET.focus()}
 var MEDLABEL=/treatment|\bSTRs?\b|DBQ|nexus|medical|exam|test result|opinion|C&P|x-?ray|MRI|diagnos|doctor|hospital|clinic|prescription|lab /i;
 function guessDoc(t){t=t||'';var m=[[/DD-?\s?214/i,'L029'],[/personnel/i,'L034'],[/10210|buddy|lay\b|witness/i,'L015'],[/4138|personal statement|statement in support/i,'X4138'],[/4192|employ/i,'L115'],[/marriage/i,'L051'],[/divorce/i,'L037'],[/birth/i,'L014'],[/death/i,'L033'],[/photo/i,'L070'],[/police/i,'L018'],[/court/i,'L418'],[/decision/i,'XDEC'],[/code sheet/i,'XCODE'],[/686c|dependen/i,'L139'],[/674|school/i,'L133']];
   for(var i=0;i<m.length;i++)if(m[i][0].test(t))return vaDocBy(m[i][1]);return null}
@@ -848,7 +1043,7 @@ function renderDocs(){ensureDocs();var open=[].map.call(document.querySelectorAl
     return '<details class="card tcard" data-cat="'+c[0]+'"><summary><span class="smct">'+esc(c[1])+'<span class="tsum">'+(L.length?L.length+' document'+(L.length>1?'s':''):'No documents yet')+(function(){var n=0;S.order.forEach(function(id){var cl=S.claims[id];if(cl&&cl.cdocs)n+=cl.cdocs.filter(function(x){return x.cat===c[0]}).length});return n?' · '+n+' claim document'+(n>1?'s':''):''})()+'</span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">'+
     '<div class="row" style="align-items:center"><label class="b" style="flex:0 0 auto;cursor:pointer;font-weight:700">📎 Add files<input type="file" multiple data-up="'+c[0]+'" accept="application/pdf,image/*,.pdf,.doc,.docx,.txt,.rtf,.odt,.heic,.heif" class="hidefile"></label><label class="b alt" style="flex:0 0 auto;cursor:pointer;font-weight:700">📷 Take photo<input type="file" accept="image/*" capture="environment" data-up="'+c[0]+'" class="hidefile"></label></div>'+
     '<div class="muted" data-upmsg="'+c[0]+'" aria-live="polite"></div>'+
-    S.order.map(function(id){var cl=S.claims[id];if(!cl||!cl.cdocs)return '';return cl.cdocs.filter(function(x){return x.cat===c[0]}).map(function(x){return '<div class="docitem cdph" data-cdph="'+x.id+'"><div class="docname">'+esc(x.type)+'</div><div class="muted">Claim document for <b>'+esc(cl.dc+' '+cl.name.slice(0,40))+'</b> · added '+esc(new Date(x.added).toLocaleDateString())+' · no file yet (use 📎 Add files above). Manage it in My Claims.</div></div>'}).join('')}).join('')+
+    S.order.map(function(id){var cl=S.claims[id];if(!cl||!cl.cdocs)return '';return cl.cdocs.filter(function(x){return x.cat===c[0]&&!cdFile(x)}).map(function(x){return '<div class="docitem cdph" data-cdph="'+x.id+'"><div class="docname">'+esc(x.type)+'</div><div class="muted">Claim document for <b>'+esc(cl.dc+' '+cl.name.slice(0,40))+'</b> · added '+esc(new Date(x.added).toLocaleDateString())+' · no file yet (use 📎 Add files above). Manage it in My Claims.</div></div>'}).join('')}).join('')+
     L.map(function(d){return '<div class="docitem" data-doc="'+d.id+'"><div class="docname">'+esc(d.name)+'</div><div class="muted">Added '+esc(new Date(d.added).toLocaleString())+' · '+fmtSize(d.orig)+' (stored '+fmtSize(d.stored)+(d.gz?', compressed':'')+')</div>'+
       '<div class="row"><div><label>Note</label><input type="text" data-dnote="'+d.id+'" value="'+esc(d.note||'')+'" placeholder="Optional note"></div><div><label>Linked claim</label><select data-dclaim="'+d.id+'">'+claimOpts(d.claim)+'</select></div></div>'+
       '<div><button class="b sm" data-dact="open" data-id="'+d.id+'">Open</button><button class="b alt sm" data-dact="dl" data-id="'+d.id+'">Download</button><button class="b alt sm" data-dact="ren" data-id="'+d.id+'">Rename</button><button class="b red sm" data-dact="del" data-id="'+d.id+'">Delete</button></div></div>'}).join('')+'</div></details>'}).join('');
@@ -872,6 +1067,28 @@ $('docList').addEventListener('click',async function(e){var b=e.target.closest('
     else if(act==='del'){if(!confirm('Delete "'+d.name+'"? This removes it from this device'+(DIRSTATE==='ok'?' and your save folder':'')+'. It cannot be undone unless you have a backup.'))return;
       await idbDel('files',d.id).catch(function(){});if(d.mpath)S.mirrorTrash.push(d.mpath);S.docs=S.docs.filter(function(x){return x.id!==d.id});saveNow();renderDocs()}}
   catch(err){alert('Sorry: '+err.message)}});
+async function cdUpload(inp){var h=cdFind(S.current,inp.dataset.cdup),f0=inp.files&&inp.files[0];inp.value='';if(!h||!f0)return;var x=h.d,msg=document.querySelector('[data-cdm="'+x.id+'"]');
+  if(MEDLABEL.test(f0.name)&&!confirm('"'+f0.name+'" looks like a medical record. VA to Z does not store medical records. Upload it anyway only if it is not a medical record. Continue?'))return;
+  try{if(msg)msg.textContent='Saving '+f0.name+'…';var buf=await f0.arrayBuffer(),old=cdFile(x),id=old?old.id:uid(),r=await storeFile(id,buf,f0.type);
+    if(old){old.name=f0.name;old.type=f0.type;old.orig=buf.byteLength;old.stored=r.stored;old.gz=r.gz;old.hash=r.hash;old.added=new Date().toISOString();delete old.form;delete x.filled}
+    else S.docs.push({id:id,cat:x.cat,name:f0.name,type:f0.type,added:new Date().toISOString(),orig:buf.byteLength,stored:r.stored,gz:r.gz,hash:r.hash,note:'',claim:S.current});
+    x.docId=id;saveNow();renderClaims();renderDocs();var m2=document.querySelector('[data-cdm="'+x.id+'"]');if(m2)m2.innerHTML='<span class="ok">✓ Saved '+esc(f0.name)+'. Integrity checked.</span>'}
+  catch(err){if(msg)msg.innerHTML='<span class="err">Could not save: '+esc(err.message)+'</span>'}}
+async function cdAction(c,b){var ds=b.dataset,did=ds.cdopen||ds.cdfill||ds.cddl||ds.cdprint||ds.cdview||ds.cdren,h=did?cdFind(S.current,did):null,x=h&&h.d;
+  try{if(ds.cdhow){openHowTo(ds.cdhow);return}
+    if(ds.cdblank){var fn=ds.cdblank,buf=await getBlank(fn);dlBlob(buf,'VA Form '+fn+' (blank).pdf');return}
+    if(!x)return;var fnx=CODEFORM[x.code],f=cdFile(x);
+    if(ds.cdfill||(ds.cdopen&&fnx&&(x.code!=='L015'||!f||f.form))){await openEditor(S.current,x.id);return}
+    if(ds.cdopen&&!f){var li=b.closest('li'),d=li&&li.querySelector('details.cdget');if(d)d.open=true;var u=li&&li.querySelector('[data-cdup]');if(u)u.closest('label').focus?u.focus():0;var m=li&&li.querySelector('[data-cdm]');if(m)m.textContent='No file yet. Upload your copy below.';return}
+    if(ds.cdren&&f){var nn=prompt('New name for this document:',f.name);if(nn&&nn.trim()){var ext=(f.name.match(/\.[A-Za-z0-9]{1,5}$/)||[''])[0];nn=nn.trim();if(ext&&!/\.[A-Za-z0-9]{1,5}$/.test(nn))nn+=ext;f.name=nn;saveNow();renderClaims();renderDocs()}return}
+    var r=await cdFilledBuf(x);if(ds.cddl)dlBlob(r.buf,r.d.name,r.d.type);else openBlob(r.buf,r.d.type)}
+  catch(err){var m3=document.querySelector('[data-cdm="'+(x?x.id:'')+'"]')||$('cdMsg');m3.innerHTML='<span class="err">'+esc(err.message)+'</span>'}}
+$('edSave').onclick=edSave;$('edClose').onclick=closeEditor;
+$('edDl').onclick=async function(){try{var h=ED&&cdFind(ED.cid,ED.did);var r=await cdFilledBuf(h.d);dlBlob(r.buf,r.d.name)}catch(e){$('edMsg').textContent=e.message}};
+$('edPrint').onclick=async function(){try{var h=ED&&cdFind(ED.cid,ED.did);var r=await cdFilledBuf(h.d);openBlob(r.buf)}catch(e){$('edMsg').textContent=e.message}};
+$('edModal').addEventListener('click',function(e){var b=e.target.closest('[data-cdhow]');if(b)openHowTo(b.dataset.cdhow)});
+$('howClose').onclick=function(){$('howModal').hidden=true;if(HOWRET&&document.contains(HOWRET))HOWRET.focus()};
+document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;if(!$('howModal').hidden){$('howClose').click();e.preventDefault()}else if(!$('edModal').hidden){closeEditor();e.preventDefault()}});
 $('medDl').onclick=function(){medDownload()};
 $('medRm').onclick=function(){if(!S.medExported&&!confirm('Remove this medical information without downloading it? This cannot be undone unless you have an older backup file.'))return;medRemove()};
 $('docAI').addEventListener('change',function(){S.docAI=this.checked;save()});
@@ -1021,9 +1238,10 @@ if(IS_POPUP){$('openWin').onclick=function(){openWindow(null)};
   document.addEventListener('click',function(e){var el=e.target.closest('input[type=file],label,button');if(!el)return;
     var inp=el.matches('input[type=file]')?el:el.querySelector&&el.querySelector('input[type=file]');var id=(inp||el).id,h=HANDOFF[id];
     if(!h&&inp&&inp.dataset.up)h=['docs','','Add files / Take photo in "'+catName(inp.dataset.up)+'"'];
+    if(!h&&inp&&inp.dataset.cdup)h=['claims','','Upload file / Replace file'];
     if(!h)return;e.preventDefault();e.stopImmediatePropagation();openWindow({tab:h[0],open:h[1],hl:id,label:h[2]})},true)}
 function applyIntent(){var m=/[#&]intent=([^&]+)/.exec(location.hash);if(!m)return;var it;try{it=JSON.parse(decodeURIComponent(m[1]))}catch(e){return}history.replaceState(null,'',location.pathname+location.search);
-  tab(it.tab||'tools');if(it.open&&$(it.open))$(it.open).open=true;var el=it.hl&&$(it.hl);var tgt=el?(el.closest('label')||el):null;if(el&&el.dataset.up)tgt=el.closest('details');if(tgt&&tgt.tagName==='DETAILS')tgt.open=true;
+  tab(it.tab||'tools');if(it.cdedit&&S.claims[it.cdedit[0]]){S.current=it.cdedit[0];renderClaims();setTimeout(function(){openEditor(it.cdedit[0],it.cdedit[1])},50);return}if(it.open&&$(it.open))$(it.open).open=true;var el=it.hl&&$(it.hl);var tgt=el?(el.closest('label')||el):null;if(el&&el.dataset.up)tgt=el.closest('details');if(tgt&&tgt.tagName==='DETAILS')tgt.open=true;
   var old=$('handoffMsg');if(old)old.remove();document.querySelectorAll('.hl-flash').forEach(function(x){x.classList.remove('hl-flash')});
   var main=document.querySelector('main');main.insertAdjacentHTML('afterbegin','<div class="handoff" id="handoffMsg">Continue here: click <u>'+esc(it.label||'the highlighted button')+'</u>. (File and folder windows only work in the full window.)</div>');
   if(tgt){tgt.classList.add('hl-flash');setTimeout(function(){tgt.scrollIntoView({block:'center'})},60)}}
@@ -1278,9 +1496,9 @@ function renderClaim(){
   V.innerHTML='<div class="card"><h2><span class="dc">'+esc(c.dc)+'</span> '+esc(c.name)+'</h2>'+
   '<div class="row"><div><label for="cStat">Status</label><select id="cStat">'+STAT.map(function(s){return '<option'+(s===c.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div><div><label for="cDen">Denied before?</label><select id="cDen"><option value="0">No / first time</option><option value="1"'+(c.prevDenied?' selected':'')+'>Yes (use 21-0995 Supplemental)</option></select></div></div>'+
   '<details style="margin-top:10px"><summary><b>Official rating text (38 CFR)</b></summary><div class="reg">'+(e?regHTML(e):'')+'</div></details></div>'+
-  '<div class="card cdcard"><h3 id="cdH">Claim Documents</h3><label for="cdSel">Add a document type VA recognizes</label><select id="cdSel" aria-describedby="cdHelp"><option value="">Choose a document type…</option><optgroup label="VA.gov evidence upload types">'+VADOC.map(function(d){return '<option value="'+d[0]+'">'+esc(d[1])+'</option>'}).join('')+'</optgroup><optgroup label="Other VA documents (not a VA.gov upload type)">'+VADOC_X.map(function(d){return '<option value="'+d[0]+'">'+esc(d[1])+'</option>'}).join('')+'</optgroup></select><p class="muted" id="cdHelp">Medical record types (treatment records, STRs, DBQs, exams, medical opinions, test results) are not offered.</p>'+
+  '<div class="card cdcard"><h3 id="cdH">Claim Documents</h3><div id="cdDesc" class="cddesc" aria-live="polite">'+cdDescHTML(CDSHOW,c)+'</div><label for="cdSel">Add a document type VA recognizes</label><select id="cdSel" aria-describedby="cdHelp cdDesc">'+cdSelHTML(c)+'</select><p class="muted" id="cdHelp">Items at the top are required or recommended for this claim. "Required" is used only where VA says so. Medical record types (treatment records, STRs, DBQs, exams, medical opinions, test results) are not offered.</p>'+
   '<div id="cdConfirm" class="cdconfirm" role="group" aria-labelledby="cdQ" hidden><p id="cdQ"></p><button class="b sm" id="cdYes">Yes</button> <button class="b alt sm" id="cdNo">No</button></div><div id="cdMsg" class="muted" aria-live="polite"></div>'+
-  '<ul id="cdList" class="cdlist" aria-labelledby="cdH">'+(c.cdocs.length?c.cdocs.map(function(x){return '<li><span class="cdname">'+esc(x.type)+'<br><small class="muted">In Documents → '+esc(catName(x.cat))+'</small></span><button class="b red sm" data-cdrm="'+x.id+'" aria-label="Remove '+esc(x.type)+' from this claim">Remove</button></li>'}).join(''):'<li class="muted cdempty">No claim documents yet.</li>')+'</ul></div>'+
+  '<ul id="cdList" class="cdlist" aria-labelledby="cdH">'+(c.cdocs.length?c.cdocs.map(function(x){return cdItemHTML(c,x)}).join(''):'<li class="muted cdempty">No claim documents yet.</li>')+'</ul></div>'+
   '<div class="card"><h3>My notes</h3><p class="muted">Timeline, how it affects work and daily life.</p><p class="nomedhint">Don\'t paste medical records or treatment details here.</p><textarea id="cNotes">'+esc(c.notes)+'</textarea>'+
   '<h3>Evidence log</h3><p class="muted">No uploads here. Write down what you have and where it is (e.g., "DD-214 – in my files", "Buddy statement from Sgt. Lee – requested 10/1").</p><p class="nomedhint">Don\'t paste medical records or treatment details here.</p><textarea id="cEvid">'+esc(c.evidence)+'</textarea></div>'+
   '<div class="card"><h3>AI claim helper</h3><p class="muted">Grok gets this condition\'s 38 CFR text, your notes, evidence log, and claim documents list. Uses your xAI key (billed by xAI). Double-check everything; AI can make mistakes. Your profile is sent only if you turn on AI access in the Profile tab.</p>'+
@@ -1290,15 +1508,18 @@ function renderClaim(){
   '<div class="card"><button class="b red sm" id="cDel">Delete this claim</button></div>'+auditCardHTML(c);
   var ch=$('chat');ch.scrollTop=ch.scrollHeight;
 }
-$('claimView').addEventListener('input',function(ev){var c=S.claims[S.current];if(!c)return;var t=ev.target;
+$('claimView').addEventListener('input',function(ev){var c=S.claims[S.current];if(!c)return;var t=ev.target;if(t.dataset.cdnote){var h=cdFind(S.current,t.dataset.cdnote),f=h&&cdFile(h.d);if(f){f.note=t.value;save()}return}if(t.id==='cdSel')return;
   if(t.id==='cNotes')c.notes=t.value;else if(t.id==='cEvid')c.evidence=t.value;else if(t.id==='cStat'){c.status=t.value;renderClaimsListOnly()}else if(t.id==='cDen')c.prevDenied=t.value==='1';
   save()});
-var CDPEND='';
-$('claimView').addEventListener('change',function(ev){if(ev.target.id==='cdSel'){var g=vaDocBy(ev.target.value);CDPEND=g?g[0]:'';$('cdMsg').textContent='';var bx=$('cdConfirm');if(!g){bx.hidden=true;return}$('cdQ').innerHTML='Add <b>'+esc(g[1])+'</b> to this claim?';bx.hidden=false;ev.target.blur();$('cdYes').focus();return}if(ev.target.dataset.ci!=null||ev.target.id==='cStat'||ev.target.id==='cDen')ev.target.dispatchEvent(new Event('input',{bubbles:true}))});
+var CDPEND='',CDSHOW='';
+$('claimView').addEventListener('input',function(ev){if(ev.target.id==='cdSel'){CDSHOW=ev.target.value;$('cdDesc').innerHTML=cdDescHTML(CDSHOW,S.claims[S.current])}});
+$('claimView').addEventListener('change',async function(ev){var t0=ev.target;if(t0.dataset&&t0.dataset.cdup){await cdUpload(t0);return}
+  if(ev.target.id==='cdSel'){var g=vaDocBy(ev.target.value);CDPEND=g?g[0]:'';CDSHOW=ev.target.value;$('cdDesc').innerHTML=cdDescHTML(CDSHOW,S.claims[S.current]);$('cdMsg').textContent='';var bx=$('cdConfirm');if(!g){bx.hidden=true;return}$('cdQ').innerHTML='Add <b>'+esc(g[1])+'</b> to this claim?';bx.hidden=false;ev.target.blur();$('cdYes').focus();return}if(ev.target.dataset.ci!=null||ev.target.id==='cStat'||ev.target.id==='cDen')ev.target.dispatchEvent(new Event('input',{bubbles:true}))});
 function renderClaimsListOnly(){var y=window.scrollY;var L=$('claimList');L.innerHTML=S.order.map(function(id){var c=S.claims[id];if(!c)return '';var nd=(c.cdocs||[]).length;return '<button class="b '+(id===S.current?'':'alt')+'" data-cl="'+id+'"><b>'+esc(c.dc)+'</b> '+esc(c.name.slice(0,48))+'<br><small>'+esc(c.status)+' · '+nd+' doc'+(nd===1?'':'s')+'</small></button>'}).join('');window.scrollTo(0,y)}
-$('claimView').addEventListener('click',function(ev){var c=S.claims[S.current];if(!c)return;var t=ev.target;
-  if(t.id==='cdYes'&&CDPEND){var g=vaDocBy(CDPEND);CDPEND='';if(g){if(c.cdocs.some(function(y){return y.code===g[0]})){renderClaims();$('cdMsg').textContent=g[1]+' is already in this claim.';$('cdSel').focus();return}c.cdocs.push({id:uid(),code:g[0],type:g[1],cat:g[2],added:new Date().toISOString()});saveNow();renderClaims();renderDocs();$('cdMsg').textContent='Added '+g[1]+' to Claim Documents and Documents ('+catName(g[2])+').';$('cdSel').focus()}return}
+$('claimView').addEventListener('click',async function(ev){var c=S.claims[S.current];if(!c)return;var t=ev.target;
+  if(t.id==='cdYes'&&CDPEND){var g=vaDocBy(CDPEND);CDPEND='';if(g){if(c.cdocs.some(function(y){return y.code===g[0]})){renderClaims();$('cdMsg').textContent=g[1]+' is already in this claim.';$('cdSel').focus();return}var nid=uid();c.cdocs.push({id:nid,code:g[0],type:g[1],cat:g[2],added:new Date().toISOString()});saveNow();renderClaims();renderDocs();var fn=CODEFORM[g[0]];$('cdMsg').textContent='Added '+g[1]+' to Claim Documents and Documents ('+catName(g[2])+').'+(fn?' A blank official VA Form '+fn+' is attached. Tap it to fill it out.':' See "How to get it" and upload your copy.');$('cdSel').focus()}return}
   if(t.id==='cdNo'){CDPEND='';$('cdSel').value='';$('cdConfirm').hidden=true;$('cdMsg').textContent='Not added.';$('cdSel').focus();return}
+  var cb=t.closest&&t.closest('[data-cdopen],[data-cdfill],[data-cdhow],[data-cdblank],[data-cddl],[data-cdprint],[data-cdview],[data-cdren]');if(cb){await cdAction(c,cb);return}
   if(t.dataset.cdrm){c.cdocs=c.cdocs.filter(function(y){return y.id!==t.dataset.cdrm});saveNow();renderClaims();renderDocs();$('cdMsg').textContent='Removed.';var s2=$('cdSel');if(s2)s2.focus();return}
   else if(t.dataset.p){$('cMsg').value=t.dataset.p;sendChat()}
   else if(t.id==='cSend')sendChat();
