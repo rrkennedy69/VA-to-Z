@@ -36,7 +36,27 @@ async function runInVA(fn,args,refocus){
   finally{if(opened)chrome.tabs.remove(opened.id).catch(()=>{});if(openedWin)chrome.windows.remove(openedWin).catch(()=>{});
     const {appWin}=await SES.get('appWin');if(appWin&&refocus)chrome.windows.update(appWin,{focused:true}).catch(()=>{})}}
 function pull(refocus){return runInVA('vatozPull',[],refocus)}
+
+// One-click VA sync: try silently; if not signed in, open a small VA.gov window, wait for sign-in, pull, close.
+const MYVA='https://www.va.gov/my-va/';
+async function loginSync(refocus){
+  try{const r=await runInVA('vatozPull',[],false);if(r&&r.ok)return r;if(!r||r.error!=='not-logged-in')return r}catch(e){}
+  const w=await chrome.windows.create({type:'popup',url:MYVA,width:480,height:720,focused:true});const tabId=w.tabs[0].id;
+  return await new Promise(res=>{let busy=false,done=false;
+    const fin=v=>{if(done)return;done=true;clearInterval(iv);clearTimeout(to);chrome.windows.onRemoved.removeListener(onRm);chrome.tabs.onUpdated.removeListener(onUp);
+      if(v.ok)chrome.windows.remove(w.id).catch(()=>{});
+      SES.get('appWin').then(({appWin})=>{if(appWin&&refocus)chrome.windows.update(appWin,{focused:true}).catch(()=>{})});res(v)};
+    const onRm=id=>{if(id===w.id)fin({ok:false,error:'canceled'})};
+    const tryPull=async()=>{if(busy||done)return;busy=true;try{const tb=await chrome.tabs.get(tabId);
+        if(tb.status==='complete'&&/^https:\/\/www\.va\.gov\//.test(tb.url||'')){
+          await chrome.scripting.executeScript({target:{tabId},files:['pull.js']});
+          const [x]=await chrome.scripting.executeScript({target:{tabId},func:()=>self.vatozPull()});
+          if(x&&x.result&&x.result.ok)fin(x.result)}}catch(e){}busy=false};
+    const onUp=(id,info)=>{if(id===tabId&&info.status==='complete')tryPull()};
+    chrome.windows.onRemoved.addListener(onRm);chrome.tabs.onUpdated.addListener(onUp);
+    const iv=setInterval(tryPull,4000);const to=setTimeout(()=>{chrome.windows.remove(w.id).catch(()=>{});fin({ok:false,error:'timed out waiting for VA.gov sign-in'})},15*60000);tryPull()})}
 chrome.runtime.onMessage.addListener((m,sender,reply)=>{
+  if(m&&m.type==='VATOZ_LOGIN_SYNC'&&sender.url&&sender.url.startsWith(APP)){loginSync(!/[?&]popup=1/.test(sender.url)).then(reply,e=>reply({ok:false,error:String(e&&e.message||e)}));return true}
   if(!m||!sender.url||!sender.url.startsWith(APP))return;
   if(m.type==='VATOZ_OPEN_WINDOW'){openApp(m.intent||null).then(id=>reply({ok:true,id}),e=>reply({ok:false,error:String(e)}));return true}
   if(m.type==='VATOZ_PULL_CLAIM'){runInVA('vatozPullClaim',[String(m.id||'')],!/[?&]popup=1/.test(sender.url)).then(reply,e=>reply({ok:false,error:String(e&&e.message||e)}));return true}

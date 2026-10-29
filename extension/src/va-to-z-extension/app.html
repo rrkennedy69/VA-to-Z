@@ -11,49 +11,30 @@
 <body>
 <div class="top"><header><div class="hl"><div class="brandcol"><h1 class="brand"><svg class="logo" role="img" aria-label="VA to Z" xmlns="http://www.w3.org/2000/svg" viewBox="18 18 384 164"><title>VA to Z</title><circle cx="100" cy="100" r="78" fill="#fff"/><text x="100" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#162e51" text-anchor="middle" letter-spacing="-3">VA</text><text x="200" y="128" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="82" fill="#fff">to Z</text></svg></h1><div id="welcome" class="welcome" aria-live="polite" hidden></div></div></div><div class="hr"><button type="button" id="hdrRing" class="hdrring" aria-haspopup="dialog"></button><button id="openWin" class="popwin" type="button" title="Open in window" aria-label="Open VA to Z in its own window"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg><span> Open in window</span></button><button type="button" id="donateBtn" class="donbtn" aria-haspopup="dialog" aria-label="Donate" title="Donate"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-10-9.3C.4 8.5 2.2 4.5 6 4.5c2.1 0 3.4 1.1 4 2.2.6-1.1 1.9-2.2 4-2.2 3.8 0 5.6 4 4 7.2C19.5 16.4 12 21 12 21z"/></svg><span class="dontxt">Donate</span></button><div class="hrsave"><div id="saveInd" class="saveind" aria-live="polite">All changes saved</div><button type="button" id="cloudHdr" class="cloudhdr" hidden aria-live="polite"></button></div><p class="tag">Made by a Marine Veteran who strives to help fellow veterans get the benefits they've earned. <b>Semper Fi.</b></p></div></header>
 <nav id="nav">
-<button data-t="setup">1. Setup</button><button data-t="profile">2. Profile</button><button data-t="lookup">3. Conditions</button><button data-t="claims">4. My Claims</button><button data-t="status">5. Claims Status</button><button data-t="docs">6. Documents</button><button data-t="tools">Tools</button>
+<button data-t="intro">1. Welcome</button><button data-t="profile">2. Profile</button><button data-t="lookup">3. Conditions</button><button data-t="claims">4. My Claims</button><button data-t="status">5. Claims Status</button><button data-t="docs">6. Documents</button><button data-t="tools">Tools</button>
 </nav><div id="dirBanner"></div></div>
 <main>
 <div id="remind"></div>
 <div class="card" id="dirFirst" style="display:none;border:2px solid #162e51"><h3 style="margin-top:0">Save your work to a folder on this computer?</h3><p>VA to Z can keep a copy of everything, including your documents, in a folder you choose. It updates automatically when you make changes.</p><ol class="dirsteps"><li>Click <b>Choose save folder</b>. A folder window opens.</li><li>Go to your <b>Documents</b> folder. <b>Don't select Documents itself.</b> The browser blocks it ("contains system files").</li><li>Click <b>New folder</b> and name it <b>VAtoZ</b>.</li><li><b>Double-click VAtoZ</b> so you are <b>inside</b> it. The window should show VAtoZ at the top and an empty folder.</li><li>Click <b>Select Folder</b>. If asked, click <b>Allow</b> / <b>View files</b> / <b>Save changes</b>.</li></ol><button class="b" id="dirFirstGo">Choose save folder</button><button class="b alt" id="dirFirstLater">Not now</button><div id="dirFirstHint"></div></div>
 <div class="warn" style="margin-bottom:14px"><b>Important:</b> This tool is not legal or medical advice. It is not made by, affiliated with, or endorsed by the U.S. Department of Veterans Affairs (VA). Only VA decides ratings and payments. For free help, contact an accredited Veterans Service Officer (VSO).</div>
 
-<section id="setup">
-<div class="card tool gscard" id="setup-google"><h2>Keep your work safe with Google (optional)</h2>
-<div class="ext-only note"><b>Google backup works on the <a href="https://rrkennedy69.github.io/VA-to-Z/" target="_blank" rel="noopener">website version</a>.</b> For now, use <b>Download Backup</b> in Tools.</div>
-<div class="web-only">
-<div id="gsNotSet" class="note" hidden><b>Google backup is coming soon.</b> You'll be able to sign in once and have your work backed up automatically. For now, use <b>Download Backup</b> in Tools.</div>
-<div id="gsLive"><p>Sign in once. After that, VA to Z backs up your work to <b>your own Google Drive</b> automatically. No Save or Back up buttons to remember. On a new phone or computer, sign in and your work comes back.</p>
-<p class="muted" style="font-size:.85rem">It goes to a hidden app folder only VA to Z can use. It never goes to us. Social Security numbers stay on this device unless you choose otherwise in Tools.</p>
-<p id="gsStatus" class="gsstatus"></p><p class="muted" id="gsLast" style="font-size:.85rem"></p>
-<button type="button" class="b bigbtn gsbtn" id="gsIn"><span class="gmark" aria-hidden="true">G</span> Sign in with Google</button>
-<div id="gsMsg" aria-live="polite" style="margin-top:8px"></div></div>
-</div></div>
-<div class="card tool" id="setup-restore" style="border-top-color:var(--ok)"><h2>Already have a backup? Restore your data</h2>
-<p>New phone or computer? Coming back after clearing your browser? If you saved a VA to Z backup file before, you can bring back your claims, notes, chats, and settings in one step.</p>
-<p class="muted">New here? Skip this and start below.</p>
-<label class="b bigbtn" style="cursor:pointer;font-weight:700;background:var(--ok)">📂 Restore from Backup<input type="file" id="imp2" accept=".vaz,.json,application/json,application/gzip" style="position:absolute;left:-9999px"></label>
-<div id="restoreMsg2" aria-live="polite" style="margin-top:10px"></div>
-</div>
-<div class="card"><h2>Set up the AI helper (optional)</h2>
-<p>The lookup and the calculator (in Tools) work without this. The AI chat in <b>My Claims</b> needs a Grok API key from xAI.</p>
-<ol class="steps">
-<li>Go to <b>console.x.ai</b> (open it in your browser) and sign in or make an account.</li>
-<li>Add a payment method or credits under <b>Billing</b>. xAI charges for API use. Small chats usually cost pennies, but you are responsible for the bill.</li>
-<li>Open <b>API Keys</b> and click <b>Create API Key</b>. Give it a name like "VA Helper".</li>
-<li>Copy the key (it starts with <code>xai-</code>). You may only see it once.</li>
-<li>Paste it below and press <b>Save</b>, then <b>Test</b>.</li>
-</ol>
-<label for="apikey">Your xAI API key</label>
-<input id="apikey" type="password" autocomplete="off" placeholder="xai-...">
-<label for="model">Model</label>
-<input id="model" list="models" placeholder="grok-4.7">
-<datalist id="models"><option value="grok-4.7"><option value="grok-4.6"><option value="grok-4.3"><option value="grok-4.20-0309-non-reasoning"></datalist>
-<p class="muted">Default is <code>grok-4.7</code> (xAI's recommended chat model as of Oct 2026). If xAI renames models, type the new name here. See docs.x.ai/docs/models.</p>
-<button class="b" id="saveKey">Save</button><button class="b alt" id="testKey">Test</button><button class="b alt" id="showKey">Show/Hide</button>
-<div id="testOut" style="margin-top:8px"></div>
-<p class="muted">Privacy: your key is saved only in this browser's storage on this device. It is sent only to api.x.ai when you use the chat. Your claim notes are sent to xAI only when you chat. Anyone using this device and browser could see the key; use <a href="#" data-go="tool-clear">Clear All Data in Tools</a> when you're done on a shared computer.</p>
-</div></section>
+<section id="intro">
+<div class="wlc">
+<div class="wlchero"><h2>Welcome to VA to Z</h2><p>Your private helper for VA disability claims, from your first condition to your final decision. Everything stays on your device. Here's what you can do:</p>
+<button type="button" class="b bigbtn" id="getStarted">Get started →</button></div>
+<ul class="wgrid">
+<li><span class="wic" aria-hidden="true">⭕</span><h3>Total Rating ring</h3><p>Your combined VA rating sits at the top of every page. Tap it to see each rating and how VA math adds them up.</p></li>
+<li><span class="wic" aria-hidden="true">🔎</span><h3>Conditions lookup</h3><p>Search conditions by name and see the rating criteria and diagnostic code, plus the most common claims.</p></li>
+<li><span class="wic" aria-hidden="true">📁</span><h3>My Claims</h3><p>Pick a document from the dropdown and see what's required or recommended. Get blank VA forms, simple how-to-fill guides, and fill the PDFs right in the app.</p></li>
+<li><span class="wic" aria-hidden="true">✅</span><h3>Let's File It &amp; Audit This Claim</h3><p>Step-by-step filing help and a check for missing pieces. The AI helper is optional and off by default.</p></li>
+<li><span class="wic" aria-hidden="true">📊</span><h3>Claims Status</h3><p>Follow each claim through VA's steps on a simple progress bar.</p></li>
+<li><span class="wic" aria-hidden="true">🗂️</span><h3>Documents</h3><p>Keep letters, forms, and photos in one place. On a phone, snap a letter with your camera.</p></li>
+<li><span class="wic" aria-hidden="true">🧰</span><h3>Tools</h3><p>Setup, the VA disability calculator, backup and restore, and more.</p></li>
+<li><span class="wic" aria-hidden="true">🔄</span><h3>VA Sync <span class="wneed">Needs the extension</span></h3><p>One click in the Chrome extension opens a small VA.gov sign-in window, pulls your claims and ratings, and closes it. It only reads. It never changes anything on VA.gov.</p></li>
+<li><span class="wic" aria-hidden="true">☁️</span><h3>Automatic Google Drive backup</h3><p>Sign in once on the website or in the extension, and your work backs up to your own Google Drive automatically.</p></li>
+<li><span class="wic" aria-hidden="true">🔒</span><h3>Private by design</h3><p>Your data stays on your device. No medical records are stored, and Social Security numbers are never sent anywhere unless you choose.</p></li>
+</ul></div>
+</section>
 
 
 
@@ -119,8 +100,45 @@
 </section>
 
 <section id="tools">
+<div class="card setupsec" id="tools-setup" role="region" aria-labelledby="setupH"><h2 id="setupH" class="setuph">⚙️ Setup</h2><p class="muted">Sign in with Google for automatic backup, restore a backup, and set up the optional AI helper.</p>
+<div class="card tool gscard" id="setup-google"><h2>Keep your work safe with Google (optional)</h2>
+<div class="ext-only note"><b>Google backup works on the <a href="https://rrkennedy69.github.io/VA-to-Z/" target="_blank" rel="noopener">website version</a>.</b> For now, use <b>Download Backup</b> in Tools.</div>
+<div class="web-only">
+<div id="gsNotSet" class="note" hidden><b>Google backup is coming soon.</b> You'll be able to sign in once and have your work backed up automatically. For now, use <b>Download Backup</b> in Tools.</div>
+<div id="gsLive"><p>Sign in once. After that, VA to Z backs up your work to <b>your own Google Drive</b> automatically. No Save or Back up buttons to remember. On a new phone or computer, sign in and your work comes back.</p>
+<p class="muted" style="font-size:.85rem">It goes to a hidden app folder only VA to Z can use. It never goes to us. Social Security numbers stay on this device unless you choose otherwise in Tools.</p>
+<p id="gsStatus" class="gsstatus"></p><p class="muted" id="gsLast" style="font-size:.85rem"></p>
+<button type="button" class="b bigbtn gsbtn" id="gsIn"><span class="gmark" aria-hidden="true">G</span> Sign in with Google</button>
+<div id="gsMsg" aria-live="polite" style="margin-top:8px"></div></div>
+</div></div>
+<div class="card tool" id="setup-restore" style="border-top-color:var(--ok)"><h2>Already have a backup? Restore your data</h2>
+<p>New phone or computer? Coming back after clearing your browser? If you saved a VA to Z backup file before, you can bring back your claims, notes, chats, and settings in one step.</p>
+<p class="muted">New here? Skip this and start below.</p>
+<label class="b bigbtn" style="cursor:pointer;font-weight:700;background:var(--ok)">📂 Restore from Backup<input type="file" id="imp2" accept=".vaz,.json,application/json,application/gzip" style="position:absolute;left:-9999px"></label>
+<div id="restoreMsg2" aria-live="polite" style="margin-top:10px"></div>
+</div>
+<div class="card"><h2>Set up the AI helper (optional)</h2>
+<p>The lookup and the calculator (in Tools) work without this. The AI chat in <b>My Claims</b> needs a Grok API key from xAI.</p>
+<ol class="steps">
+<li>Go to <b>console.x.ai</b> (open it in your browser) and sign in or make an account.</li>
+<li>Add a payment method or credits under <b>Billing</b>. xAI charges for API use. Small chats usually cost pennies, but you are responsible for the bill.</li>
+<li>Open <b>API Keys</b> and click <b>Create API Key</b>. Give it a name like "VA Helper".</li>
+<li>Copy the key (it starts with <code>xai-</code>). You may only see it once.</li>
+<li>Paste it below and press <b>Save</b>, then <b>Test</b>.</li>
+</ol>
+<label for="apikey">Your xAI API key</label>
+<input id="apikey" type="password" autocomplete="off" placeholder="xai-...">
+<label for="model">Model</label>
+<input id="model" list="models" placeholder="grok-4.7">
+<datalist id="models"><option value="grok-4.7"><option value="grok-4.6"><option value="grok-4.3"><option value="grok-4.20-0309-non-reasoning"></datalist>
+<p class="muted">Default is <code>grok-4.7</code> (xAI's recommended chat model as of Oct 2026). If xAI renames models, type the new name here. See docs.x.ai/docs/models.</p>
+<button class="b" id="saveKey">Save</button><button class="b alt" id="testKey">Test</button><button class="b alt" id="showKey">Show/Hide</button>
+<div id="testOut" style="margin-top:8px"></div>
+<p class="muted">Privacy: your key is saved only in this browser's storage on this device. It is sent only to api.x.ai when you use the chat. Your claim notes are sent to xAI only when you chat. Anyone using this device and browser could see the key; use <a href="#" data-go="tool-clear">Clear All Data in Tools</a> when you're done on a shared computer.</p>
+</div>
+</div>
 <div class="card"><h2>Tools</h2><p>Extra tools for your claim. Pick one:</p>
-<div class="toolnav"><button class="b alt sm" data-go="tool-calc">VA Disability Calculator</button><button class="b alt sm" data-go="tool-backup">Backup and Restore</button><button class="b alt sm" data-go="tool-cloud">Cloud Backup</button><button class="b alt sm" data-go="tool-about">About the data</button></div></div>
+<div class="toolnav"><button class="b alt sm" data-go="tools-setup">Setup</button><button class="b alt sm" data-go="tool-calc">VA Disability Calculator</button><button class="b alt sm" data-go="tool-backup">Backup and Restore</button><button class="b alt sm" data-go="tool-cloud">Cloud Backup</button><button class="b alt sm" data-go="tool-about">About the data</button></div></div>
 
 <details class="card tool tcard" id="tool-calc"><summary><span class="smct">VA Disability Calculator<span class="tsum" id="sum-calc"></span></span><span class="chev" aria-hidden="true">▾</span></summary><div class="pbody">
 <p>VA doesn't add ratings. It uses "VA math": each rating takes a share of what's left, then the total rounds to the nearest 10. Results update as you go.</p>
@@ -209,11 +227,12 @@
 <ol><li>Go to <a href="https://www.va.gov/" target="_blank" rel="noopener">VA.gov</a> and sign in (Login.gov or ID.me) as usual.</li>
 <li>Click the <b>VA to Z Sync</b> button in your toolbar, then <b>Pull my VA data</b>.</li>
 <li>If this app is open in another tab, the info appears below for review. If not, click <b>Download VA data file</b> in the extension, then use <b>Import VA data file</b> here.</li></ol>
+<p class="note" id="syncWebNote">Tip: in the VA to Z Chrome extension, <b>Sync VA data</b> is one click. It opens a small VA.gov sign-in window, pulls your info, and closes it.</p>
 </div></div><div class="sub ext-only"><h3>Pull your info</h3>
 <ol><li>Sign in at <a href="https://www.va.gov/" target="_blank" rel="noopener">VA.gov</a> in this browser (Login.gov or ID.me) as usual. You can close that tab afterward.</li>
-<li>Click <b>Pull from VA.gov</b> below. If no VA.gov tab is open, the app briefly opens one in the background, reads your info, and closes it.</li>
+<li>Click <b>Sync VA data</b> below. A small VA.gov window opens. If you're not signed in, sign in there (Login.gov or ID.me). VA to Z reads your claims and ratings and closes the window for you. If you're already signed in, it may just flash open and close.</li>
 <li>Review the items that appear and click <b>Apply</b>.</li></ol>
-<button class="b red" id="extPull">Pull from VA.gov</button></div>
+<button class="b red" id="extPull">Sync VA data</button></div>
 <div class="sub"><p id="syncLast" style="font-weight:700;margin:6px 0"></p><div id="syncExt" class="muted"></div>
 <label class="b alt" style="display:inline-block;cursor:pointer">Import VA data file<input type="file" id="syncImp" class="hidefile" accept=".json,application/json"></label>
 <div id="syncMsg"></div></div>

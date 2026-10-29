@@ -101,7 +101,7 @@ var CFR=JSON.parse(document.getElementById('cfr').textContent);
 var RATES=JSON.parse(document.getElementById('rates').textContent);
 var BYDC={};CFR.forEach(function(e){BYDC[e.c]=e});
 var KEY='vaHelper.v1';
-var S={apiKey:'',model:'grok-4.7',calc:{entries:[],deps:{spouse:0,aa:0,parents:0,kids:0,school:0}},claims:{},order:[],current:null,tab:'setup'};
+var S={apiKey:'',model:'grok-4.7',calc:{entries:[],deps:{spouse:0,aa:0,parents:0,kids:0,school:0}},claims:{},order:[],current:null,tab:'intro'};
 var storageOK=true;
 function $(id){return document.getElementById(id)}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -166,7 +166,8 @@ document.addEventListener('visibilitychange',function(){if(document.visibilitySt
 window.addEventListener('pagehide',saveNow);
 
 /* ---------- tabs ---------- */
-function tab(t){if(t==='calc'||t==='data')t='tools';S.tab=t;document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===t)});document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});if(t==='claims')renderClaims();if(t==='status')renderStatus();save();window.scrollTo(0,0)}
+function tab(t){if(t==='setup'){goTool('tools-setup');return}if(t==='calc'||t==='data')t='tools';S.tab=t;document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===t)});document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});if(t==='claims')renderClaims();if(t==='status')renderStatus();save();window.scrollTo(0,0)}
+$('getStarted').addEventListener('click',function(){goTool('tools-setup')});
 $('nav').addEventListener('click',function(e){if(e.target.dataset.t)tab(e.target.dataset.t)});
 function goTool(id){if(S.tab!=='tools')tab('tools');var el=$(id);if(!el)return;if(el.tagName==='DETAILS')el.open=true;setTimeout(function(){var y=el.getBoundingClientRect().top+window.scrollY-150;window.scrollTo({top:y,behavior:'smooth'});var s=el.querySelector('summary');if(s)s.focus({preventScroll:true})},30)}
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-go]');if(b){e.preventDefault();goTool(b.dataset.go)}});
@@ -539,11 +540,11 @@ function cdocLines(c){return (c.cdocs||[]).map(function(x){return '- '+x.type}).
 // into S.medPending (never shown, backed up, mirrored, or sent to AI) until the user exports/removes them via the one-time notice.
 var MED_CATS={vamed:'Medical Records (VA)',privmed:'Private Medical Records',nexus:'Nexus Letters / IMOs',dbq:'DBQs',str:'Service Treatment Records',cfile:'C-File'};
 function isMedDoc(d){return !!(d&&MED_CATS[d.cat])}
-function medSplit(){if(!Array.isArray(S.docs))return;var m=S.docs.filter(isMedDoc);if(!m.length)return;S.medPending=(Array.isArray(S.medPending)?S.medPending:[]).concat(m);S.docs=S.docs.filter(function(d){return !isMedDoc(d)})}
+function medSplit(){if(!Array.isArray(S.docs))return;var m=S.docs.filter(isMedDoc);if(!m.length)return;var pm=Array.isArray(S.medPending)?S.medPending:[];S.medPending=pm.concat(m.filter(function(x){return !pm.some(function(y){return y.id===x.id})}));S.docs=S.docs.filter(function(d){return !isMedDoc(d)})}
 var PROV_KEYS=[['name','Name of doctor or facility'],['address','Address'],['phone','Phone'],['from','Treatment from'],['to','Treatment to'],['conditions','Conditions treated']];
 function provSplit(p){var L=Array.isArray(p.l.providers)?p.l.providers.filter(function(x){return x&&PROV_KEYS.some(function(k){return x[k[0]]})}):[],f={};
   ['vha','vaFacility'].forEach(function(k){if(p.f[k])f[k]=p.f[k];delete p.f[k]});delete p.l.providers;
-  if(L.length||Object.keys(f).length){var o=S.provPending||{list:[],f:{}};o.list=o.list.concat(L);Object.assign(o.f,f);S.provPending=o}}
+  if(L.length||Object.keys(f).length){var o=S.provPending||{list:[],f:{}};var ks=o.list.map(function(x){return JSON.stringify(x)});o.list=o.list.concat(L.filter(function(x){return ks.indexOf(JSON.stringify(x))<0}));Object.assign(o.f,f);S.provPending=o}}
 function provText(){var o=S.provPending;if(!o)return '';var t='VA to Z - medical provider info exported '+new Date().toLocaleString()+'\n\n';
   if(o.f.vha)t+='Enrolled in VA health care: '+o.f.vha+'\n';if(o.f.vaFacility)t+='VA medical center / clinic: '+o.f.vaFacility+'\n';
   o.list.forEach(function(x,i){t+='\nProvider #'+(i+1)+'\n'+PROV_KEYS.filter(function(k){return x[k[0]]}).map(function(k){return '  '+k[1]+': '+x[k[0]]}).join('\n')+'\n'});return t}
@@ -743,8 +744,10 @@ function applySync(){var p=ensureProfile(),n=0,nc=0,wantCalc=false;S.vaData=SYNC
   SYNC=null;saveNow();renderProfile();renderCalc();renderVARings();renderClaims();renderSync();toolSums();
   $('syncMsg').innerHTML='<div class="okbox">✓ Applied: '+n+' profile/calculator item'+(n===1?'':'s')+' and '+nc+' claim'+(nc===1?'':'s')+' added.<br><b>Next:</b> make a backup (Tools → Backup and Restore) to save it and to move it to your phone.</div>'}
 document.addEventListener('click',function(e){var t=e.target;if(t.id==='syncApply')applySync();else if(t.id==='syncCancel'){SYNC=null;renderSync();$('syncMsg').innerHTML=''}else if(t.id==='syncAsk')window.postMessage({type:'VATOZ_REQUEST'},'*')});
-if($('extPull'))$('extPull').onclick=function(){if(!IS_EXT||!window.chrome||!chrome.runtime||!chrome.runtime.sendMessage)return;var b=this;b.disabled=true;$('syncMsg').innerHTML='<p class="muted">Reading from VA.gov… (a VA.gov tab may open briefly)</p>';
-  chrome.runtime.sendMessage({type:'VATOZ_PULL'}).then(function(r){if(!r||!r.ok){$('syncMsg').innerHTML='<span class="err">'+esc(r&&r.error==='not-logged-in'?'You don\'t seem to be signed in to VA.gov. Sign in at VA.gov in this browser, then press Pull again.':'Could not read your VA.gov info'+(r&&r.error?' ('+r.error+')':'')+'. Make sure you are signed in to VA.gov, then try again.')+'</span>';return}
+if($('extPull'))$('extPull').onclick=function(){if(!IS_EXT||!window.chrome||!chrome.runtime||!chrome.runtime.sendMessage)return;var b=this;b.disabled=true;$('syncMsg').innerHTML='<p class="muted">Opening VA.gov… Sign in there if asked. The window closes by itself when your info is pulled.</p>';
+  chrome.runtime.sendMessage({type:'VATOZ_LOGIN_SYNC'}).then(function(r){if(r&&r.error==='canceled'){$('syncMsg').innerHTML='<p class="note" id="syncCanceled">Sync canceled. The VA.gov window was closed before your info was pulled. Click <b>Sync VA data</b> to try again.</p>';return}
+    if(r&&r.ok){startSync(r.data,'from VA.gov');var m=$('syncMsg');if(m)m.insertAdjacentHTML('afterbegin','<div class="okbox" id="syncDone">✓ Synced with VA.gov. Your claims and ratings were pulled. Review them below and click Apply.</div>');return}
+    if(!r||!r.ok){$('syncMsg').innerHTML='<span class="err">'+esc(r&&r.error==='not-logged-in'?'You don\'t seem to be signed in to VA.gov. Sign in at VA.gov in this browser, then press Pull again.':'Could not read your VA.gov info'+(r&&r.error?' ('+r.error+')':'')+'. Make sure you are signed in to VA.gov, then try again.')+'</span>';return}
     startSync(r.data,'from VA.gov')}).catch(function(e){$('syncMsg').innerHTML='<span class="err">Pull failed: '+esc(e.message)+'</span>'}).finally(function(){b.disabled=false})};
 $('syncImp').onchange=function(){var f=this.files[0];if(!f)return;this.value='';f.text().then(function(t){startSync(JSON.parse(t),'from file')}).catch(function(e){$('syncMsg').innerHTML='<span class="err">Import failed: '+esc(e.message)+'</span>'})};
 window.addEventListener('message',function(e){if(e.source!==window||!e.data||e.data.source!=='vatoz-sync-ext')return;
@@ -752,7 +755,7 @@ window.addEventListener('message',function(e){if(e.source!==window||!e.data||e.d
   else if(e.data.type==='VATOZ_VA_DATA'){try{startSync(e.data.data,'from the extension')}catch(x){$('syncMsg').innerHTML='<span class="err">'+esc(x.message)+'</span>'}}});
 
 /* ---------- extension popup → window handoff ---------- */
-var HANDOFF={imp:['tools','tool-backup','Restore from Backup'],imp2:['setup','','Restore from Backup'],syncImp:['tools','tool-sync','Import VA data file'],
+var HANDOFF={imp:['tools','tool-backup','Restore from Backup'],imp2:['tools','tools-setup','Restore from Backup'],syncImp:['tools','tool-sync','Import VA data file'],extPull:['tools','tool-sync','Sync VA data'],
   dirChoose:['tools','tool-backup','Choose save folder'],dirFirstGo:['tools','tool-backup','Choose save folder'],dirRestore:['tools','tool-backup','Restore from save folder'],
   dirReconnect:['tools','tool-backup','Reconnect save folder'],dirReconnect2:['tools','tool-backup','Reconnect save folder'],exp:['tools','tool-backup','Download Backup']};
 function openWindow(intent){saveNow();var go=function(){try{chrome.runtime.sendMessage({type:'VATOZ_OPEN_WINDOW',intent:intent||null}).then(function(){window.close()},function(){window.close()})}catch(e){}};
@@ -1091,7 +1094,7 @@ async function runAudit(){var c=S.claims[S.current];if(!c||AUDIT_BUSY)return;var
 $('claimView').addEventListener('change',function(ev){var t=ev.target;if(t.id!=='auditReady')return;var c=S.claims[S.current];if(!c)return;c.auditReady=t.checked;save();$('auditBtn').disabled=!(aiOn()&&t.checked)||AUDIT_BUSY});
 $('claimView').addEventListener('click',function(ev){var t=ev.target.closest('button');if(!t)return;var c=S.claims[S.current];
   if(t.id==='auditBtn')runAudit();
-  else if(t.id==='auditGoSetup'){tab('setup');var k=$('apikey');if(k){k.scrollIntoView({block:'center'});setTimeout(function(){k.focus()},50)}}
+  else if(t.id==='auditGoSetup'){tab('tools');var k=$('apikey');if(k){k.scrollIntoView({block:'center'});setTimeout(function(){k.focus()},50)}}
   else if(t.id==='auditCopy'&&c&&c.audit){var done=function(){t.textContent='Copied ✓';setTimeout(function(){t.textContent='Copy'},2000)};
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(c.audit.text).then(done,function(){fallbackCopy(c.audit.text);done()});else{fallbackCopy(c.audit.text);done()}}
   else if(t.id==='auditToNotes'&&c&&c.audit){c.notes=(c.notes?c.notes.replace(/\s+$/,'')+'\n\n':'')+'--- AI audit ('+new Date(c.audit.at).toLocaleString()+') ---\n'+c.audit.text;saveNow();var n=$('cNotes');if(n)n.value=c.notes;t.textContent='Saved to notes ✓'}});
@@ -1106,7 +1109,7 @@ async function sendChat(){var c=S.claims[S.current];if(!c||busy)return;var t=$('
 $('claimView').addEventListener('keydown',function(e){if(e.target.id==='cMsg'&&e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();sendChat()}});
 
 /* ---------- backup ---------- */
-function blankState(){return {apiKey:'',model:'grok-4.7',calc:{entries:[],deps:{spouse:0,aa:0,parents:0,kids:0,school:0},smc:{level:'',k:0}},claims:{},order:[],current:null,tab:'setup',docs:[],mirrorTrash:[]}}
+function blankState(){return {apiKey:'',model:'grok-4.7',calc:{entries:[],deps:{spouse:0,aa:0,parents:0,kids:0,school:0},smc:{level:'',k:0}},claims:{},order:[],current:null,tab:'intro',docs:[],mirrorTrash:[]}}
 function buildBackup(){return JSON.stringify({app:'VA to Z',version:1,exported:new Date().toISOString(),data:S},null,2)} // settings-only JSON (legacy format)
 async function buildFullBackup(){ensureDocs();var files=[];for(var i=0;i<S.docs.length;i++){var d=S.docs[i],r=await readFile(d.id);files.push({id:d.id,hash:d.hash||await sha(r.buf),type:r.type,b64:await b64(r.buf)})}
   var dS=JSON.parse(JSON.stringify(S));delete dS.medPending;delete dS.provPending;var dataStr=JSON.stringify(dS),payload=JSON.stringify({app:'VA to Z',version:2,exported:new Date().toISOString(),dataHash:await sha(new TextEncoder().encode(dataStr)),data:dS,files:files});
@@ -1250,7 +1253,7 @@ function wireRestore(inputId,msgId,tabAfter){$(inputId).onchange=function(){var 
   f.arrayBuffer().then(async function(buf){var u=new Uint8Array(buf),text;
     if(u[0]===0x1f&&u[1]===0x8b){if(!CAN_GZ)throw new Error('This browser can\'t open compressed (.vaz) backups. Try Chrome, Edge, or a current Safari.');text=new TextDecoder().decode(await gzip(buf,false))}else text=new TextDecoder().decode(buf);
     var r=await restoreFrom(text,msgId,tabAfter);if(r===false)$(msgId).innerHTML=''}).catch(function(e){$(msgId).innerHTML='<span class="err">Restore failed: '+esc(e.message)+'</span>'})}}
-wireRestore('imp','restoreMsg','tools');wireRestore('imp2','restoreMsg2','setup');
+wireRestore('imp','restoreMsg','tools');wireRestore('imp2','restoreMsg2','tools');
 $('clr').onclick=async function(){if(!confirm('Erase ALL data from this device: API key, profile, calculator, claims, notes, chats, and documents?\n\nThis cannot be undone. Download a backup first if you want to keep it. (Files already in a save folder on your computer are not deleted.)'))return;
   try{localStorage.removeItem(KEY)}catch(e){}if(DB){await idbClear('files').catch(function(){});await idbClear('kv').catch(function(){})}DIR=null;DIRSTATE='none';
   S=blankState();S.tab='tools';init();saveNow();renderDir();alert('All data cleared.')};
